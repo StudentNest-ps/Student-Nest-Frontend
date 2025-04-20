@@ -78,7 +78,7 @@ export default function CorporatePartnershipsSection() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Corporate Partnerships</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Corporate Partnerships</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             We work with CEOs, companies to meet accommodation needs in London. Offer a dedicated booking service that
             can help to find properties for your needs.
@@ -94,14 +94,14 @@ export default function CorporatePartnershipsSection() {
           >
             <div className="rounded-xl overflow-hidden shadow-md">
               <Image
-                src="/placeholder.svg?height=400&width=600&text=Before"
+                src="/Bedroom1.jpg"
                 alt="Before renovation"
                 width={600}
                 height={400}
                 className="w-full h-auto object-cover"
               />
-              <div className="absolute bottom-4 right-4 bg-background px-4 py-2 rounded-md font-semibold text-foreground">
-                Before
+              <div className="absolute bottom-4 right-4 bg-accent px-4 py-2 rounded-xl font-semibold text-primary">
+                Cozy
               </div>
             </div>
           </motion.div>
@@ -114,14 +114,14 @@ export default function CorporatePartnershipsSection() {
           >
             <div className="rounded-xl overflow-hidden shadow-md">
               <Image
-                src="/placeholder.svg?height=400&width=600&text=After"
+                src="/Bedroom2.jpg"
                 alt="After renovation"
                 width={600}
                 height={400}
                 className="w-full h-auto object-cover"
               />
-              <div className="absolute bottom-4 right-4 bg-background px-4 py-2 rounded-md font-semibold text-foreground">
-                After
+              <div className="absolute bottom-4 right-4 bg-accent px-4 py-2 rounded-xl font-semibold text-primary">
+                Modern
               </div>
             </div>
           </motion.div>
