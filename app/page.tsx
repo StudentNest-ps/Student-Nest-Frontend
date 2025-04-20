@@ -1,10 +1,9 @@
+import Landing from '@/components/Landing/Landing'
 import React from 'react'
 
 const page = () => {
   return (
-    <div>
-      hi
-    </div>  
+    <Landing/>
   )
 }
 
