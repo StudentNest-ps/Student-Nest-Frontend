@@ -105,8 +105,8 @@ export default function BenefitsSection() {
 
   const lineHeight = useTransform(
     smoothProgress,
-    [0, 0.1, 0.9, 1],
-    ["0%", "15%", "85%", "100%"]
+    [0, 0.1, 0.6, 1],
+    ["0%", "2%", "65%", "110%"]
   );
 
   const benefits = [
@@ -178,7 +178,7 @@ export default function BenefitsSection() {
         <div className="flex justify-center">
             <div>
                 {/* Timeline line with smooth animation */}
-                <div className="absolute left-1/2 transform -translate-x-1/2 h-[calc(100%-24rem)] top-80 flex justify-center">
+                <div className="absolute left-1/2 transform -translate-x-1/2 h-[calc(100%-20rem)] top-60 flex justify-center">
                   <div className="w-[4px] bg-muted/50 rounded-full relative overflow-hidden">
                     <motion.div
                       className="absolute top-0 left-0 w-full bg-primary rounded-full"
@@ -237,12 +237,14 @@ export default function BenefitsSection() {
                 </div>
             </div>
             <div className="hidden lg:block relative -ml-15">
-            <div className="sticky top-32">
-              <h3 className="text-[120px] font-bold text-primary/5 writing-mode-vertical transform rotate-180 leading-none tracking-tighter">
-                BENEFITS 
-              </h3>
+                <div className="sticky-wrapper">
+                    <div className="sticky top-32">
+                        <h3 className="text-[300px] font-bold text-primary/5 writing-mode-vertical transform rotate-180 leading-none tracking-tighter">
+                            BENEFITS
+                        </h3>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
       </div>
     </section>

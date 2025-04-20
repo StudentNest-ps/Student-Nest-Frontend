@@ -13,12 +13,10 @@ import {
   ChevronLeft,
   ChevronRight,
   FileText,
-  Phone,
   Home,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 // Animation variants
@@ -65,42 +63,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* 1. Navbar */}
-      <nav className="sticky top-0 z-50 bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center">
-              <div className="flex items-center cursor-pointer">
-                <div className="w-8 h-8 bg-primary rounded-md mr-2"></div>
-                <span className="text-lg font-semibold text-primary"
-                  onClick={()=>scrollTo({
-                  top: 0,
-                  left: 0,
-                  behavior: "smooth",
-                  })}
-                >
-                  RentEase
-                </span>
-              </div>
-            <div className="hidden md:flex ml-10 space-x-8">
-              <Link href="/" className="text-headline hover:text-primary transition-colors">
-                Home
-              </Link>
-              <Link href="/landlords" className="text-headline hover:text-primary transition-colors">
-                Landlords
-              </Link>
-              <Link href="/blog" className="text-headline hover:text-primary transition-colors">
-                Blog
-              </Link>
-              <Link href="/contacts" className="text-headline hover:text-primary transition-colors">
-                Contacts
-              </Link>
-            </div>
-          </div>
-          <Button variant="outline" className="text-primary border-primary hover:bg-accent cursor-pointer">
-            <Link href="/signin">Sign in</Link>
-          </Button>
-        </div>
-      </nav>
+      {/* 1. Navbar (inside the layout) */}
 
       {/* 2. Hero Section */}
       <motion.section
@@ -248,7 +211,7 @@ export default function Landing() {
             <motion.div variants={fadeInUp} className="md:w-1/2 md:pl-16 order-1 md:order-2">
               <h2 className="text-3xl md:text-4xl font-bold text-headline mb-6 text-primary">The future is flexible</h2>
               <p className="text-muted-foreground mb-8">
-                Our properties are designed to adapt to your lifestyle. Whether you're looking for a short-term stay or
+                Our properties are designed to adapt to your lifestyle. Whether you&apos;re looking for a short-term stay or
                 a long-term home, we have options that fit your needs.
               </p>
               <Button className="bg-primary text-white hover:bg-primary/90 cursor-pointer">Learn More</Button>
@@ -493,8 +456,8 @@ export default function Landing() {
                     </div>
                   </div>
                   <p className="text-muted-foreground">
-                    "The flexibility and quality of the properties have been perfect for our team's needs. The booking
-                    process is seamless and the support team is always responsive."
+                    The flexibility and quality of the properties have been perfect for our team&apos;s needs. The booking
+                    process is seamless and the support team is always responsive.
                   </p>
                 </CardContent>
               </Card>
@@ -513,8 +476,8 @@ export default function Landing() {
                     </div>
                   </div>
                   <p className="text-muted-foreground">
-                    "We've been using RentEase for our corporate housing needs for over a year now. The properties are
-                    always clean, well-maintained, and in great locations."
+                    We&apos;ve been using RentEase for our corporate housing needs for over a year now. The properties are
+                    always clean, well-maintained, and in great locations.
                   </p>
                 </CardContent>
               </Card>
@@ -533,8 +496,8 @@ export default function Landing() {
                     </div>
                   </div>
                   <p className="text-muted-foreground">
-                    "Finding accommodation for our international employees used to be a challenge. RentEase has
-                    simplified the process and provided excellent options."
+                    Finding accommodation for our international employees used to be a challenge. RentEase has
+                    simplified the process and provided excellent options.
                   </p>
                 </CardContent>
               </Card>
@@ -758,143 +721,7 @@ export default function Landing() {
       </motion.section>
 
       {/* 13. Footer */}
-      <footer className="bg-white border-t border-gray-200 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <Link href="/" className="flex items-center mb-6">
-                <div className="w-8 h-8 bg-primary rounded-md mr-2"></div>
-                <span className="text-lg font-semibold text-primary">RentEase</span>
-              </Link>
-              <p className="text-muted-foreground mb-4">
-                123 Property Street
-                <br />
-                London, UK
-                <br />
-                W1 1AA
-              </p>
-              <p className="text-muted-foreground">
-                <Phone size={16} className="inline mr-2" />
-                +44 (0) 123 456 7890
-              </p>
-            </div>
 
-            <div>
-              <h3 className="text-lg font-semibold text-headline mb-6">Company</h3>
-              <ul className="space-y-3">
-                <li>
-                  <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    Careers
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    Press
-                  </Link>
-                </li>
-              </ul>
-
-              <h3 className="text-lg font-semibold text-headline mt-8 mb-6">Legal</h3>
-              <ul className="space-y-3">
-                <li>
-                  <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    Terms & Conditions
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    Privacy Policy
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                    Cookie Policy
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold text-headline mb-6">Newsletter</h3>
-              <p className="text-muted-foreground mb-4">
-                Subscribe to our newsletter to receive updates and exclusive offers.
-              </p>
-              <div className="flex">
-                <Input type="email" placeholder="Your email" className="rounded-l-xl rounded-r-none border-r-0" />
-                <Button className="cursor-pointer rounded-l-none bg-primary text-white hover:bg-primary/90">Subscribe</Button>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()} RentEase. All rights reserved.
-            </p>
-            <div className="flex space-x-4">
-              <Link href="#" className="text-muted-foreground hover:text-primary">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5"
-                >
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                </svg>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5"
-                >
-                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
-                </svg>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-5 h-5"
-                >
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

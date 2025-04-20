@@ -137,7 +137,7 @@ export default function LandlordForm() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (

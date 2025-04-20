@@ -3,7 +3,6 @@
 import { motion } from "framer-motion"
 import { useInView } from "react-intersection-observer"
 import Image from "next/image"
-import { Shield, Ban, Clock, Building } from "lucide-react"
 import LandlordForm from "./components/LandlordForm"
 import BenefitsSection from "./components/BenefitsSection"
 import CorporatePartnershipsSection from "./components/CorporatePartnershipsSection"
@@ -23,7 +22,7 @@ export default function LandlordsPage() {
     },
   }
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Hero Section */}
       <motion.section
         ref={heroRef}
@@ -45,7 +44,7 @@ export default function LandlordsPage() {
                   alt="Landlords discussing property"
                   width={1000}
                   height={1000}
-                  className="rounded-xl"
+                  className="rounded-xl border-4"
                 />
               </div>
             </div>
