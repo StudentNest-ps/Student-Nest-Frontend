@@ -17,7 +17,7 @@ import {
   Home,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -139,7 +139,7 @@ export default function Landing() {
           <Card className="rounded-4xl shadow-md">
             <CardContent className="py-2">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div className="flex flex-wrap items-center space-x-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 md:pr-4">
+                <div className="flex items-center space-x-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 md:pr-4">
                   <Search className="text-primary mt-6" size={20} />
                   <div className="w-full">
                     <label className="block text-sm text-muted-foreground">City</label>
@@ -205,10 +205,13 @@ export default function Landing() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button className="bg-primary text-white hover:bg-primary/90 cursor-pointer">Search</Button>
+                  
                 </div>
               </div>
             </CardContent>
+            <CardFooter className="flex justify-center">
+            <Button className="bg-primary text-white hover:bg-primary/90 cursor-pointer w-full md:w-[300px]">Search</Button>
+            </CardFooter>
           </Card>
         </div>
       </motion.section>
