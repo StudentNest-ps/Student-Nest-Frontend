@@ -39,6 +39,9 @@ const Navbar = () => {
               <Link href="/contacts" className="text-headline hover:text-primary transition-colors">
                 Contacts
               </Link>
+              <Link href="/apartments" className="text-headline hover:text-primary transition-colors">
+                Book Now
+              </Link>
             </div>
           </div>
           <Button variant="outline" className="text-primary border-primary hover:bg-accent cursor-pointer">
