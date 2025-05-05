@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/sonner"
 import { landlordSchema } from "../schema/landlordSchema"
 
@@ -18,7 +17,6 @@ export interface LandlordFormValues {
 
 export const useLandlordForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const router = useRouter()
 
   const initialValues: LandlordFormValues = {
     fullName: "",

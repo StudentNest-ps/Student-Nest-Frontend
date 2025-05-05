@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { useInView } from "react-intersection-observer"
@@ -97,16 +97,17 @@ export default function ApartmentsPage() {
   })
 
   // Update URL with search params
+  const router = useRouter()
+  
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams()
-      if (city) params.set("city", city)
-      if (guests) params.set("guests", guests)
-
-      const url = `/apartments?${params.toString()}`
-      window.history.replaceState({}, "", url)
-    }
-  }, [city, guests])
+    // Create URLSearchParams object
+    const params = new URLSearchParams()
+    if (city) params.set("city", city)
+    if (guests) params.set("guests", guests)
+    
+    // Use Next.js router to update the URL without a full page refresh
+    router.push(`/apartments?${params.toString()}`, { scroll: false })
+  }, [city, guests, router])
 
   // Toggle filter
   const toggleFilter = (filter: string) => {

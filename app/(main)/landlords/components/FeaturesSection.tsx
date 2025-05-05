@@ -36,7 +36,7 @@ const FeaturesSection = () => {
     <div className="container mx-auto px-4">
       <h2 className="text-3xl font-bold text-primary text-center mb-12">Better than Property Management</h2>
       <p className="text-muted-foreground text-center max-w-3xl mx-auto mb-16">
-        We take care of everything so you don't have to. From finding tenants to maintenance, we handle it all while
+        We take care of everything so you don&apos;t have to. From finding tenants to maintenance, we handle it all while
         ensuring you get the best return on your investment.
       </p>
 
