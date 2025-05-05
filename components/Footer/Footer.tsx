@@ -1,10 +1,18 @@
+"use client";
+
 import Link from 'next/link'
 import React from 'react'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { Phone } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
+const hideFooter = ["/signin", "/signup"];
 const Footer = () => {
+  const pathname = usePathname();
+  
+  if(!hideFooter.includes(pathname)){
+
   return (
     <footer className="bg-white border-t border-gray-200 py-12">
     <div className="container mx-auto px-4">
@@ -144,6 +152,8 @@ const Footer = () => {
     </div>
   </footer>
   )
+}
+return null;
 }
 
 export default Footer
