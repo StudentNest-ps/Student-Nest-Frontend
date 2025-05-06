@@ -37,18 +37,19 @@ export default function BlogCarousel({ items }: BlogCarouselProps) {
     }),
   }
 
-  const startAutoPlay = () => {
-    if (autoPlayRef.current) clearInterval(autoPlayRef.current)
 
-    autoPlayRef.current = setInterval(() => {
-      if (isAutoPlaying) {
-        setDirection(1)
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length)
-      }
-    }, 5000)
-  }
 
   useEffect(() => {
+    const startAutoPlay = () => {
+      if (autoPlayRef.current) clearInterval(autoPlayRef.current)
+  
+      autoPlayRef.current = setInterval(() => {
+        if (isAutoPlaying) {
+          setDirection(1)
+          setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length)
+        }
+      }, 5000)
+    }
     startAutoPlay()
 
     return () => {

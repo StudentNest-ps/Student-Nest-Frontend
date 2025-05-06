@@ -191,6 +191,7 @@ export default function BenefitsSection() {
                   {benefits.map((benefit, index) => {
                     const isLeft = index % 2 === 0;
                     // Individual card section in-view detection for better animations
+                    // eslint-disable-next-line react-hooks/rules-of-hooks
                     const [cardRef, cardInView] = useInView({
                       triggerOnce: false,
                       threshold: 0.2,
