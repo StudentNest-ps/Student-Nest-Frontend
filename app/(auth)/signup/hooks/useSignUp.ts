@@ -1,61 +1,71 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useFormik } from "formik"
-import { signUpSchema } from "../../schema/authSchema"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import { useState } from "react";
+import { useFormik } from "formik";
+import { signUpSchema } from "../../schema/authSchema";
+import { toast } from "sonner";
+import auth from "@/module/services/auth";
+import { IRegisterUser } from "@/module/@types";
+import { useRouter } from "next/navigation";
 
 interface SignUpValues {
-  fullName: string
-  email: string
-  phone: string
-  password: string
-  confirmPassword: string
-  termsAccepted: boolean
+  username: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  confirmPassword: string;
+  termsAccepted: boolean;
 }
 
 export const useSignUp = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const router = useRouter()
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
   const initialValues: SignUpValues = {
-    fullName: "",
+    username: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     password: "",
     confirmPassword: "",
-    termsAccepted: false,
-  }
+    termsAccepted: false
+  };
 
   const formik = useFormik({
     initialValues,
     validationSchema: signUpSchema,
     onSubmit: async (values) => {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500))
+        
+        const user: IRegisterUser = {
+          email: values.email,
+          username: values.username,
+          phoneNumber: values.phoneNumber,
+          password: values.password,
+          confirmPassword: values.confirmPassword,
+          role: "student"
+        };
 
-        console.log("Sign up form submitted:", values)
-
-        // Show success toast
-        toast("Account created successfully")
-
-        // Redirect to sign in or home page
-        router.push("/auth/signin")
+        console.log('signed up user: ', user);
+        
+        const res = await auth.registerUser(user);
+        if (res) {
+          toast.success("Account created successfully");
+          router.push("/signin");
+        } else {
+          toast.error("Account creation failed");
+        }
       } catch (error) {
-        console.error("Sign up error:", error)
+        console.error("Sign up error:", error);
 
-        toast("Account creation failed")
+        toast.error("Account creation failed");
       } finally {
-        setIsSubmitting(false)
+        setIsSubmitting(false);
       }
-    },
-  })
+    }
+  });
 
   return {
     formik,
-    isSubmitting,
-  }
-}
+    isSubmitting
+  };
+};
