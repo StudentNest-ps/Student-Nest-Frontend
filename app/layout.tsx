@@ -31,7 +31,7 @@ export default function RootLayout({
       <body
         className={` ${poppins.variable} antialiased`}
       >
-        <Toaster/>
+        <Toaster richColors/>
         <Navbar/>
         <main>{children}</main>
         <Footer/>

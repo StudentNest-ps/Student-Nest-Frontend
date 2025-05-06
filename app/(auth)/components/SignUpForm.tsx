@@ -13,7 +13,7 @@ export default function SignUpForm() {
 
   const formFields = [
     {
-      id: "fullName",
+      id: "username",
       label: "Full Name",
       type: "text",
       placeholder: "Enter your full name",
@@ -27,7 +27,7 @@ export default function SignUpForm() {
       icon: <Mail className="h-4 w-4 text-muted-foreground" />,
     },
     {
-      id: "phone",
+      id: "phoneNumber",
       label: "Phone Number",
       type: "tel",
       placeholder: "Enter your phone number",

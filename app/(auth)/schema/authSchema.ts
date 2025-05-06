@@ -11,11 +11,11 @@ export const signInSchema = Yup.object().shape({
 
 // Sign Up validation schema
 export const signUpSchema = Yup.object().shape({
-  fullName: Yup.string().min(2, "Name must be at least 2 characters").required("Full name is required"),
+  username: Yup.string().min(2, "Name must be at least 2 characters").required("Full name is required"),
 
   email: Yup.string().email("Please enter a valid email address").required("Email is required"),
 
-  phone: Yup.string()
+  phoneNumber: Yup.string()
     .matches(/^(\+?\d{1,3}[- ]?)?\d{10,14}$/, "Please enter a valid phone number")
     .required("Phone number is required"),
 
