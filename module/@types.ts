@@ -7,7 +7,18 @@ export interface IRegisterUser {
     role: "student" | "landlord" | "admin";
 }
 
-export interface ILoginUser {
+export interface User {
     email: string;
     password: string;
+}
+
+export interface UserResponse  {
+    token: string;
+    role: string;
+};
+
+export enum Role {
+    ADMIN = "admin",
+    OWNER = "owner",
+    STUDENT = "student",
 }
