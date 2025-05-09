@@ -32,12 +32,6 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  if (pathname === '/') {
-    if (token) {
-      const role = req.cookies.get('role')?.value
-      if (role) return roleBasedRedirect(req, role)
-    }
-  }
 
   return NextResponse.next()
 }

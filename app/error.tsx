@@ -5,6 +5,7 @@ import { motion, Variants } from "framer-motion"
 import { useEffect, useState } from "react"
 import { AlertTriangle, ArrowLeft, Home, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 export default function Error({
   error,
@@ -14,6 +15,7 @@ export default function Error({
   reset: () => void
 }) {
   const [isClient, setIsClient] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     // Log the error to an error reporting service
@@ -111,7 +113,7 @@ export default function Error({
                 Try Again
               </Button>
 
-              <Button onClick={() => window.history.back()} variant="outline" className="flex items-center gap-2">
+              <Button onClick={() => router.back()} variant="outline" className="flex items-center gap-2">
                 <ArrowLeft size={16} />
                 Go Back
               </Button>
@@ -150,7 +152,7 @@ export default function Error({
                 Try Again
               </Button>
 
-              <Button onClick={() => window.history.back()} variant="outline" className="flex items-center gap-2">
+              <Button onClick={() => router.back()} variant="outline" className="flex items-center gap-2">
                 <ArrowLeft size={16} />
                 Go Back
               </Button>

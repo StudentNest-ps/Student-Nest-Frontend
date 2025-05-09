@@ -4,9 +4,10 @@ import React from "react";
 import { Button } from "../ui/button";
 import { redirect } from "next/navigation";
 import { useAuth } from "@/context/Auth";
+import { Role } from "@/module/@types";
 
 const Navbar = () => {
-  const {user, logout} = useAuth();
+  const { user, logout } = useAuth();
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -34,12 +35,14 @@ const Navbar = () => {
             >
               Home
             </Link>
-            <Link
-              href="/landlords"
-              className="text-headline hover:text-primary transition-colors"
-            >
-              Landlords
-            </Link>
+            {user?.role === Role.OWNER && (
+              <Link
+                href="/landlords"
+                className="text-headline hover:text-primary transition-colors"
+              >
+                Landlords
+              </Link>
+            )}
             <Link
               href="/blog"
               className="text-headline hover:text-primary transition-colors"
@@ -52,12 +55,14 @@ const Navbar = () => {
             >
               Contacts
             </Link>
-            <Link
-              href="/apartments"
-              className="text-headline hover:text-primary transition-colors"
-            >
-              Book Now
-            </Link>
+            {user?.role === Role.STUDENT && (
+              <Link
+                href="/apartments"
+                className="text-headline hover:text-primary transition-colors"
+              >
+                Book Now
+              </Link>
+            )}
           </div>
         </div>
         {user ? (
