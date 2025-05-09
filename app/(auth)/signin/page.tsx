@@ -35,7 +35,7 @@ export default function SignInPage() {
       </div>
 
       {/* Right side - Image */}
-      <div className="hidden lg:block w-1/2 relative bg-primary/10">
+      <div className="hidden lg:block w-1/2 relative bg-primary/10" suppressHydrationWarning>
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent z-10" />
         <Image
           src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2070&auto=format&fit=crop"

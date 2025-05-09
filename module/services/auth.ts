@@ -1,5 +1,5 @@
 import axios from "axios"
-import { ILoginUser, IRegisterUser } from "../@types"
+import { User, IRegisterUser, UserResponse } from "../@types"
 
 class Auth {
     async registerUser(user: IRegisterUser) {
@@ -11,11 +11,11 @@ class Auth {
         return false;
     }
 
-    async loginUser(user: ILoginUser) {
+    async loginUser(user: User) {
         const res = await axios.post(`api/sn/api/login`,user)
 
         if(res.status === 200) {
-            return {status: true, data: res.data}
+            return {status: true, data: res.data as UserResponse}
         }
         return {status: false};
     }

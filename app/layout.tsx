@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/Header/Navbar";
 import Footer from "@/components/Footer/Footer";
+import { AuthProvider } from "@/context/Auth";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -31,10 +32,12 @@ export default function RootLayout({
       <body
         className={` ${poppins.variable} antialiased`}
       >
+        <AuthProvider>
         <Toaster richColors/>
         <Navbar/>
         <main>{children}</main>
         <Footer/>
+        </AuthProvider>
       </body>
     </html>
   );
