@@ -14,27 +14,39 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import Admin from '@/module/services/Admin';
+import { toast } from 'sonner';
+import { User } from '@/module/types/Admin';
 
 interface DeleteUserButtonProps {
   userId: string;
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }
 
-export default function DeleteUserButton({ userId }: DeleteUserButtonProps) {
+export default function DeleteUserButton({
+  userId,
+  setUsers,
+}: DeleteUserButtonProps) {
   const [open, setOpen] = useState(false);
 
-  const handleDelete = () => {
-    // This function will be replaced with actual delete functionality
+  const handleDelete = async () => {
     console.log(`Deleting user with ID: ${userId}`);
-    setOpen(false);
+    const res = await Admin.deleteUser(userId);
+    if (res) {
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+      toast.success('User deleted successfully');
+    } else {
+      toast.error('Failed to delete user. Please try again later.');
+      setOpen(false);
+    }
   };
-
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button
           variant="ghost"
           size="icon"
-          className="text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50"
+          className="transition duration-200 cursor-pointer text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50"
         >
           <Trash2 className="h-4 w-4" />
           <span className="sr-only">Delete user</span>
@@ -49,10 +61,12 @@ export default function DeleteUserButton({ userId }: DeleteUserButtonProps) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="cursor-pointer">
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            className="bg-red-600 hover:bg-red-700"
+            className="transition duration-200 cursor-pointer bg-red-700 hover:bg-red-400"
           >
             Delete
           </AlertDialogAction>
