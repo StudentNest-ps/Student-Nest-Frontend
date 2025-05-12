@@ -4,14 +4,9 @@ import { motion } from 'framer-motion';
 import { PlusCircle, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import UsersTable from '../components/users-table';
-import { useEffect } from 'react';
-import Admin from '@/module/services/Admin';
-import { Role } from '@/module/@types';
 
 function UsersPageHeader() {
-  useEffect(() => {
-    Admin.getUsersByRole(Role.STUDENT);
-  }, []);
+
 
   return (
     <div>

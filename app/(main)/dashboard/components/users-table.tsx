@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Table,
@@ -20,61 +20,27 @@ import {
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import DeleteUserButton from './delete-user-button';
-
-// Mock data for demonstration
-const users = [
-  {
-    id: 'USR001',
-    username: 'johndoe',
-    email: 'john.doe@example.com',
-    phoneNumber: '+1 (555) 123-4567',
-  },
-  {
-    id: 'USR002',
-    username: 'janedoe',
-    email: 'jane.doe@example.com',
-    phoneNumber: '+1 (555) 987-6543',
-  },
-  {
-    id: 'USR003',
-    username: 'mikebrown',
-    email: 'mike.brown@example.com',
-    phoneNumber: '+1 (555) 456-7890',
-  },
-  {
-    id: 'USR004',
-    username: 'sarahsmith',
-    email: 'sarah.smith@example.com',
-    phoneNumber: '+1 (555) 234-5678',
-  },
-  {
-    id: 'USR005',
-    username: 'alexjohnson',
-    email: 'alex.johnson@example.com',
-    phoneNumber: '+1 (555) 876-5432',
-  },
-  {
-    id: 'USR006',
-    username: 'emilywilson',
-    email: 'emily.wilson@example.com',
-    phoneNumber: '+1 (555) 345-6789',
-  },
-  {
-    id: 'USR007',
-    username: 'davidmiller',
-    email: 'david.miller@example.com',
-    phoneNumber: '+1 (555) 654-3210',
-  },
-];
+import { Role } from '@/module/@types';
+import Admin from '@/module/services/Admin';
+import { User } from '@/module/types/Admin';
 
 export default function UsersTable() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const res = await Admin.getUsersByRole(Role.STUDENT);
+      setUsers(res);
+    };
+    fetchUsers();
+  }, []);
 
   const filteredUsers = users.filter(
     (user) =>
       user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.id.toLowerCase().includes(searchTerm.toLowerCase())
+      user._id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -116,7 +82,7 @@ export default function UsersTable() {
                 <AnimatePresence>
                   {filteredUsers.map((user, index) => (
                     <motion.tr
-                      key={user.id}
+                      key={`${user._id} ${index}`}
                       initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 20 }}
@@ -127,12 +93,12 @@ export default function UsersTable() {
                       }}
                       className="border-b transition-colors hover:bg-slate-100/50 data-[state=selected]:bg-slate-100 dark:hover:bg-slate-800/50 dark:data-[state=selected]:bg-slate-800"
                     >
-                      <TableCell className="font-medium">{user.id}</TableCell>
+                      <TableCell className="font-medium">{user._id}</TableCell>
                       <TableCell>{user.username}</TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>{user.phoneNumber}</TableCell>
                       <TableCell className="text-right">
-                        <DeleteUserButton userId={user.id} />
+                        <DeleteUserButton userId={user._id} setUsers={setUsers} />
                       </TableCell>
                     </motion.tr>
                   ))}
