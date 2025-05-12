@@ -6,12 +6,12 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Phone } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { hiddenPaths } from '@/data/hiddenPaths';
 
-const hideFooter = ['/signin', '/signup', '/dashboard', '/dashboard-owner'];
 const Footer = () => {
   const pathname = usePathname();
 
-  if (!hideFooter.includes(pathname)) {
+  if (!hiddenPaths.some((path) => pathname.startsWith(path))) {
     return (
       <footer className="bg-white border-t border-gray-200 py-12">
         <div className="container mx-auto px-4">

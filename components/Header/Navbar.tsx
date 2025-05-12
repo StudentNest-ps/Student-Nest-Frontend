@@ -5,12 +5,12 @@ import { Button } from '../ui/button';
 import { redirect, usePathname } from 'next/navigation';
 import { useAuth } from '@/context/Auth';
 import { Role } from '@/module/@types';
+import { hiddenPaths } from '@/data/hiddenPaths';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const hideFooter = ['/signin', '/signup', '/dashboard', '/dashboard-owner'];
   const pathname = usePathname();
-  if (!hideFooter.includes(pathname))
+  if (!hiddenPaths.some((path) => pathname.startsWith(path)))
     return (
       <nav className="sticky top-0 z-50 bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">

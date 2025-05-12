@@ -3,18 +3,17 @@
 import * as React from 'react';
 import {
   IconCamera,
-  IconDashboard,
   IconDatabase,
   IconFileAi,
   IconFileDescription,
   IconFileWord,
-
   IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
   IconReport,
   IconSearch,
   IconSettings,
+  IconUsers,
+  IconBuilding,
 } from '@tabler/icons-react';
 
 import { NavDocuments } from '@/components/nav-documents';
@@ -39,14 +38,14 @@ const data = {
   },
   navMain: [
     {
-      title: 'Dashboard',
-      url: '#',
-      icon: IconDashboard,
+      title: 'Users',
+      url: '/dashboard/users',
+      icon: IconUsers,
     },
     {
-      title: 'Lifecycle',
-      url: '#',
-      icon: IconListDetails,
+      title: 'Properties',
+      url: '/dashboard/properties',
+      icon: IconBuilding,
     },
   ],
   navClouds: [
