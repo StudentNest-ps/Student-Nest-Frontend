@@ -1,14 +1,23 @@
-"use client"
+'use client';
 
-import { motion } from "framer-motion"
+import { motion } from 'framer-motion';
 
 interface BlogCategoriesProps {
-  activeCategory: string
-  setActiveCategory: (category: string) => void
+  activeCategory: string;
+  setActiveCategory: (category: string) => void;
 }
 
-export default function BlogCategories({ activeCategory, setActiveCategory }: BlogCategoriesProps) {
-  const categories = ["View all", "Destination guide", "Remote working", "Property investing", "Property insights"]
+export default function BlogCategories({
+  activeCategory,
+  setActiveCategory,
+}: BlogCategoriesProps) {
+  const categories = [
+    'View all',
+    'Destination guide',
+    'Remote working',
+    'Property investing',
+    'Property insights',
+  ];
 
   return (
     <motion.div
@@ -25,8 +34,8 @@ export default function BlogCategories({ activeCategory, setActiveCategory }: Bl
               onClick={() => setActiveCategory(category)}
               className={`whitespace-nowrap px-2 py-1 text-sm font-medium transition-colors cursor-pointer ${
                 activeCategory === category
-                  ? "text-primary border-b-2 border-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {category}
@@ -35,5 +44,5 @@ export default function BlogCategories({ activeCategory, setActiveCategory }: Bl
         </div>
       </div>
     </motion.div>
-  )
+  );
 }

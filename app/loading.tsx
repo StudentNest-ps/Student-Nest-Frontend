@@ -1,14 +1,14 @@
-"use client"
+'use client';
 
-import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 export default function Loading() {
-  const [isClient, setIsClient] = useState(false)
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true)
-  }, [])
+    setIsClient(true);
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
@@ -23,7 +23,7 @@ export default function Loading() {
               transition={{
                 duration: 1.5,
                 repeat: Number.POSITIVE_INFINITY,
-                ease: "linear",
+                ease: 'linear',
               }}
             >
               <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full" />
@@ -48,5 +48,5 @@ export default function Loading() {
         )}
       </div>
     </div>
-  )
+  );
 }

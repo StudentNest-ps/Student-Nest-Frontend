@@ -1,9 +1,9 @@
-"use client"
+'use client';
 
-import { motion } from "framer-motion"
-import Link from "next/link"
-import Image from "next/image"
-import SignUpForm from "../components/SignUpForm"
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import Image from 'next/image';
+import SignUpForm from '../components/SignUpForm';
 
 export default function SignUpPage() {
   return (
@@ -25,10 +25,12 @@ export default function SignUpPage() {
             transition={{ duration: 0.7, delay: 0.3 }}
             className="text-white max-w-md"
           >
-            <h2 className="text-3xl font-bold mb-4">Find Your Dream Home in Palestine</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              Find Your Dream Home in Palestine
+            </h2>
             <p className="text-white/80 mb-6">
-              Join our community of homeowners and renters to discover beautiful properties near Najah National
-              University and across Palestine.
+              Join our community of homeowners and renters to discover beautiful
+              properties near Najah National University and across Palestine.
             </p>
             <div className="flex space-x-4">
               <div className="bg-white/20 backdrop-blur-sm p-4 rounded-lg">
@@ -65,13 +67,16 @@ export default function SignUpPage() {
           className="mt-8 flex justify-center"
         >
           <div className="text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/signin" className="text-primary font-medium hover:underline">
+            Already have an account?{' '}
+            <Link
+              href="/signin"
+              className="text-primary font-medium hover:underline"
+            >
               Sign in
             </Link>
           </div>
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

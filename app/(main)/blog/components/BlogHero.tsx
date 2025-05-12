@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
-import { motion } from "framer-motion"
-import Image from "next/image"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function BlogHero() {
   return (
@@ -50,7 +50,8 @@ export default function BlogHero() {
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="text-muted-foreground text-sm"
               >
-                Vel morbi integer pulvinar morbi quis amet eu. In nunc facilisi potion interdum, consectetur cursus.
+                Vel morbi integer pulvinar morbi quis amet eu. In nunc facilisi
+                potion interdum, consectetur cursus.
               </motion.p>
             </div>
           </div>
@@ -64,5 +65,5 @@ export default function BlogHero() {
         </button>
       </div>
     </motion.section>
-  )
+  );
 }
