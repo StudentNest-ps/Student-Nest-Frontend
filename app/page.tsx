@@ -1,11 +1,8 @@
-import React from 'react'
+import Landing from '@/components/Landing/Landing';
+import React from 'react';
 
 const page = () => {
-  return (
-    <div>
-      hi
-    </div>  
-  )
-}
+  return <Landing />;
+};
 
-export default page
+export default page;
