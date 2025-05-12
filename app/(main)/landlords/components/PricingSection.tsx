@@ -1,12 +1,12 @@
-"use client"
+'use client';
 
-import { useRef } from "react"
-import { motion, useInView } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Check } from "lucide-react"
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Check } from 'lucide-react';
 
 interface PricingFeatureProps {
-  text: string
+  text: string;
 }
 
 const PricingFeature = ({ text }: PricingFeatureProps) => {
@@ -15,12 +15,12 @@ const PricingFeature = ({ text }: PricingFeatureProps) => {
       <Check className="text-primary mr-2 flex-shrink-0" size={18} />
       <span className="text-muted-foreground">{text}</span>
     </div>
-  )
-}
+  );
+};
 
 export default function PricingSection() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, amount: 0.2 })
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, amount: 0.2 });
 
   return (
     <section ref={ref} className="py-20 md:py-32 bg-accent/20">
@@ -31,8 +31,12 @@ export default function PricingSection() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">Pricing</h2>
-          <p className="text-card-foreground max-w-2xl mx-auto">Compare our pricing model to high street agents</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+            Pricing
+          </h2>
+          <p className="text-card-foreground max-w-2xl mx-auto">
+            Compare our pricing model to high street agents
+          </p>
         </motion.div>
 
         <div className="flex flex-col lg:flex-row justify-center items-center lg:items-stretch gap-8 max-w-5xl mx-auto">
@@ -44,7 +48,9 @@ export default function PricingSection() {
           >
             <div className="h-full bg-accent border-2 rounded-xl">
               <div className="text-center mb-8 p-10">
-                <h3 className="text-xl font-semibold text-foreground mb-4">High Street Agents</h3>
+                <h3 className="text-xl font-semibold text-foreground mb-4">
+                  High Street Agents
+                </h3>
                 <div className="text-4xl font-bold text-primary mb-2">12%</div>
                 <p className="text-muted-foreground text-sm">Management fee</p>
               </div>
@@ -76,8 +82,12 @@ export default function PricingSection() {
           >
             <div className="h-full rounded-xl bg-accent border-2">
               <div className="text-center mb-8 py-10">
-                <h3 className="text-xl font-semibold text-card-foreground mb-4">Flex Living Guaranteed Rental</h3>
-                <div className="text-4xl font-bold text-primary mb-2">Fixed price</div>
+                <h3 className="text-xl font-semibold text-card-foreground mb-4">
+                  Flex Living Guaranteed Rental
+                </h3>
+                <div className="text-4xl font-bold text-primary mb-2">
+                  Fixed price
+                </div>
                 <p className="text-muted-foreground text-sm">Monthly</p>
               </div>
               <div className="space-y-4 p-8 bg-background rounded-b-xl">
@@ -104,5 +114,5 @@ export default function PricingSection() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

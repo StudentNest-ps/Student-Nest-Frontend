@@ -1,26 +1,26 @@
-"use client"
+'use client';
 
-import { useState, useEffect, useRef } from "react"
-import Image from "next/image"
-import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface CarouselItem {
-  id: number
-  title: string
-  subtitle: string
-  image: string
+  id: number;
+  title: string;
+  subtitle: string;
+  image: string;
 }
 
 interface BlogCarouselProps {
-  items: CarouselItem[]
+  items: CarouselItem[];
 }
 
 export default function BlogCarousel({ items }: BlogCarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [direction, setDirection] = useState(0)
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-  const autoPlayRef = useRef<NodeJS.Timeout | null>(null)
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
 
   const variants = {
     enter: (direction: number) => ({
@@ -35,45 +35,45 @@ export default function BlogCarousel({ items }: BlogCarouselProps) {
       x: direction < 0 ? 1000 : -1000,
       opacity: 0,
     }),
-  }
-
-
+  };
 
   useEffect(() => {
     const startAutoPlay = () => {
-      if (autoPlayRef.current) clearInterval(autoPlayRef.current)
-  
+      if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+
       autoPlayRef.current = setInterval(() => {
         if (isAutoPlaying) {
-          setDirection(1)
-          setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length)
+          setDirection(1);
+          setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length);
         }
-      }, 5000)
-    }
-    startAutoPlay()
+      }, 5000);
+    };
+    startAutoPlay();
 
     return () => {
-      if (autoPlayRef.current) clearInterval(autoPlayRef.current)
-    }
-  }, [isAutoPlaying, items.length])
+      if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+    };
+  }, [isAutoPlaying, items.length]);
 
   const handleNext = () => {
-    setIsAutoPlaying(false)
-    setDirection(1)
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length)
-  }
+    setIsAutoPlaying(false);
+    setDirection(1);
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length);
+  };
 
   const handlePrev = () => {
-    setIsAutoPlaying(false)
-    setDirection(-1)
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + items.length) % items.length)
-  }
+    setIsAutoPlaying(false);
+    setDirection(-1);
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + items.length) % items.length
+    );
+  };
 
   const handleDotClick = (index: number) => {
-    setIsAutoPlaying(false)
-    setDirection(index > currentIndex ? 1 : -1)
-    setCurrentIndex(index)
-  }
+    setIsAutoPlaying(false);
+    setDirection(index > currentIndex ? 1 : -1);
+    setCurrentIndex(index);
+  };
 
   return (
     <motion.div
@@ -93,13 +93,13 @@ export default function BlogCarousel({ items }: BlogCarouselProps) {
           animate="center"
           exit="exit"
           transition={{
-            x: { type: "spring", stiffness: 300, damping: 30 },
+            x: { type: 'spring', stiffness: 300, damping: 30 },
             opacity: { duration: 0.5 },
           }}
           className="absolute inset-0"
         >
           <Image
-            src={items[currentIndex].image || "/placeholder.svg"}
+            src={items[currentIndex].image || '/placeholder.svg'}
             alt={items[currentIndex].title}
             fill
             className="object-cover"
@@ -115,8 +115,12 @@ export default function BlogCarousel({ items }: BlogCarouselProps) {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="max-w-lg bg-white/90 backdrop-blur-sm rounded-3xl p-8 ml-4 md:ml-12"
               >
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{items[currentIndex].title}</h2>
-                <p className="text-muted-foreground">{items[currentIndex].subtitle}</p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  {items[currentIndex].title}
+                </h2>
+                <p className="text-muted-foreground">
+                  {items[currentIndex].subtitle}
+                </p>
               </motion.div>
             </div>
           </div>
@@ -145,12 +149,14 @@ export default function BlogCarousel({ items }: BlogCarouselProps) {
             key={index}
             onClick={() => handleDotClick(index)}
             className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${
-              index === currentIndex ? "bg-white scale-125" : "bg-white/50 hover:bg-white/80"
+              index === currentIndex
+                ? 'bg-white scale-125'
+                : 'bg-white/50 hover:bg-white/80'
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>
     </motion.div>
-  )
+  );
 }

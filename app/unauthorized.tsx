@@ -1,19 +1,19 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { motion, Variants } from "framer-motion"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, Lock, LogIn, ShieldAlert } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
+import Link from 'next/link';
+import { motion, Variants } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, Lock, LogIn, ShieldAlert } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
 
 export default function Unauthorized() {
-  const router = useRouter()
-  const [isClient, setIsClient] = useState(false)
+  const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true)
-  }, [])
+    setIsClient(true);
+  }, []);
 
   // Animation variants
   const containerVariants = {
@@ -24,7 +24,7 @@ export default function Unauthorized() {
         staggerChildren: 0.1,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -33,7 +33,7 @@ export default function Unauthorized() {
       opacity: 1,
       transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
     },
-  }
+  };
 
   const shieldVariants: Variants = {
     initial: { y: 0 },
@@ -42,11 +42,11 @@ export default function Unauthorized() {
       transition: {
         duration: 3,
         repeat: Number.POSITIVE_INFINITY,
-        repeatType: "loop",
-        ease: "easeInOut",
+        repeatType: 'loop',
+        ease: 'easeInOut',
       },
     },
-  }
+  };
 
   const lockVariants: Variants = {
     initial: { scale: 1 },
@@ -55,19 +55,19 @@ export default function Unauthorized() {
       transition: {
         duration: 1.5,
         repeat: Number.POSITIVE_INFINITY,
-        repeatType: "loop",
-        ease: "easeInOut",
+        repeatType: 'loop',
+        ease: 'easeInOut',
       },
     },
-  }
+  };
 
   const circleVariants = {
     hidden: { scale: 0 },
     visible: {
       scale: [0, 1.2, 1],
-      transition: { duration: 0.8, ease: "easeOut" },
+      transition: { duration: 0.8, ease: 'easeOut' },
     },
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
@@ -92,7 +92,12 @@ export default function Unauthorized() {
                 animate="visible"
               />
               <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div className="relative" variants={lockVariants} initial="initial" animate="animate">
+                <motion.div
+                  className="relative"
+                  variants={lockVariants}
+                  initial="initial"
+                  animate="animate"
+                >
                   <ShieldAlert size={60} className="text-primary" />
                   <motion.div
                     className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
@@ -106,22 +111,38 @@ export default function Unauthorized() {
               </div>
             </motion.div>
 
-            <motion.h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4" variants={itemVariants}>
+            <motion.h1
+              className="text-4xl md:text-5xl font-bold text-foreground mb-4"
+              variants={itemVariants}
+            >
               Access Denied
             </motion.h1>
 
-            <motion.p className="text-muted-foreground text-lg mb-8 max-w-md mx-auto" variants={itemVariants}>
-              You don&apos;t have permission to access this page. Please sign in with an authorized account or contact the
-              administrator.
+            <motion.p
+              className="text-muted-foreground text-lg mb-8 max-w-md mx-auto"
+              variants={itemVariants}
+            >
+              You don&apos;t have permission to access this page. Please sign in
+              with an authorized account or contact the administrator.
             </motion.p>
 
-            <motion.div className="flex flex-col md:flex-row gap-4 justify-center" variants={itemVariants}>
-              <Button onClick={() => router.back()} variant="outline" className="flex items-center gap-2">
+            <motion.div
+              className="flex flex-col md:flex-row gap-4 justify-center"
+              variants={itemVariants}
+            >
+              <Button
+                onClick={() => router.back()}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
                 <ArrowLeft size={16} />
                 Go Back
               </Button>
 
-              <Button asChild className="bg-primary text-white hover:bg-primary/90">
+              <Button
+                asChild
+                className="bg-primary text-white hover:bg-primary/90"
+              >
                 <Link href="/auth/signin" className="flex items-center gap-2">
                   <LogIn size={16} />
                   Sign In
@@ -151,20 +172,29 @@ export default function Unauthorized() {
               </div>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Access Denied</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+              Access Denied
+            </h1>
 
             <p className="text-muted-foreground text-lg mb-8 max-w-md mx-auto">
-              You don&apos;t have permission to access this page. Please sign in with an authorized account or contact the
-              administrator.
+              You don&apos;t have permission to access this page. Please sign in
+              with an authorized account or contact the administrator.
             </p>
 
             <div className="flex flex-col md:flex-row gap-4 justify-center">
-              <Button onClick={() => router.back()} variant="outline" className="flex items-center gap-2">
+              <Button
+                onClick={() => router.back()}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
                 <ArrowLeft size={16} />
                 Go Back
               </Button>
 
-              <Button asChild className="bg-primary text-white hover:bg-primary/90">
+              <Button
+                asChild
+                className="bg-primary text-white hover:bg-primary/90"
+              >
                 <Link href="/auth/signin" className="flex items-center gap-2">
                   <LogIn size={16} />
                   Sign In
@@ -180,5 +210,5 @@ export default function Unauthorized() {
         )}
       </div>
     </div>
-  )
+  );
 }
