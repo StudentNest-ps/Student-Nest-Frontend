@@ -125,7 +125,7 @@ export default function SignInForm() {
           >
             <Button
               type="submit"
-              className="cursor-pointer w-full bg-primary text-white hover:bg-primary/90"
+              className="cursor-pointer w-full bg-primary text-background hover:bg-primary/90"
               disabled={isSubmitting}
             >
               {isSubmitting ? (

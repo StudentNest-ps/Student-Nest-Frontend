@@ -7,15 +7,16 @@ import SignUpForm from '../components/SignUpForm';
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
+    <div className="bg-background flex flex-col lg:flex-row">
       {/* Left side - Image */}
-      <div className="hidden lg:block w-1/2 relative">
+      <div className="hidden lg:block w-1/2 relative h-screen overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop"
           alt="Beautiful property exterior"
           fill
           className="object-cover"
           priority
+          sizes="50vw"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent z-10" />
         <div className="absolute inset-0 flex items-center p-16 z-20">
@@ -23,27 +24,27 @@ export default function SignUpPage() {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="text-white max-w-md"
+            className="text-primary-foreground max-w-md"
           >
-            <h2 className="text-3xl font-bold mb-4">
+            <h2 className="text-3xl font-bold mb-4 text-white">
               Find Your Dream Home in Palestine
             </h2>
-            <p className="text-white/80 mb-6">
+            <p className="text-gray-200/80 mb-6">
               Join our community of homeowners and renters to discover beautiful
               properties near Najah National University and across Palestine.
             </p>
-            <div className="flex space-x-4">
-              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-lg">
+            <div className="flex space-x-4 text-white">
+              <div className="bg-primary-foreground/20 backdrop-blur-sm p-4 rounded-lg">
                 <div className="text-2xl font-bold">500+</div>
-                <div className="text-white/70 text-sm">Properties</div>
+                <div className="text-gray-300 text-sm">Properties</div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-lg">
+              <div className="bg-primary-foreground/20 backdrop-blur-sm p-4 rounded-lg">
                 <div className="text-2xl font-bold">1000+</div>
-                <div className="text-white/70 text-sm">Happy Customers</div>
+                <div className="text-gray-300 text-sm">Happy Customers</div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-lg">
+              <div className="bg-primary-foreground/20 backdrop-blur-sm p-4 rounded-lg">
                 <div className="text-2xl font-bold">10+</div>
-                <div className="text-white/70 text-sm">Cities</div>
+                <div className="text-gray-300 text-sm">Cities</div>
               </div>
             </div>
           </motion.div>
@@ -51,7 +52,7 @@ export default function SignUpPage() {
       </div>
 
       {/* Right side - Form */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center p-8 md:p-12 lg:p-16 bg-background">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center p-8 md:p-12 lg:p-16 bg-background h-screen">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
