@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { PlusCircle, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import UsersTable from '../components/users-table';
+import UsersTable from './components/users-table';
 
 function UsersPageHeader() {
 
