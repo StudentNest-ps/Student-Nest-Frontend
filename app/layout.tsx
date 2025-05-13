@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/sonner';
 import Navbar from '@/components/Header/Navbar';
 import Footer from '@/components/Footer/Footer';
 import { AuthProvider } from '@/context/Auth';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 
 const poppins = Poppins({
   variable: '--font-poppins',
@@ -26,10 +27,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={` ${poppins.variable} antialiased`}>
         <AuthProvider>
-          <Toaster richColors />
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster richColors />
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>
