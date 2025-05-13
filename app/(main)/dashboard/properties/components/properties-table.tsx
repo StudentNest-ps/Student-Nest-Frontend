@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Table,
@@ -30,97 +30,9 @@ import {
 } from '@/components/ui/tooltip';
 import DeletePropertyButton from './delete-property-button';
 import EditPropertyDialog from './edit-property-dialog';
-
-type Listing = {
-  _id: string;
-  title: string;
-  description: string;
-  type: 'apartment' | 'house' | 'studio' | string;
-  price: number;
-  address: string;
-  ownerName: string;
-  ownerPhoneNumber: string;
-};
-
-const properties: Listing[] = [
-  {
-    _id: 'PROP001',
-    title: 'Modern Downtown Apartment',
-    description:
-      'Luxurious 2-bedroom apartment with stunning city views and modern amenities. Features include hardwood floors, stainless steel appliances, in-unit laundry, and a spacious balcony overlooking the city skyline. Building amenities include 24/7 security, fitness center, and rooftop lounge.',
-    type: 'apartment',
-    price: 1850,
-    address: '123 Main St, Downtown, New York, NY 10001',
-    ownerName: 'John Smith',
-    ownerPhoneNumber: '+1 (555) 123-4567',
-  },
-  {
-    _id: 'PROP002',
-    title: 'Cozy Studio in Brooklyn',
-    description:
-      'Charming studio apartment in a historic building with hardwood floors and high ceilings. Recently renovated with modern kitchen and bathroom fixtures. Great location near public transportation, restaurants, and shops. Perfect for young professionals or students.',
-    type: 'studio',
-    price: 1200,
-    address: '456 Park Ave, Brooklyn, New York, NY 10002',
-    ownerName: 'Sarah Johnson',
-    ownerPhoneNumber: '+1 (555) 987-6543',
-  },
-  {
-    _id: 'PROP003',
-    title: 'Spacious Family House',
-    description:
-      'Beautiful 4-bedroom house with a large backyard, perfect for families. Features include a modern kitchen with granite countertops, hardwood floors throughout, finished basement, attached two-car garage, and a spacious deck for entertaining. Located in a quiet, family-friendly neighborhood with excellent schools nearby.',
-    type: 'house',
-    price: 3500,
-    address: '789 Oak St, Queens, New York, NY 10003',
-    ownerName: 'Michael Brown',
-    ownerPhoneNumber: '+1 (555) 456-7890',
-  },
-  {
-    _id: 'PROP004',
-    title: 'Luxury Penthouse Suite',
-    description:
-      'Exclusive penthouse with panoramic views, private terrace, and premium finishes. This 3-bedroom, 3.5-bathroom luxury residence features floor-to-ceiling windows, custom Italian cabinetry, marble countertops, and top-of-the-line appliances. Building amenities include concierge service, indoor pool, spa, and private elevator access.',
-    type: 'apartment',
-    price: 5000,
-    address: '101 Skyline Blvd, Manhattan, New York, NY 10004',
-    ownerName: 'Emily Wilson',
-    ownerPhoneNumber: '+1 (555) 234-5678',
-  },
-  {
-    _id: 'PROP005',
-    title: 'Charming Brownstone',
-    description:
-      "Historic brownstone with original details, updated kitchen, and private garden. This 3-story home features original crown moldings, decorative fireplaces, and hardwood floors throughout. Modern updates include a chef's kitchen with high-end appliances and renovated bathrooms with heated floors. Includes a private backyard garden oasis.",
-    type: 'house',
-    price: 4200,
-    address: '202 Heritage Ln, Brooklyn, New York, NY 10005',
-    ownerName: 'David Miller',
-    ownerPhoneNumber: '+1 (555) 876-5432',
-  },
-  {
-    _id: 'PROP006',
-    title: 'Modern Studio Loft',
-    description:
-      'Industrial-style loft studio with high ceilings and exposed brick walls. This open-concept living space features large windows, polished concrete floors, and a sleek kitchen with stainless steel appliances. Building includes a shared rooftop space, laundry facilities, and bike storage. Located in a vibrant arts district with galleries, cafes, and boutiques.',
-    type: 'studio',
-    price: 1650,
-    address: '303 Artist Row, SoHo, New York, NY 10006',
-    ownerName: 'Jessica Taylor',
-    ownerPhoneNumber: '+1 (555) 345-6789',
-  },
-  {
-    _id: 'PROP007',
-    title: 'Waterfront Condo',
-    description:
-      'Elegant 3-bedroom condo with waterfront views and resort-style amenities. This luxury unit features an open floor plan with gourmet kitchen, spa-like bathrooms, and a large private balcony overlooking the water. Building amenities include a swimming pool, fitness center, clubhouse, and 24-hour security. Walking distance to parks, dining, and shopping.',
-    type: 'apartment',
-    price: 3800,
-    address: '404 Harbor Dr, Battery Park, New York, NY 10007',
-    ownerName: 'Robert Johnson',
-    ownerPhoneNumber: '+1 (555) 654-3210',
-  },
-];
+import { Property } from '@/module/types/Admin';
+import Admin from '@/module/services/Admin';
+import { toast } from 'sonner';
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('en-US', {
@@ -130,13 +42,11 @@ const formatPrice = (price: number) => {
   }).format(price);
 };
 
-// Function to truncate text
 const truncateText = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + '...';
 };
 
-// Property type icon mapping
 const PropertyTypeIcon = ({ type }: { type: string }) => {
   switch (type) {
     case 'apartment':
@@ -152,10 +62,36 @@ const PropertyTypeIcon = ({ type }: { type: string }) => {
 
 export default function PropertiesTable() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [properties, setProperties] = useState<Property[]>([]);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState<Listing | null>(
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(
     null
   );
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      const res = await Admin.getProperties();
+      console.log(res);
+      setProperties(res);
+    };
+
+    fetchProperties();
+  }, []);
+
+  const handlePropertyDelete = async (propertyId: string) => {
+    const res = await Admin.deleteProperty(propertyId);
+
+    if (res) {
+      toast.success(`Property deleted successfully!`);
+      setProperties((prev) =>
+        prev.filter((property) => property._id !== propertyId)
+      );
+    } else {
+      toast.error(`Failed deleting property.`);
+    }
+
+    console.log(`Deleting property with ID: ${propertyId}`);
+  };
 
   const filteredProperties = properties.filter(
     (property) =>
@@ -173,7 +109,7 @@ export default function PropertiesTable() {
     }
   };
 
-  const handleSaveProperty = (updatedProperty: Listing) => {
+  const handleSaveProperty = (updatedProperty: Property) => {
     console.log('Updated property:', updatedProperty);
     setEditDialogOpen(false);
     // In a real application, you would update the property in your data store here
@@ -325,7 +261,9 @@ export default function PropertiesTable() {
                             </svg>
                             <span className="sr-only">Edit property</span>
                           </Button>
-                          <DeletePropertyButton propertyId={property._id} />
+                          <DeletePropertyButton
+                            onDelete={() => handlePropertyDelete(property._id)}
+                          />
                         </div>
                       </TableCell>
                     </motion.tr>

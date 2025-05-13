@@ -1,8 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Home, PlusCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Home } from 'lucide-react';
 import PropertiesTable from './components/properties-table';
 
 function PropertiesPageHeader() {
@@ -24,16 +23,6 @@ function PropertiesPageHeader() {
           <p className="text-muted-foreground">
             View and manage all property listings in your application
           </p>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <Button className="cursor-pointer transition duration-200 bg-primary hover:bg-card-foreground">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add New Property
-          </Button>
         </motion.div>
       </div>
       <PropertiesTable />

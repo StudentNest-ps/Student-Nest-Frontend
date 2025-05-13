@@ -16,19 +16,13 @@ import {
 } from '@/components/ui/alert-dialog';
 
 interface DeletePropertyButtonProps {
-  propertyId: string;
+  onDelete: () => void;
 }
 
 export default function DeletePropertyButton({
-  propertyId,
+  onDelete,
 }: DeletePropertyButtonProps) {
   const [open, setOpen] = useState(false);
-
-  const handleDelete = () => {
-    // This function will be replaced with actual delete functionality
-    console.log(`Deleting property with ID: ${propertyId}`);
-    setOpen(false);
-  };
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -55,7 +49,10 @@ export default function DeletePropertyButton({
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={handleDelete}
+            onClick={() => {
+              onDelete();
+              setOpen(false);
+            }}
             className="transition duration-200 cursor-pointer bg-red-700 hover:bg-red-400"
           >
             Delete
