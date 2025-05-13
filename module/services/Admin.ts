@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Role } from '../@types';
 import { token } from './token';
-import { User } from '../types/Admin';
+import { Property, User } from '../types/Admin';
 
 class Admin {
   async getUsersByRole(role: Role) {
@@ -22,6 +22,29 @@ class Admin {
       },
     });
     console.log(res.data);
+
+    return res.status === 200;
+  }
+
+  async getProperties(): Promise<Property[]> {
+    const res = await axios.get(`/api/sn/api/admin/properties`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data as Property[];
+  }
+
+  async deleteProperty(propertyId: string) {
+    const res = await axios.delete(
+      `/api/sn/api/admin/properties/${propertyId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     return res.status === 200;
   }

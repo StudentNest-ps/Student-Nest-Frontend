@@ -14,6 +14,7 @@ import {
   IconSettings,
   IconUsers,
   IconBuilding,
+  IconShieldPlus,
 } from '@tabler/icons-react';
 
 import { NavDocuments } from '@/components/nav-documents';
@@ -47,6 +48,11 @@ const data = {
       title: 'Properties',
       url: '/dashboard/properties',
       icon: IconBuilding,
+    },
+    {
+      title: 'Accounts',
+      url: '/dashboard/accounts',
+      icon: IconShieldPlus,
     },
   ],
   navClouds: [

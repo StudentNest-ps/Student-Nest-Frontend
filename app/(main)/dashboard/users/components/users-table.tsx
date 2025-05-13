@@ -23,18 +23,27 @@ import DeleteUserButton from './delete-user-button';
 import { Role } from '@/module/@types';
 import Admin from '@/module/services/Admin';
 import { User } from '@/module/types/Admin';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectGroup,
+} from '@/components/ui/select';
 
 export default function UsersTable() {
   const [searchTerm, setSearchTerm] = useState('');
   const [users, setUsers] = useState<User[]>([]);
+  const [role, setRole] = useState<Role>(Role.STUDENT);
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const res = await Admin.getUsersByRole(Role.STUDENT);
+      const res = await Admin.getUsersByRole(role);
       setUsers(res);
     };
     fetchUsers();
-  }, []);
+  }, [role]);
 
   const filteredUsers = users.filter(
     (user) =>
@@ -59,13 +68,32 @@ export default function UsersTable() {
         </CardHeader>
         <CardContent>
           <div className="mb-4 flex items-center gap-2 rounded-md border px-3 py-2">
-            <Search className="h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search users..."
-              className="border-0 p-0 shadow-none focus-visible:ring-0"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <div className="flex  items-center gap-2 w-full">
+              <Search className="h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search users..."
+                className="border-0 p-0 shadow-none focus-visible:ring-0"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div>
+              <Select
+                value={role}
+                onValueChange={(val) => setRole(val as Role)}
+              >
+                <SelectTrigger className="w-[280px]">
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value={Role.STUDENT}>Student</SelectItem>
+                    <SelectItem value={Role.OWNER}>Owner</SelectItem>
+                    <SelectItem value={Role.ADMIN}>Admin</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div className="rounded-md border">
             <Table>
@@ -98,7 +126,10 @@ export default function UsersTable() {
                       <TableCell>{user.email}</TableCell>
                       <TableCell>{user.phoneNumber}</TableCell>
                       <TableCell className="text-right">
-                        <DeleteUserButton userId={user._id} setUsers={setUsers} />
+                        <DeleteUserButton
+                          userId={user._id}
+                          setUsers={setUsers}
+                        />
                       </TableCell>
                     </motion.tr>
                   ))}
