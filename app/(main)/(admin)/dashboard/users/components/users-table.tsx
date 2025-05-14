@@ -68,11 +68,11 @@ export default function UsersTable() {
         </CardHeader>
         <CardContent>
           <div className="mb-4 flex items-center gap-2 rounded-md border px-3 py-2">
-            <div className="flex  items-center gap-2 w-full">
+            <div className="flex items-center gap-2 w-full">
               <Search className="h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search users..."
-                className="border-0 p-0 shadow-none focus-visible:ring-0"
+                className="border-0 p-0 shadow-none focus-visible:ring-0 px-2"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
