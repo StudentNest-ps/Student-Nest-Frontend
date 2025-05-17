@@ -25,6 +25,39 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
+import { useAuth } from '@/context/Auth';
+import { Role } from '@/module/@types';
+
+const adminTabs = [
+  {
+    title: 'Users',
+    url: '/dashboard/users',
+    icon: IconUsers,
+  },
+  {
+    title: 'Properties',
+    url: '/dashboard/properties',
+    icon: IconBuilding,
+  },
+  {
+    title: 'Accounts',
+    url: '/dashboard/accounts',
+    icon: IconShieldPlus,
+  },
+];
+
+const ownerTabs = [
+  {
+    title: 'Properties',
+    url: '/dashboard-owner/properties',
+    icon: IconBuilding,
+  },
+  {
+    title: 'Accounts',
+    url: '/dashboard/accounts',
+    icon: IconShieldPlus,
+  },
+];
 
 const data = {
   user: {
@@ -107,6 +140,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth();
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -125,7 +159,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain
+          items={
+            user?.role === Role.ADMIN ? adminTabs : ownerTabs || data.navMain
+          }
+        />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
