@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 
 type AuthContextType = {
   user: UserResponse | null;
-  login: (userData: User) => void;
+  login: (userData: User, callback?: () => void) => void;
   logout: () => void;
 };
 
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  const login = async (userData: User) => {
+  const login = async (userData: User, callback?: () => void) => {
     try {
       const user: User = {
         email: userData.email,
@@ -51,10 +51,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push('/apartments');
       } else {
         toast.error('Invalid Email or Password');
+        if (callback) callback();
       }
     } catch (error) {
       console.error('Sign in error:', error);
-      toast.error('Sign in failed');
+      toast.error('Invalid Email or Password');
+      if (callback) callback();
     }
   };
 
