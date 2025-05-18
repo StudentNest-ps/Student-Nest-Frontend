@@ -379,7 +379,7 @@ export default function MyPropertiesPage() {
             </p>
           </div>
           <Button
-            className="bg-emerald-600 hover:bg-emerald-700"
+            className="bg-primary cursor-pointer"
             onClick={handleAddProperty}
           >
             <Plus className="mr-2 h-4 w-4" />

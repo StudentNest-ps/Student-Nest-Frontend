@@ -1,11 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import type React from 'react';
+
+import { useState, useEffect, useRef } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { format } from 'date-fns';
-import { CalendarIcon, X, Upload, Loader2, Plus, Trash } from 'lucide-react';
+import {
+  CalendarIcon,
+  X,
+  Upload,
+  Loader2,
+  Plus,
+  Trash,
+  ImageIcon,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -41,6 +51,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 // Define the property schema based on the MongoDB structure
 const propertyFormSchema = z.object({
@@ -128,7 +139,10 @@ export function PropertyFormDialog({
 }: PropertyFormDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [blockedDates, setBlockedDates] = useState<Date[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize form with default values or initial data
   const form = useForm<PropertyFormValues>({
@@ -215,55 +229,137 @@ export function PropertyFormDialog({
         },
       });
       setImages([]);
+      setImageFiles([]);
       setBlockedDates([]);
     }
   }, [initialData, form, open]);
 
-  const handleFormSubmit = (data: PropertyFormValues) => {
+  const handleFormSubmit = async (data: PropertyFormValues) => {
     setIsSubmitting(true);
 
-    // Prepare the complete data object including images and blocked dates
-    const completeData: PropertyData = {
-      ...data,
-      images,
-      blockedDates,
-      ...(initialData?.id ? { id: initialData.id } : {}),
-      ...(initialData?._id ? { _id: initialData._id } : {}),
-    };
+    // Process image files and create paths
+    const imagePaths: string[] = [];
 
-    // Log the data for debugging
-    console.log('Form submitted:', completeData);
+    // Process existing images that are already saved
+    images.forEach((img) => {
+      if (img.startsWith('/images/')) {
+        // This is already a processed image path
+        imagePaths.push(img);
+      }
+    });
 
-    // Call the onSubmit callback
-    onSubmit(completeData);
+    try {
+      // Upload new image files
+      for (let i = 0; i < imageFiles.length; i++) {
+        const file = imageFiles[i];
 
-    // Simulate API call delay
-    setTimeout(() => {
+        // Create FormData for the file upload
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Upload the file to our API route
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          // Add the file path to our array
+          imagePaths.push(result.filePath);
+        } else {
+          console.error('Error uploading file:', result.error);
+          toast.error(`Failed to upload ${file.name}`);
+        }
+      }
+
+      // Prepare the complete data object including images and blocked dates
+      const completeData: PropertyData = {
+        ...data,
+        images: imagePaths,
+        blockedDates,
+        ...(initialData?.id ? { id: initialData.id } : {}),
+        ...(initialData?._id ? { _id: initialData._id } : {}),
+      };
+
+      // Log the data for debugging
+      console.log('Form submitted:', completeData);
+
+      // Call the onSubmit callback
+      onSubmit(completeData);
+
+      // Reset the form after successful submission
+      setTimeout(() => {
+        setIsSubmitting(false);
+        onOpenChange(false);
+      }, 1000);
+    } catch (error) {
+      console.error('Error during form submission:', error);
+      toast.error('Failed to submit form. Please try again.');
       setIsSubmitting(false);
-      onOpenChange(false);
-    }, 1000);
+    }
   };
 
   const handleImageUpload = () => {
-    // Simulate image upload
-    const newImage = `/placeholder.svg?height=300&width=400&text=Property+Image+${images.length + 1}`;
-    setImages([...images, newImage]);
+    // Trigger file input click
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const newImageFiles = [...imageFiles];
+    const newImagePreviews = [...images];
+
+    // Process each selected file
+    Array.from(files).forEach((file) => {
+      // Only accept image files
+      if (!file.type.startsWith('image/')) return;
+
+      // Add file to the files array
+      newImageFiles.push(file);
+
+      // Create a preview URL
+      const previewUrl = URL.createObjectURL(file);
+      newImagePreviews.push(previewUrl);
+    });
+
+    setImageFiles(newImageFiles);
+    setImages(newImagePreviews);
+
+    // Reset the input value so the same file can be selected again
+    e.target.value = '';
   };
 
   const removeImage = (index: number) => {
     const newImages = [...images];
     newImages.splice(index, 1);
     setImages(newImages);
+
+    // If this was a file upload, also remove from imageFiles
+    if (index < imageFiles.length) {
+      const newImageFiles = [...imageFiles];
+      newImageFiles.splice(index, 1);
+      setImageFiles(newImageFiles);
+    }
   };
 
-  const addBlockedDate = (date: Date) => {
-    // Check if date already exists
-    const exists = blockedDates.some(
-      (blockedDate) => blockedDate.toDateString() === date.toDateString()
-    );
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setSelectedDate(date);
 
-    if (!exists) {
-      setBlockedDates([...blockedDates, date]);
+      // Check if date already exists
+      const exists = blockedDates.some(
+        (blockedDate) => blockedDate.toDateString() === date.toDateString()
+      );
+
+      if (!exists) {
+        setBlockedDates([...blockedDates, date]);
+      }
     }
   };
 
@@ -298,8 +394,7 @@ export function PropertyFormDialog({
                 <FormField
                   control={form.control}
                   name="title"
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  render={({ field }: { field: any }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Property Title</FormLabel>
                       <FormControl>
@@ -324,13 +419,17 @@ export function PropertyFormDialog({
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="cursor-pointer">
                             <SelectValue placeholder="Select property type" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {propertyTypes.map((type) => (
-                            <SelectItem key={type.id} value={type.id}>
+                            <SelectItem
+                              key={type.id}
+                              value={type.id}
+                              className="cursor-pointer"
+                            >
                               {type.label}
                             </SelectItem>
                           ))}
@@ -417,9 +516,10 @@ export function PropertyFormDialog({
                                 <Button
                                   variant={'outline'}
                                   className={cn(
-                                    'pl-3 text-left font-normal',
+                                    'pl-3 text-left font-normal cursor-pointer',
                                     !field.value && 'text-muted-foreground'
                                   )}
+                                  type="button"
                                 >
                                   {field.value ? (
                                     format(field.value, 'PPP')
@@ -437,12 +537,15 @@ export function PropertyFormDialog({
                               <Calendar
                                 mode="single"
                                 selected={field.value}
-                                onSelect={field.onChange}
+                                onSelect={(date) => {
+                                  field.onChange(date);
+                                }}
                                 disabled={(date) =>
                                   date <
                                   new Date(new Date().setHours(0, 0, 0, 0))
                                 }
                                 initialFocus
+                                className="cursor-pointer"
                               />
                             </PopoverContent>
                           </Popover>
@@ -463,9 +566,10 @@ export function PropertyFormDialog({
                                 <Button
                                   variant={'outline'}
                                   className={cn(
-                                    'pl-3 text-left font-normal',
+                                    'pl-3 text-left font-normal cursor-pointer',
                                     !field.value && 'text-muted-foreground'
                                   )}
+                                  type="button"
                                 >
                                   {field.value ? (
                                     format(field.value, 'PPP')
@@ -483,16 +587,21 @@ export function PropertyFormDialog({
                               <Calendar
                                 mode="single"
                                 selected={field.value}
-                                onSelect={field.onChange}
-                                disabled={(date) =>
-                                  date <
-                                  new Date(
-                                    form.getValues(
-                                      'availability.availableFrom'
-                                    ) || new Date().setHours(0, 0, 0, 0)
-                                  )
-                                }
+                                onSelect={(date) => {
+                                  field.onChange(date);
+                                }}
+                                disabled={(date) => {
+                                  const fromDate = form.getValues(
+                                    'availability.availableFrom'
+                                  );
+                                  return (
+                                    date <
+                                    (fromDate ||
+                                      new Date().setHours(0, 0, 0, 0))
+                                  );
+                                }}
                                 initialFocus
+                                className="cursor-pointer"
                               />
                             </PopoverContent>
                           </Popover>
@@ -556,9 +665,10 @@ export function PropertyFormDialog({
                                         )
                                       );
                                 }}
+                                className="cursor-pointer"
                               />
                             </FormControl>
-                            <FormLabel className="font-normal">
+                            <FormLabel className="font-normal cursor-pointer">
                               {amenity.label}
                             </FormLabel>
                           </FormItem>
@@ -579,7 +689,8 @@ export function PropertyFormDialog({
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
-                          className="w-full justify-start"
+                          className="w-full justify-start cursor-pointer"
+                          type="button"
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           <span>Add Blocked Dates</span>
@@ -588,11 +699,13 @@ export function PropertyFormDialog({
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          onSelect={(date) => date && addBlockedDate(date)}
+                          selected={selectedDate}
+                          onSelect={handleDateSelect}
                           disabled={(date) =>
                             date < new Date(new Date().setHours(0, 0, 0, 0))
                           }
                           initialFocus
+                          className="cursor-pointer"
                         />
                       </PopoverContent>
                     </Popover>
@@ -613,7 +726,7 @@ export function PropertyFormDialog({
                                 type="button"
                                 variant="ghost"
                                 size="icon"
-                                className="h-5 w-5 ml-1 text-gray-500"
+                                className="h-5 w-5 ml-1 text-gray-500 cursor-pointer"
                                 onClick={() => removeBlockedDate(index)}
                               >
                                 <X className="h-3 w-3" />
@@ -637,11 +750,20 @@ export function PropertyFormDialog({
                   variant="outline"
                   size="sm"
                   onClick={handleImageUpload}
-                  className="flex items-center"
+                  className="flex items-center cursor-pointer"
                 >
                   <Plus className="mr-1 h-4 w-4" />
                   Add Image
                 </Button>
+                {/* Hidden file input */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                />
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {images.map((image, index) => (
@@ -658,7 +780,7 @@ export function PropertyFormDialog({
                       type="button"
                       variant="destructive"
                       size="icon"
-                      className="absolute top-2 right-2 h-6 w-6"
+                      className="absolute top-2 right-2 h-6 w-6 cursor-pointer"
                       onClick={() => removeImage(index)}
                     >
                       <Trash className="h-3 w-3" />
@@ -667,18 +789,21 @@ export function PropertyFormDialog({
                 ))}
                 {images.length === 0 && (
                   <div className="col-span-full text-center p-8 border border-dashed rounded-md">
-                    <p className="text-gray-500 dark:text-gray-400 mb-2">
-                      No images added yet
-                    </p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={handleImageUpload}
-                      className="mx-auto"
-                    >
-                      <Upload className="mr-2 h-4 w-4" />
-                      Upload Image
-                    </Button>
+                    <div className="flex flex-col items-center">
+                      <ImageIcon className="h-10 w-10 text-gray-400 mb-2" />
+                      <p className="text-gray-500 dark:text-gray-400 mb-2">
+                        No images added yet
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleImageUpload}
+                        className="mx-auto cursor-pointer"
+                      >
+                        <Upload className="mr-2 h-4 w-4" />
+                        Upload Image
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -690,13 +815,14 @@ export function PropertyFormDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 disabled={isSubmitting}
+                className="cursor-pointer"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-emerald-600 hover:bg-emerald-700"
+                className="bg-primary cursor-pointer"
               >
                 {isSubmitting ? (
                   <>
