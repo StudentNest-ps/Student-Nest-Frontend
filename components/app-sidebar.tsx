@@ -53,8 +53,8 @@ const ownerTabs = [
     icon: IconBuilding,
   },
   {
-    title: 'Accounts',
-    url: '/dashboard/accounts',
+    title: 'Bookings',
+    url: '/dashboard-owner/bookings',
     icon: IconShieldPlus,
   },
 ];
