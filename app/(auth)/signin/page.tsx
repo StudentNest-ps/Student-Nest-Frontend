@@ -55,7 +55,7 @@ export default function SignInPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="bg-white/90 backdrop-blur-sm p-8 rounded-xl max-w-md"
+            className="bg-background/70 backdrop-blur-sm p-8 rounded-xl max-w-md"
           >
             <h2 className="text-2xl font-bold text-foreground mb-4">
               Welcome Back

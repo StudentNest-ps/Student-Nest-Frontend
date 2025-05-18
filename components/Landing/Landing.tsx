@@ -98,7 +98,7 @@ export default function Landing() {
   const [ctaRef, ctaInView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* 1. Navbar (inside the layout) */}
 
       {/* 2. Hero Section */}
@@ -107,7 +107,7 @@ export default function Landing() {
         initial="hidden"
         animate={heroInView ? 'visible' : 'hidden'}
         variants={fadeIn}
-        className="py-16 md:py-24 bg-white"
+        className="py-16 md:py-24 bg-background"
       >
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center">
@@ -115,14 +115,14 @@ export default function Landing() {
               variants={fadeInUp}
               className="md:w-1/2 mb-10 md:mb-0 md:pr-10"
             >
-              <h1 className="text-4xl md:text-5xl font-bold text-headline mb-6 text-primary">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-primary">
                 We rent your property
               </h1>
               <p className="text-muted-foreground mb-8 text-lg">
                 Find your perfect rental home with ease. We offer a wide range
                 of properties to suit your needs and budget.
               </p>
-              <Button className="bg-primary text-white hover:bg-primary/90 cursor-pointer">
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer">
                 Get Started
               </Button>
             </motion.div>
@@ -147,7 +147,7 @@ export default function Landing() {
         initial="hidden"
         animate={searchInView ? 'visible' : 'hidden'}
         variants={fadeInUp}
-        className="py-8 bg-white"
+        className="py-8 bg-background"
       >
         <div className="container mx-auto px-8">
           <Card className="rounded-4xl shadow-md">
@@ -231,7 +231,7 @@ export default function Landing() {
               </div>
             </CardContent>
             <CardFooter className="flex justify-center">
-              <Button className="bg-primary text-white hover:bg-primary/90 cursor-pointer w-full md:w-[300px]">
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer w-full md:w-[300px]">
                 Search
               </Button>
             </CardFooter>
@@ -275,7 +275,7 @@ export default function Landing() {
                 you&apos;re looking for a short-term stay or a long-term home,
                 we have options that fit your needs.
               </p>
-              <Button className="bg-primary text-white hover:bg-primary/90 cursor-pointer">
+              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer">
                 Learn More
               </Button>
             </motion.div>
@@ -289,7 +289,7 @@ export default function Landing() {
         initial="hidden"
         animate={cardsInView ? 'visible' : 'hidden'}
         variants={staggerContainer}
-        className="py-16 md:py-24 bg-white"
+        className="py-16 md:py-24 bg-background"
       >
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -380,7 +380,7 @@ export default function Landing() {
         initial="hidden"
         animate={locationInView ? 'visible' : 'hidden'}
         variants={fadeIn}
-        className="py-16 md:py-24 bg-white"
+        className="py-16 md:py-24 bg-background"
       >
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-headline text-center mb-12 text-primary">
@@ -438,7 +438,7 @@ export default function Landing() {
         className="py-16 md:py-24 relative"
       >
         <div className="absolute inset-0 bg-black/50 z-10"></div>
-        <div className="relative z-20 container mx-auto px-4 text-center text-white">
+        <div className="relative z-20 container mx-auto px-4 text-center text-primary-foreground">
           <motion.h2
             variants={fadeInUp}
             className="text-4xl md:text-5xl font-bold mb-8"
@@ -446,7 +446,7 @@ export default function Landing() {
             Bespoke spaces
           </motion.h2>
           <motion.div variants={fadeInUp}>
-            <Button className="bg-primary text-white hover:bg-primary/90 cursor-pointer">
+            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer">
               Start booking
             </Button>
           </motion.div>
@@ -467,7 +467,7 @@ export default function Landing() {
         initial="hidden"
         animate={corporateInView ? 'visible' : 'hidden'}
         variants={fadeIn}
-        className="py-16 md:py-24 bg-white"
+        className="py-16 md:py-24 bg-background"
       >
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -666,7 +666,7 @@ export default function Landing() {
         initial="hidden"
         animate={blogInView ? 'visible' : 'hidden'}
         variants={fadeIn}
-        className="py-16 md:py-24 bg-white"
+        className="py-16 md:py-24 bg-background"
       >
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-headline text-center mb-16 text-primary">
@@ -738,7 +738,7 @@ export default function Landing() {
         initial="hidden"
         animate={linksInView ? 'visible' : 'hidden'}
         variants={fadeIn}
-        className="py-16 md:py-24 bg-white border-t border-gray-200"
+        className="py-16 md:py-24 bg-background"
       >
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-headline mb-12 text-primary">
@@ -911,7 +911,7 @@ export default function Landing() {
                 is dedicated to providing exceptional service and support
                 throughout your rental journey.
               </p>
-              <Button className="cursor-pointer bg-primary text-white hover:bg-primary/90">
+              <Button className="cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90">
                 Contact Us
               </Button>
             </motion.div>

@@ -6,14 +6,14 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Phone } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { hiddenPaths } from '@/data/hiddenPaths';
+import { hiddenFooterPaths } from '@/data/hiddenPaths';
 
 const Footer = () => {
   const pathname = usePathname();
 
-  if (!hiddenPaths.some((path) => pathname.startsWith(path))) {
+  if (!hiddenFooterPaths.some((path) => pathname.startsWith(path))) {
     return (
-      <footer className="bg-white border-t border-gray-200 py-12">
+      <footer className="bg-background border-t border-border py-12">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
@@ -37,7 +37,7 @@ const Footer = () => {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-headline mb-6">
+              <h3 className="text-lg font-semibold text-foreground mb-6">
                 Company
               </h3>
               <ul className="space-y-3">
@@ -75,7 +75,7 @@ const Footer = () => {
                 </li>
               </ul>
 
-              <h3 className="text-lg font-semibold text-headline mt-8 mb-6">
+              <h3 className="text-lg font-semibold text-foreground mt-8 mb-6">
                 Legal
               </h3>
               <ul className="space-y-3">
@@ -107,7 +107,7 @@ const Footer = () => {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-headline mb-6">
+              <h3 className="text-lg font-semibold text-foreground mb-6">
                 Newsletter
               </h3>
               <p className="text-muted-foreground mb-4">
@@ -120,14 +120,14 @@ const Footer = () => {
                   placeholder="Your email"
                   className="rounded-l-xl rounded-r-none border-r-0"
                 />
-                <Button className="cursor-pointer rounded-l-none bg-primary text-white hover:bg-primary/90">
+                <Button className="cursor-pointer rounded-l-none bg-primary text-primary-foreground hover:bg-primary/90">
                   Subscribe
                 </Button>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-muted-foreground mb-4 md:mb-0">
               &copy; {new Date().getFullYear()} RentEase. All rights reserved.
             </p>

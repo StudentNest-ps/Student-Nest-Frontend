@@ -3,21 +3,15 @@
 import * as React from 'react';
 import {
   IconCamera,
-  IconDatabase,
   IconFileAi,
   IconFileDescription,
-  IconFileWord,
-  IconHelp,
   IconInnerShadowTop,
-  IconReport,
-  IconSearch,
   IconSettings,
   IconUsers,
   IconBuilding,
   IconShieldPlus,
 } from '@tabler/icons-react';
 
-import { NavDocuments } from '@/components/nav-documents';
 import { NavMain } from '@/components/nav-main';
 import { NavSecondary } from '@/components/nav-secondary';
 import { NavUser } from '@/components/nav-user';
@@ -31,6 +25,39 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
+import { useAuth } from '@/context/Auth';
+import { Role } from '@/module/@types';
+
+const adminTabs = [
+  {
+    title: 'Users',
+    url: '/dashboard/users',
+    icon: IconUsers,
+  },
+  {
+    title: 'Properties',
+    url: '/dashboard/properties',
+    icon: IconBuilding,
+  },
+  {
+    title: 'Accounts',
+    url: '/dashboard/accounts',
+    icon: IconShieldPlus,
+  },
+];
+
+const ownerTabs = [
+  {
+    title: 'Properties',
+    url: '/dashboard-owner/properties',
+    icon: IconBuilding,
+  },
+  {
+    title: 'Accounts',
+    url: '/dashboard/accounts',
+    icon: IconShieldPlus,
+  },
+];
 
 const data = {
   user: {
@@ -109,37 +136,11 @@ const data = {
       url: '#',
       icon: IconSettings,
     },
-    {
-      title: 'Get Help',
-      url: '#',
-      icon: IconHelp,
-    },
-    {
-      title: 'Search',
-      url: '#',
-      icon: IconSearch,
-    },
-  ],
-  documents: [
-    {
-      name: 'Data Library',
-      url: '#',
-      icon: IconDatabase,
-    },
-    {
-      name: 'Reports',
-      url: '#',
-      icon: IconReport,
-    },
-    {
-      name: 'Word Assistant',
-      url: '#',
-      icon: IconFileWord,
-    },
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth();
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -158,8 +159,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
+        <NavMain
+          items={
+            user?.role === Role.ADMIN ? adminTabs : ownerTabs || data.navMain
+          }
+        />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

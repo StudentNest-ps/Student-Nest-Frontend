@@ -8,6 +8,22 @@ export function middleware(req: NextRequest) {
 
   // Pages that require authentication
   const protectedRoutes = ['/apartments', '/landlords'];
+  
+  // Auth pages that should redirect if user is already logged in
+  const authPages = ['/signin', '/signup'];
+
+  // Redirect authenticated users away from auth pages
+  if (authPages.includes(pathname) && token) {
+    return NextResponse.redirect(new URL('/already-signed', req.url));
+  }
+
+  // Redirect admin users from home page to dashboard
+  if (pathname === '/' && token) {
+    const role = req.cookies.get('role')?.value;
+    if (role === Role.ADMIN) {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
+  }
 
   // Redirect unauthenticated users trying to access protected routes
   if (protectedRoutes.includes(pathname)) {
@@ -52,5 +68,5 @@ function roleBasedRedirect(req: NextRequest, role: string): NextResponse {
 }
 
 export const config = {
-  matcher: ['/', '/apartments', '/landlords'],
+  matcher: ['/', '/apartments', '/landlords', '/signin', '/signup'],
 };

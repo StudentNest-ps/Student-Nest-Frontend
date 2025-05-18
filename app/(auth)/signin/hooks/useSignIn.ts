@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useFormik } from 'formik';
 import { signInSchema } from '../../schema/authSchema';
 import { useAuth } from '@/context/Auth';
+import { toast } from 'sonner';
 
 interface SignInValues {
   email: string;
@@ -24,8 +25,16 @@ export const useSignIn = () => {
     initialValues,
     validationSchema: signInSchema,
     onSubmit: async (values) => {
-      setIsSubmitting(true);
-      login({ email: values.email, password: values.password });
+      try {
+        setIsSubmitting(true);
+        login({ email: values.email, password: values.password }, () =>
+          setIsSubmitting(false)
+        );
+      } catch (error) {
+        console.error(error);
+        toast.error('Invalid Email or Password');
+        setIsSubmitting(false);
+      }
     },
   });
 
