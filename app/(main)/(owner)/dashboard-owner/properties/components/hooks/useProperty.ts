@@ -66,9 +66,7 @@ export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
           ...values,
           image: finalImagePath,
         };
-        const res = await owner.addProperty(
-          fullValues as Property
-        );
+        const res = await owner.addProperty(fullValues as Property);
         if (res) {
           toast.success('Property added successfully');
         } else {

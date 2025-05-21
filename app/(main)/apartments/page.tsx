@@ -175,6 +175,8 @@ export default function ApartmentsPage() {
     const fetchApartments = async () => {
       try {
         const response = await admin.getProperties();
+        console.log(response);
+
         setApartments(response);
         console.log(response);
       } catch (error) {
