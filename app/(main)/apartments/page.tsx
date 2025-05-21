@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -38,9 +38,10 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import MapComponent from './components/MapComponent';
-import { apartmentListings } from './data/listings';
 
 import ListingCard from './components/ListingCard';
+import admin from '@/module/services/Admin';
+import { Property } from '@/module/types/Admin';
 
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -57,21 +58,21 @@ export default function ApartmentsPage() {
 
   const initialCity = searchParams.get('city') || 'nablus';
   const initialGuests = searchParams.get('guests') || '1';
-
+  const [apartments, setApartments] = useState<Property[]>([]);
   const [city, setCity] = useState(initialCity);
   const [guests, setGuests] = useState(initialGuests);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('availability');
   const [visibleListings, setVisibleListings] = useState(6);
 
-  const filteredListings = apartmentListings.filter((listing) => {
-    if (
-      city &&
-      city !== 'all' &&
-      listing.city.toLowerCase() !== city.toLowerCase()
-    ) {
-      return false;
-    }
+  const filteredListings = apartments.filter((listing) => {
+    // if (
+    //   city &&
+    //   city !== 'all' &&
+    //   listing.city.toLowerCase() !== city.toLowerCase()
+    // ) {
+    //   return false;
+    // }
 
     if (
       activeFilters.includes('parking') &&
@@ -81,7 +82,8 @@ export default function ApartmentsPage() {
     }
 
     const guestsNum = Number.parseInt(guests);
-    if (guestsNum > listing.maxGuests) {
+    if (guestsNum > 1) {
+      //TODO: listing.maxGuests
       return false;
     }
 
@@ -172,6 +174,19 @@ export default function ApartmentsPage() {
         'We accept various payment methods including credit/debit cards, bank transfers, and PayPal. Payment details will be provided during the booking process.',
     },
   ];
+
+  useEffect(() => {
+    const fetchApartments = async () => {
+      try {
+        const response = await admin.getProperties();
+        setApartments(response);
+        console.log(response);
+      } catch (error) {
+        console.error('Error fetching apartments:', error);
+      }
+    };
+    fetchApartments();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -399,7 +414,7 @@ export default function ApartmentsPage() {
           >
             <div className="space-y-4">
               {sortedListings.slice(0, visibleListings).map((listing) => (
-                <ListingCard key={listing.id} listing={listing} />
+                <ListingCard key={listing._id} listing={listing} />
               ))}
             </div>
 

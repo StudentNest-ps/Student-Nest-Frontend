@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import type { Apartment } from '../data/listings';
+import type { Property } from '@/module/types/Admin';
 
 // Fix Leaflet marker icon issue in Next.js
 const markerIcon = L.icon({
@@ -32,7 +32,7 @@ const universityIcon = L.icon({
 });
 
 interface MapComponentProps {
-  listings: Apartment[];
+  listings: Property[];
   center: { lat: number; lng: number };
   zoom: number;
 }
@@ -104,7 +104,7 @@ export default function MapComponent({
       {/* Apartment markers */}
       {listings.map((listing) => (
         <Marker
-          key={listing.id}
+          key={listing._id}
           position={[listing.location.lat, listing.location.lng]}
           icon={markerIcon}
         >
@@ -112,11 +112,11 @@ export default function MapComponent({
             <div className="text-sm">
               <strong>{listing.title}</strong>
               <p>
-                {listing.neighborhood}, {listing.city}
+                {listing.address}
               </p>
               <p className="font-semibold">${listing.price}/month</p>
               <p>
-                {listing.bedrooms} bed, {listing.bathrooms} bath
+                {listing.type === 'studio' ? 'Studio' : `${listing.type}`}
               </p>
             </div>
           </Popup>

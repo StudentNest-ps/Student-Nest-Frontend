@@ -27,6 +27,7 @@ class Admin {
   }
 
   async getProperties(): Promise<Property[]> {
+    console.log(token);
     const res = await axios.get(`/api/sn/api/admin/properties`, {
       headers: {
         Authorization: `Bearer ${token}`,

@@ -4,8 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Bed, Bath, Wifi, MapPin, Building } from 'lucide-react';
-import { Apartment } from '../data/listings';
 import { useEffect, useState } from 'react';
+import { Property } from '@/module/types/Admin';
 
 // Animation variant
 export const fadeInUp = {
@@ -18,7 +18,7 @@ export const fadeInUp = {
 };
 
 interface ListingCardProps {
-  listing: Apartment;
+  listing: Property;
 }
 
 export default function ListingCard({ listing }: ListingCardProps) {
@@ -39,6 +39,9 @@ export default function ListingCard({ listing }: ListingCardProps) {
     setFormattedDate(formatDate(listing.availableFrom));
   }, [listing.availableFrom]);
 
+  // Extract neighborhood from address
+  const neighborhood = listing.address.split(',')[0]?.trim() || 'Unknown';
+
   return (
     <motion.div
       variants={fadeInUp}
@@ -47,17 +50,12 @@ export default function ListingCard({ listing }: ListingCardProps) {
       <div className="flex flex-col md:flex-row">
         <div className="md:w-1/3 relative">
           <Image
-            src={listing.image || '/placeholder.svg'}
+            src="/placeholder.svg" // Default placeholder since we don't have image in the new interface
             alt={listing.title}
             width={300}
             height={200}
             className="w-full h-full object-cover aspect-[4/3]"
           />
-          {listing.featured && (
-            <div className="absolute top-2 left-2 bg-primary text-white text-xs px-2 py-1 rounded-full">
-              Featured
-            </div>
-          )}
         </div>
         <div className="md:w-2/3 p-4">
           <h3 className="text-lg font-semibold text-foreground mb-2">
@@ -67,17 +65,11 @@ export default function ListingCard({ listing }: ListingCardProps) {
           <div className="flex flex-wrap gap-3 mb-3">
             <div className="flex items-center text-sm text-muted-foreground">
               <Bed className="mr-1" size={16} />
-              <span>
-                {listing.bedrooms} bedroom
-                {listing.bedrooms !== 1 ? 's' : ''}
-              </span>
+              <span>{listing.type === 'studio' ? 'Studio' : '2 bedrooms'}</span>
             </div>
             <div className="flex items-center text-sm text-muted-foreground">
               <Bath className="mr-1" size={16} />
-              <span>
-                {listing.bathrooms} bath
-                {listing.bathrooms !== 1 ? 's' : ''}
-              </span>
+              <span>1 bath</span>
             </div>
             {listing.amenities.includes('WiFi') && (
               <div className="flex items-center text-sm text-muted-foreground">
@@ -91,12 +83,12 @@ export default function ListingCard({ listing }: ListingCardProps) {
             <div className="flex items-center">
               <MapPin className="mr-1" size={14} />
               <span>
-                {listing.neighborhood}, {listing.city}
+                {neighborhood}, {listing.city}
               </span>
             </div>
             <div className="flex items-center">
               <Building className="mr-1" size={14} />
-              <span>{listing.floor} floor</span>
+              <span>{listing.type}</span>
             </div>
             {listing.amenities.includes('Parking') && (
               <div className="flex items-center">
@@ -116,7 +108,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
                 ${listing.price}/month
               </div>
               <Link
-                href={`/apartments/${listing.id}`}
+                href={`/apartments/${listing._id}`}
                 className="bg-primary text-primary-foreground px-5 py-2 rounded-md mt-2 text-sm font-medium hover:bg-primary/90 transition-colors"
               >
                 Book Now
