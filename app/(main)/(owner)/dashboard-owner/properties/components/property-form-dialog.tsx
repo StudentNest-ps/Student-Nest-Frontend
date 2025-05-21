@@ -161,7 +161,7 @@ export function PropertyFormDialog({
 }: PropertyFormDialogProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { formik, images, handleImageUpload, removeImage } = useProperty({
+  const { formik, image, handleImageUpload, removeImage } = useProperty({
     initialValues: initialData || undefined,
     onSubmit: (values) => {
       onSubmit(values);
@@ -583,7 +583,7 @@ export function PropertyFormDialog({
                         </p>
                       )}
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label htmlFor="maxGuests" className="text-sm font-medium">
                       Maximum Guests
@@ -687,9 +687,9 @@ export function PropertyFormDialog({
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 <AnimatePresence>
-                  {images.map((image: string, index: number) => (
+                  {image ? (
                     <motion.div
-                      key={`${image}-${index}`}
+                      key={image}
                       variants={imageVariants}
                       initial="hidden"
                       animate="visible"
@@ -699,7 +699,7 @@ export function PropertyFormDialog({
                     >
                       <Image
                         src={image || '/placeholder.svg?height=150&width=200'}
-                        alt={`Property image ${index + 1}`}
+                        alt="Property image"
                         fill
                         className="w-full h-full object-cover"
                       />
@@ -708,32 +708,30 @@ export function PropertyFormDialog({
                         variant="destructive"
                         size="icon"
                         className="absolute top-2 right-2 h-6 w-6"
-                        onClick={() => removeImage(index)}
+                        onClick={removeImage}
                       >
                         <Trash className="h-3 w-3" />
                       </Button>
                     </motion.div>
-                  ))}
-                </AnimatePresence>
-
-                {images.length === 0 && (
-                  <div className="col-span-full text-center p-8 border border-dashed rounded-md">
-                    <div className="flex flex-col items-center">
-                      <ImageIcon className="h-10 w-10 text-muted-foreground mb-2" />
-                      <p className="text-muted-foreground mb-2">
-                        No images added yet
-                      </p>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={triggerFileInput}
-                      >
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload Image
-                      </Button>
+                  ) : (
+                    <div className="col-span-full text-center p-8 border border-dashed rounded-md">
+                      <div className="flex flex-col items-center">
+                        <ImageIcon className="h-10 w-10 text-muted-foreground mb-2" />
+                        <p className="text-muted-foreground mb-2">
+                          No image added yet
+                        </p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={triggerFileInput}
+                        >
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload Image
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 

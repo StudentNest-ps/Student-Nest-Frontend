@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create a unique filename
-    const timestamp = 'SNPublicAsset';
+    const timestamp = Date.now();
     const originalName = file.name.replace(/\s+/g, '-');
     const fileName = `${timestamp}-${originalName}`;
 

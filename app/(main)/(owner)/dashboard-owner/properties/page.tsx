@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -50,100 +50,6 @@ import { toast } from 'sonner';
 import { Property } from '@/module/types/Admin';
 import { PropertyFormDialog } from './components/property-form-dialog';
 
-// Sample property data
-const sampleProperties: Property[] = [
-  {
-    _id: '1',
-    title: 'Modern Studio Apartment',
-    description:
-      'A cozy studio apartment close to An-Najah National University, perfect for students.',
-    type: 'studio',
-    price: 350,
-    address: '123 University St, Nablus',
-    ownerName: 'Ahmad Khalid',
-    ownerPhoneNumber: '+970 59 123 4567',
-    amenities: ['wifi', 'ac', 'furnished'],
-    country: 'Palestine',
-    images: ['/placeholder.svg?height=100&width=100'],
-    city: 'Nablus',
-    availableFrom: '2023-09-01',
-    availableTo: '2023-12-31',
-    maxGuests: '1',
-  },
-  {
-    _id: '2',
-    title: 'Spacious 2-Bedroom Apartment',
-    description:
-      'A spacious 2-bedroom apartment with a balcony and great views of the city.',
-    type: 'apartment',
-    price: 550,
-    address: '456 College Ave, Ramallah',
-    ownerName: 'Layla Ibrahim',
-    ownerPhoneNumber: '+970 59 234 5678',
-    amenities: ['wifi', 'parking', 'furnished', 'balcony'],
-    country: 'Palestine',
-    images: ['/placeholder.svg?height=100&width=100'],
-    city: 'Ramallah',
-    availableFrom: '2023-08-15',
-    availableTo: '2023-12-31',
-    maxGuests: '4',
-  },
-  {
-    _id: '3',
-    title: 'Cozy 1-Bedroom Apartment',
-    description:
-      'A cozy 1-bedroom apartment with modern amenities, walking distance to campus.',
-    type: 'apartment',
-    price: 400,
-    address: '789 Campus Rd, Ramallah',
-    ownerName: 'Omar Nasser',
-    ownerPhoneNumber: '+970 59 345 6789',
-    amenities: ['wifi', 'ac', 'furnished', 'tv'],
-    country: 'Palestine',
-    images: ['/placeholder.svg?height=100&width=100'],
-    city: 'Ramallah',
-    availableFrom: '2023-09-01',
-    availableTo: '2023-12-31',
-    maxGuests: '2',
-  },
-  {
-    _id: '4',
-    title: 'Luxury 3-Bedroom Condo',
-    description:
-      'A luxury 3-bedroom condo with high-end finishes and amenities.',
-    type: 'condo',
-    price: 800,
-    address: '101 Luxury Lane, Ramallah',
-    ownerName: 'Nour Haddad',
-    ownerPhoneNumber: '+970 59 456 7890',
-    amenities: ['wifi', 'parking', 'furnished', 'gym', 'pool'],
-    country: 'Palestine',
-    images: ['/placeholder.svg?height=100&width=100'],
-    city: 'Ramallah',
-    availableFrom: '2023-10-01',
-    availableTo: '2023-12-31',
-    maxGuests: '6',
-  },
-  {
-    _id: '5',
-    title: 'Student-Friendly Studio',
-    description: 'A budget-friendly studio apartment perfect for students.',
-    type: 'studio',
-    price: 300,
-    address: '202 Student Lane, Bethlehem',
-    ownerName: 'Rami Khoury',
-    ownerPhoneNumber: '+970 59 567 8901',
-    amenities: ['wifi', 'furnished'],
-    country: 'Palestine',
-    images: ['/placeholder.svg?height=100&width=100'],
-    city: 'Bethlehem',
-    availableFrom: '2023-09-15',
-    availableTo: '2023-12-31',
-    maxGuests: '1',
-  },
-];
-
-// Status options
 const statusOptions = [
   { value: 'all', label: 'All Status' },
   { value: 'published', label: 'Published' },
@@ -151,7 +57,7 @@ const statusOptions = [
 ];
 
 export default function PropertiesPage() {
-  const [properties, setProperties] = useState<Property[]>(sampleProperties);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -164,17 +70,16 @@ export default function PropertiesPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
 
+  useEffect(() => {}, []);
   const itemsPerPage = 5;
 
-  // Filter and sort properties
   const filteredProperties = properties.filter((property) => {
     const matchesSearch =
       property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       property.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
       property.city.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // Use a deterministic approach based on property ID instead of Math.random()
-    const isPublished = parseInt(property._id) % 3 !== 0; // Properties with ID divisible by 3 are unpublished
+    const isPublished = parseInt(property._id) % 3 !== 0;
 
     const matchesStatus =
       statusFilter === 'all' ||
@@ -184,7 +89,6 @@ export default function PropertiesPage() {
     return matchesSearch && matchesStatus;
   });
 
-  // Sort properties
   const sortedProperties = [...filteredProperties].sort((a, b) => {
     if (!sortColumn) return 0;
 
@@ -216,7 +120,6 @@ export default function PropertiesPage() {
     return 0;
   });
 
-  // Paginate properties
   const paginatedProperties = sortedProperties.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -224,7 +127,6 @@ export default function PropertiesPage() {
 
   const totalPages = Math.ceil(sortedProperties.length / itemsPerPage);
 
-  // Handle sort
   const handleSort = (column: string) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -234,16 +136,13 @@ export default function PropertiesPage() {
     }
   };
 
-  // Handle add/edit property
   const handleAddEditProperty = (property: Property) => {
     if (property._id) {
-      // Edit existing property
       setProperties((prev) =>
         prev.map((p) => (p._id === property._id ? property : p))
       );
       toast.success('Property updated successfully');
     } else {
-      // Add new property with deterministic ID instead of using Math.random()
       const newProperty = {
         ...property,
         _id: Date.now().toString(36),
@@ -255,7 +154,6 @@ export default function PropertiesPage() {
     setSelectedProperty(null);
   };
 
-  // Handle delete property
   const handleDeleteProperty = () => {
     if (propertyToDelete) {
       setProperties((prev) => prev.filter((p) => p._id !== propertyToDelete));
@@ -265,7 +163,6 @@ export default function PropertiesPage() {
     }
   };
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -485,9 +382,10 @@ export default function PropertiesPage() {
                         : property.title.includes('3-Bedroom')
                           ? 2
                           : 1;
-                          
-                  // Add this line to define the status
-                  const status = parseInt(property._id) % 3 !== 0 ? 'published' : 'unpublished';
+                  const status =
+                    parseInt(property._id) % 3 !== 0
+                      ? 'published'
+                      : 'unpublished';
 
                   return (
                     <motion.tr

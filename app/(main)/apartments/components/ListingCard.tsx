@@ -50,7 +50,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
       <div className="flex flex-col md:flex-row">
         <div className="md:w-1/3 relative">
           <Image
-            src="/placeholder.svg" // Default placeholder since we don't have image in the new interface
+            src={listing.image || ''}
             alt={listing.title}
             width={300}
             height={200}

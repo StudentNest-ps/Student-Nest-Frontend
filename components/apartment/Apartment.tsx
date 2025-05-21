@@ -114,7 +114,7 @@ export default function ApartmentDetails({ id }: { id: string }) {
             {/* Main image */}
             <div className="relative rounded-xl overflow-hidden h-[400px] shadow-md">
               <Image
-                src={'/placeholder.svg'}
+                src={apartment.image || ''}
                 alt={apartment.title}
                 fill
                 className="object-cover"

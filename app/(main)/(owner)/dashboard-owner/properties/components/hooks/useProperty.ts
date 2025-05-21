@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useFormik } from 'formik';
 import { propertySchema } from '../schema/propertySchema';
 import { Property } from '@/module/types/Admin';
+import owner from '@/module/services/Owner';
+import { toast } from 'sonner';
 
 interface UsePropertyProps {
   initialValues?: Partial<Property>;
@@ -11,8 +13,8 @@ interface UsePropertyProps {
 }
 
 export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
-  const [images, setImages] = useState<string[]>(initialValues?.images || []);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [image, setImage] = useState<string>(initialValues?.image || '');
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const defaultValues: Partial<Property> = {
     title: '',
@@ -28,7 +30,7 @@ export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
     availableFrom: new Date().toISOString().split('T')[0],
     availableTo: new Date().toISOString().split('T')[0],
     maxGuests: '1',
-    images: [],
+    image: '',
     ...initialValues,
   };
 
@@ -36,30 +38,14 @@ export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
     initialValues: defaultValues,
     validationSchema: propertySchema,
     onSubmit: async (values) => {
-      // Process image files and create paths
-      const imagePaths: string[] = [];
-      console.log('Add Values');
-
-      console.log(values);
-
-      // Process existing images that are already saved
-      images.forEach((img) => {
-        if (img.startsWith('/images/') || img.startsWith('http')) {
-          // This is already a processed image path
-          imagePaths.push(img);
-        }
-      });
-
       try {
-        // Upload new image files
-        for (let i = 0; i < imageFiles.length; i++) {
-          const file = imageFiles[i];
+        // Upload image file first (if it exists)
+        let finalImagePath = image;
 
-          // Create FormData for the file upload
+        if (imageFile) {
           const formData = new FormData();
-          formData.append('file', file);
+          formData.append('file', imageFile);
 
-          // Upload the file to our API route
           const response = await fetch('/api/upload', {
             method: 'POST',
             body: formData,
@@ -67,20 +53,29 @@ export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
 
           const result = await response.json();
 
-          if (result.success) {
-            // Add the file path to our array
-            imagePaths.push(result.filePath);
+          if (result.success && result.filePath) {
+            finalImagePath = result.filePath;
+            setImage(finalImagePath); // Update the local state with the correct uploaded path
           } else {
-            console.error('Error uploading file:', result.error);
-            throw new Error(`Failed to upload ${file.name}`);
+            console.error('Upload failed:', result.error);
+            throw new Error(`Upload failed: ${result.error}`);
           }
         }
 
-        // Call the onSubmit callback with the complete data
-        onSubmit({
+        const fullValues = {
           ...values,
-          images: imagePaths,
-        });
+          image: finalImagePath,
+        };
+        const res = await owner.addProperty(
+          fullValues as Property
+        );
+        if (res) {
+          toast.success('Property added successfully');
+        } else {
+          toast.error('Failed adding property');
+        }
+        console.log('Final Values Submitted:', fullValues);
+        onSubmit(fullValues);
       } catch (error) {
         console.error('Error during form submission:', error);
         throw error;
@@ -91,46 +86,23 @@ export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
   const handleImageUpload = (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
-    const newImageFiles = [...imageFiles];
-    const newImagePreviews = [...images];
+    const file = files[0];
+    if (!file.type.startsWith('image/')) return;
 
-    // Process each selected file
-    Array.from(files).forEach((file) => {
-      // Only accept image files
-      if (!file.type.startsWith('image/')) return;
-
-      // Add file to the files array
-      newImageFiles.push(file);
-
-      // Create a preview URL
-      const previewUrl = URL.createObjectURL(file);
-      newImagePreviews.push(previewUrl);
-    });
-
-    setImageFiles(newImageFiles);
-    setImages(newImagePreviews);
+    setImageFile(file);
+    setImage(URL.createObjectURL(file));
   };
 
-  const removeImage = (index: number) => {
-    const newImages = [...images];
-    newImages.splice(index, 1);
-    setImages(newImages);
-
-    // If this was a file upload, also remove from imageFiles
-    if (index < imageFiles.length) {
-      const newImageFiles = [...imageFiles];
-      newImageFiles.splice(index, 1);
-      setImageFiles(newImageFiles);
-    }
-
-    // Update formik values
-    formik.setFieldValue('images', newImages);
+  const removeImage = () => {
+    setImage('');
+    setImageFile(null);
+    formik.setFieldValue('image', '');
   };
 
   return {
     formik,
-    images,
-    imageFiles,
+    image,
+    imageFile,
     handleImageUpload,
     removeImage,
   };
