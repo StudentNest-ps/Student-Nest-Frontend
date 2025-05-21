@@ -67,6 +67,7 @@ const sampleProperties: Property[] = [
     images: ['/placeholder.svg?height=100&width=100'],
     city: 'Nablus',
     availableFrom: '2023-09-01',
+    availableTo: '2023-12-31',
     maxGuests: '1',
   },
   {
@@ -84,6 +85,7 @@ const sampleProperties: Property[] = [
     images: ['/placeholder.svg?height=100&width=100'],
     city: 'Ramallah',
     availableFrom: '2023-08-15',
+    availableTo: '2023-12-31',
     maxGuests: '4',
   },
   {
@@ -101,6 +103,7 @@ const sampleProperties: Property[] = [
     images: ['/placeholder.svg?height=100&width=100'],
     city: 'Ramallah',
     availableFrom: '2023-09-01',
+    availableTo: '2023-12-31',
     maxGuests: '2',
   },
   {
@@ -118,6 +121,7 @@ const sampleProperties: Property[] = [
     images: ['/placeholder.svg?height=100&width=100'],
     city: 'Ramallah',
     availableFrom: '2023-10-01',
+    availableTo: '2023-12-31',
     maxGuests: '6',
   },
   {
@@ -134,6 +138,7 @@ const sampleProperties: Property[] = [
     images: ['/placeholder.svg?height=100&width=100'],
     city: 'Bethlehem',
     availableFrom: '2023-09-15',
+    availableTo: '2023-12-31',
     maxGuests: '1',
   },
 ];
@@ -441,7 +446,7 @@ export default function PropertiesPage() {
 
                   // Mock available period
                   const availableFrom = new Date(property.availableFrom);
-                  const availableTo = new Date(availableFrom);
+                  const availableTo = new Date(property.availableTo);
                   availableTo.setMonth(
                     availableTo.getMonth() + Math.floor(Math.random() * 12) + 1
                   );

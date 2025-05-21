@@ -41,6 +41,7 @@ export const propertySchema = Yup.object().shape({
   country: Yup.string().required('Country is required'),
 
   availableFrom: Yup.date().required('Available from date is required'),
+  availableTo: Yup.date().required('Available from date is required'),
 
   maxGuests: Yup.string().required('Maximum guests is required'),
 

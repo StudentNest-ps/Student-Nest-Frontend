@@ -26,6 +26,7 @@ export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
     country: '',
     city: '',
     availableFrom: new Date().toISOString().split('T')[0],
+    availableTo: new Date().toISOString().split('T')[0],
     maxGuests: '1',
     images: [],
     ...initialValues,
