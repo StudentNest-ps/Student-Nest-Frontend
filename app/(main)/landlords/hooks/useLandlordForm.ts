@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { toast } from '@/components/ui/sonner';
 import { landlordSchema } from '../schema/landlordSchema';
+import { toast } from 'sonner';
 
 export interface LandlordFormValues {
   fullName: string;

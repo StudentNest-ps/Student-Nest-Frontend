@@ -279,7 +279,9 @@ export default function PropertiesTable() {
         property={selectedProperty}
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
-        onSave={handleSaveProperty}
+        onSave={(updatedProperty) => {
+          handleSaveProperty(updatedProperty as unknown as Property);
+        }}
       />
     </motion.div>
   );
