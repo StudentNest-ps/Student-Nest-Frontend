@@ -132,10 +132,10 @@ export default function OwnerDashboard() {
     >
       {/* Dashboard Header */}
       <motion.div variants={itemVariants} className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-bold">
           Dashboard Overview
         </h1>
-        <p className="text-gray-500 dark:text-gray-400">
+        <p className="text-muted-foreground">
           Here&apos;s what&apos;s happening with your properties today.
         </p>
       </motion.div>
@@ -152,10 +152,10 @@ export default function OwnerDashboard() {
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
             className="h-full"
           >
-            <Card className="overflow-hidden h-full shadow-md border-0 bg-white dark:bg-gray-800">
+            <Card className="overflow-hidden h-full shadow-md border">
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-center">
-                  <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
                     {item.title}
                   </CardTitle>
                   <div className={`p-2 rounded-lg ${item.color} bg-opacity-10`}>
@@ -167,7 +167,7 @@ export default function OwnerDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{item.value}</div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   {item.increase}
                 </p>
               </CardContent>
@@ -178,7 +178,7 @@ export default function OwnerDashboard() {
 
       {/* Recent Booking Requests */}
       <motion.div variants={itemVariants}>
-        <Card className="shadow-md border-0 bg-white dark:bg-gray-800">
+        <Card className="shadow-md border">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg font-semibold">
@@ -187,7 +187,7 @@ export default function OwnerDashboard() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300"
+                className="text-primary hover:text-primary/80"
               >
                 View All
                 <ChevronRight className="ml-1 h-4 w-4" />
@@ -198,20 +198,20 @@ export default function OwnerDashboard() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400">
+                  <tr className="border-b">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">
                       Property Name
                     </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">
                       Student Name
                     </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">
                       Check-In Date
                     </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground">
                       Status
                     </th>
-                    <th className="text-right py-3 px-4 font-medium text-gray-500 dark:text-gray-400">
+                    <th className="text-right py-3 px-4 font-medium text-muted-foreground">
                       Action
                     </th>
                   </tr>
@@ -220,7 +220,7 @@ export default function OwnerDashboard() {
                   {recentBookings.map((booking, index) => (
                     <motion.tr
                       key={booking.id}
-                      className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      className="border-b hover:bg-muted/50"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 + index * 0.05 }}
@@ -249,7 +249,7 @@ export default function OwnerDashboard() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="text-teal-500 hover:text-teal-600 dark:text-teal-400 dark:hover:text-teal-300"
+                          className="text-primary hover:text-primary/80"
                         >
                           View
                         </Button>

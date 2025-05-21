@@ -19,5 +19,6 @@ export interface Property {
   country: string;
   city: string;
   availableFrom: string;
+  availableTo: string;
   maxGuests: string;
 }

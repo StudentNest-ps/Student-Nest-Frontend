@@ -37,7 +37,6 @@ import {
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import MapComponent from './components/MapComponent';
 
 import ListingCard from './components/ListingCard';
 import admin from '@/module/services/Admin';
@@ -120,7 +119,6 @@ export default function ApartmentsPage() {
     triggerOnce: true,
     threshold: 0.1,
   });
-  const [mapRef, mapInView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
   const faqItems = [
     {
@@ -429,25 +427,6 @@ export default function ApartmentsPage() {
                 </Button>
               </div>
             )}
-          </motion.div>
-
-          {/* Map */}
-          <motion.div
-            ref={mapRef}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={
-              mapInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }
-            }
-            transition={{ duration: 0.5 }}
-            className="hidden lg:block sticky top-[180px] h-[calc(100vh-200px)]"
-          >
-            <div className="bg-card rounded-xl overflow-hidden shadow-sm border border-border/50 h-full">
-              <MapComponent
-                listings={sortedListings}
-                center={{ lat: 32.2227, lng: 35.2621 }} // Najah National University coordinates
-                zoom={13}
-              />
-            </div>
           </motion.div>
         </div>
       </div>

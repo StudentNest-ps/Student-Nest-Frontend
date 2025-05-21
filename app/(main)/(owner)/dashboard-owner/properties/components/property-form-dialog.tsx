@@ -340,30 +340,6 @@ export function PropertyFormDialog({
                   )}
                 </div>
 
-                {/* <div className="space-y-2">
-                  <label htmlFor="city" className="text-sm font-medium">
-                    City
-                  </label>
-                  <Input
-                    id="city"
-                    name="city"
-                    placeholder="Ramallah"
-                    value={formik.values.city}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    className={
-                      formik.touched.city && formik.errors.city
-                        ? 'border-destructive'
-                        : ''
-                    }
-                  />
-                  {formik.touched.city && formik.errors.city && (
-                    <p className="text-sm text-destructive">
-                      {formik.errors.city}
-                    </p>
-                  )}
-                </div> */}
-
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label
@@ -556,6 +532,58 @@ export function PropertyFormDialog({
                       )}
                   </div>
 
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="availableTo"
+                      className="text-sm font-medium"
+                    >
+                      Available To
+                    </label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={'outline'}
+                          className={cn(
+                            'w-full justify-start text-left font-normal',
+                            !formik.values.availableTo &&
+                              'text-muted-foreground'
+                          )}
+                          type="button"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formik.values.availableTo ? (
+                            format(new Date(formik.values.availableTo), 'PPP')
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={
+                            formik.values.availableTo
+                              ? new Date(formik.values.availableTo)
+                              : undefined
+                          }
+                          onSelect={(date) =>
+                            formik.setFieldValue(
+                              'availableTo',
+                              date ? date.toISOString().split('T')[0] : ''
+                            )
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    {formik.touched.availableTo &&
+                      formik.errors.availableTo && (
+                        <p className="text-sm text-destructive">
+                          {formik.errors.availableTo}
+                        </p>
+                      )}
+                  </div>
+                  
                   <div className="space-y-2">
                     <label htmlFor="maxGuests" className="text-sm font-medium">
                       Maximum Guests
