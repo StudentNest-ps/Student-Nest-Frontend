@@ -485,6 +485,9 @@ export default function PropertiesPage() {
                         : property.title.includes('3-Bedroom')
                           ? 2
                           : 1;
+                          
+                  // Add this line to define the status
+                  const status = parseInt(property._id) % 3 !== 0 ? 'published' : 'unpublished';
 
                   return (
                     <motion.tr

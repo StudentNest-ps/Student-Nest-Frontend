@@ -24,10 +24,8 @@ import { Property } from '@/module/types/Admin';
 export default function ApartmentDetails({ id }: { id: string }) {
   const [apartment, setApartment] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
-  //   const [formattedDate, setFormattedDate] = useState<string>('');
 
   useEffect(() => {
-    // Find the apartment with the matching ID
     const fetchApartments = async () => {
       const response = await admin.getProperties();
       console.log(response);
