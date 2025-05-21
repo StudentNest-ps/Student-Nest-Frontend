@@ -173,10 +173,13 @@ export default function PropertiesPage() {
       property.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
       property.city.toLowerCase().includes(searchTerm.toLowerCase());
 
+    // Use a deterministic approach based on property ID instead of Math.random()
+    const isPublished = parseInt(property._id) % 3 !== 0; // Properties with ID divisible by 3 are unpublished
+
     const matchesStatus =
       statusFilter === 'all' ||
-      (statusFilter === 'published' && Math.random() > 0.3) || // Mock published status
-      (statusFilter === 'unpublished' && Math.random() <= 0.3); // Mock unpublished status
+      (statusFilter === 'published' && isPublished) ||
+      (statusFilter === 'unpublished' && !isPublished);
 
     return matchesSearch && matchesStatus;
   });
@@ -240,10 +243,10 @@ export default function PropertiesPage() {
       );
       toast.success('Property updated successfully');
     } else {
-      // Add new property
+      // Add new property with deterministic ID instead of using Math.random()
       const newProperty = {
         ...property,
-        _id: Math.random().toString(36).substring(2, 9),
+        _id: Date.now().toString(36),
       };
       setProperties((prev) => [...prev, newProperty]);
       toast.success('Property added successfully');
@@ -433,23 +436,17 @@ export default function PropertiesPage() {
                     )}
                   </Button>
                 </TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Available Period</TableHead>
+                <TableHead>Max Guests</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               <AnimatePresence>
                 {paginatedProperties.map((property) => {
-                  // Mock status
-                  const status =
-                    Math.random() > 0.3 ? 'published' : 'unpublished';
-
-                  // Mock available period
+                  // Format dates without random month addition
                   const availableFrom = new Date(property.availableFrom);
                   const availableTo = new Date(property.availableTo);
-                  availableTo.setMonth(
-                    availableTo.getMonth() + Math.floor(Math.random() * 12) + 1
-                  );
 
                   // Format dates
                   const fromDate = new Intl.DateTimeFormat('en-US', {
