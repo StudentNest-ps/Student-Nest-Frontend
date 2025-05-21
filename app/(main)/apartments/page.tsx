@@ -1,16 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import {
   MapPin,
-  Bed,
-  Bath,
   Wifi,
-  Building,
   Users,
   ChevronDown,
   X,
@@ -42,17 +38,10 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import MapComponent from './components/MapComponent';
-import { apartmentListings } from './data/listings';
 
-// Animation variants
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: 'easeOut' },
-  },
-};
+import ListingCard from './components/ListingCard';
+import admin from '@/module/services/Admin';
+import { Property } from '@/module/types/Admin';
 
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -67,29 +56,24 @@ const staggerContainer = {
 export default function ApartmentsPage() {
   const searchParams = useSearchParams();
 
-  // Get search params or use defaults
   const initialCity = searchParams.get('city') || 'nablus';
   const initialGuests = searchParams.get('guests') || '1';
-
-  // State for search filters
+  const [apartments, setApartments] = useState<Property[]>([]);
   const [city, setCity] = useState(initialCity);
   const [guests, setGuests] = useState(initialGuests);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('availability');
   const [visibleListings, setVisibleListings] = useState(6);
 
-  // Filter listings based on search criteria
-  const filteredListings = apartmentListings.filter((listing) => {
-    // Filter by city
-    if (
-      city &&
-      city !== 'all' &&
-      listing.city.toLowerCase() !== city.toLowerCase()
-    ) {
-      return false;
-    }
+  const filteredListings = apartments.filter((listing) => {
+    // if (
+    //   city &&
+    //   city !== 'all' &&
+    //   listing.city.toLowerCase() !== city.toLowerCase()
+    // ) {
+    //   return false;
+    // }
 
-    // Filter by active filters
     if (
       activeFilters.includes('parking') &&
       !listing.amenities.includes('Parking')
@@ -97,16 +81,15 @@ export default function ApartmentsPage() {
       return false;
     }
 
-    // Filter by number of guests
     const guestsNum = Number.parseInt(guests);
-    if (guestsNum > listing.maxGuests) {
+    if (guestsNum > 1) {
+      //TODO: listing.maxGuests
       return false;
     }
 
     return true;
   });
 
-  // Sort listings
   const sortedListings = [...filteredListings].sort((a, b) => {
     if (sortBy === 'price-asc') {
       return a.price - b.price;
@@ -121,7 +104,6 @@ export default function ApartmentsPage() {
     return 0;
   });
 
-  // Toggle filter
   const toggleFilter = (filter: string) => {
     if (activeFilters.includes(filter)) {
       setActiveFilters(activeFilters.filter((f) => f !== filter));
@@ -130,29 +112,16 @@ export default function ApartmentsPage() {
     }
   };
 
-  // Load more listings
   const loadMore = () => {
     setVisibleListings((prev) => Math.min(prev + 4, sortedListings.length));
   };
 
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
-  };
-
-  // Intersection observer for animations
   const [listingsRef, listingsInView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
   const [mapRef, mapInView] = useInView({ triggerOnce: true, threshold: 0.1 });
 
-  // FAQ items
   const faqItems = [
     {
       question: 'What amenities are included in the apartments?',
@@ -205,6 +174,19 @@ export default function ApartmentsPage() {
         'We accept various payment methods including credit/debit cards, bank transfers, and PayPal. Payment details will be provided during the booking process.',
     },
   ];
+
+  useEffect(() => {
+    const fetchApartments = async () => {
+      try {
+        const response = await admin.getProperties();
+        setApartments(response);
+        console.log(response);
+      } catch (error) {
+        console.error('Error fetching apartments:', error);
+      }
+    };
+    fetchApartments();
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -432,89 +414,7 @@ export default function ApartmentsPage() {
           >
             <div className="space-y-4">
               {sortedListings.slice(0, visibleListings).map((listing) => (
-                <motion.div
-                  key={listing.id}
-                  variants={fadeInUp}
-                  className="bg-card rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-border/50"
-                >
-                  <div className="flex flex-col md:flex-row">
-                    <div className="md:w-1/3 relative">
-                      <Image
-                        src={listing.image || '/placeholder.svg'}
-                        alt={listing.title}
-                        width={300}
-                        height={200}
-                        className="w-full h-full object-cover aspect-[4/3]"
-                      />
-                      {listing.featured && (
-                        <div className="absolute top-2 left-2 bg-primary text-white text-xs px-2 py-1 rounded-full">
-                          Featured
-                        </div>
-                      )}
-                    </div>
-                    <div className="md:w-2/3 p-4">
-                      <h3 className="text-lg font-semibold text-foreground mb-2">
-                        {listing.title}
-                      </h3>
-
-                      <div className="flex flex-wrap gap-3 mb-3">
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Bed className="mr-1" size={16} />
-                          <span>
-                            {listing.bedrooms} bedroom
-                            {listing.bedrooms !== 1 ? 's' : ''}
-                          </span>
-                        </div>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Bath className="mr-1" size={16} />
-                          <span>
-                            {listing.bathrooms} bath
-                            {listing.bathrooms !== 1 ? 's' : ''}
-                          </span>
-                        </div>
-                        {listing.amenities.includes('WiFi') && (
-                          <div className="flex items-center text-sm text-muted-foreground">
-                            <Wifi className="mr-1" size={16} />
-                            <span>WiFi</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex flex-wrap gap-3 mb-4 text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <MapPin className="mr-1" size={14} />
-                          <span>
-                            {listing.neighborhood}, {listing.city}
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <Building className="mr-1" size={14} />
-                          <span>{listing.floor} floor</span>
-                        </div>
-                        {listing.amenities.includes('Parking') && (
-                          <div className="flex items-center">
-                            <MapPin className="mr-1" size={14} />
-                            <span>Parking</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex items-center justify-between mt-auto">
-                        <div className="bg-accent/50 text-accent-foreground text-sm px-3 py-1 rounded-full">
-                          Available: {formatDate(listing.availableFrom)}
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm text-muted-foreground">
-                            from
-                          </div>
-                          <div className="text-lg font-semibold text-foreground">
-                            ${listing.price}/month
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                <ListingCard key={listing._id} listing={listing} />
               ))}
             </div>
 
@@ -608,31 +508,6 @@ export default function ApartmentsPage() {
               </AccordionItem>
             ))}
           </Accordion>
-        </div>
-      </section>
-
-      {/* Newsletter */}
-      <section className="bg-background py-16 border-t border-border">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-4">
-              Stay up to date
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Be the first to know about our newest apartments and exclusive
-              offers.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <Input
-                type="email"
-                placeholder="Your email address"
-                className="rounded-full"
-              />
-              <Button className="bg-primary text-white hover:bg-primary/90 rounded-full">
-                Subscribe
-              </Button>
-            </div>
-          </div>
         </div>
       </section>
     </div>

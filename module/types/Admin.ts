@@ -14,4 +14,10 @@ export interface Property {
   address: string;
   ownerName: string;
   ownerPhoneNumber: string;
+  amenities: string[];
+  images: string[];
+  country: string;
+  city: string;
+  availableFrom: string;
+  maxGuests: string;
 }

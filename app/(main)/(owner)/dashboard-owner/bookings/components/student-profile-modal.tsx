@@ -195,7 +195,7 @@ export default function StudentProfileModal({
               Message
             </Button>
           </div>
-        </div>
+        </div>  
       </DialogContent>
     </Dialog>
   );

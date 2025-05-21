@@ -2,28 +2,23 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
 import {
   Search,
   Plus,
+  Eye,
   Edit,
   Trash2,
-  Eye,
-  Filter,
+  ArrowUpDown,
   ChevronLeft,
   ChevronRight,
-  ArrowUpDown,
-  MoreHorizontal,
+  Filter,
   Building,
+  Bed,
+  Bath,
+  MapPin,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -40,291 +35,225 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
+
+import { toast } from 'sonner';
+import { Property } from '@/module/types/Admin';
 import { PropertyFormDialog } from './components/property-form-dialog';
 
 // Sample property data
-const properties = [
+const sampleProperties: Property[] = [
   {
-    id: 'prop-1',
-    _id: '6809340ea030eb703c203696',
+    _id: '1',
     title: 'Modern Studio Apartment',
-    location: {
-      city: 'Nablus',
-      country: 'Palestine',
-    },
-    address: 'Near An-Najah University, Nablus',
-    image: '/placeholder.svg?height=80&width=120',
-    images: ['/placeholder.svg?height=300&width=400&text=Property+Image+1'],
-    rent: 350,
+    description:
+      'A cozy studio apartment close to An-Najah National University, perfect for students.',
+    type: 'studio',
     price: 350,
-    availability: {
-      availableFrom: '2023-09-01',
-      availableTo: '2024-06-30',
-    },
-    status: 'Published',
-    type: 'studio',
-    description:
-      'A cozy studio apartment, perfect for students at An-Najah University.',
+    address: '123 University St, Nablus',
+    ownerName: 'Ahmad Khalid',
+    ownerPhoneNumber: '+970 59 123 4567',
     amenities: ['wifi', 'ac', 'furnished'],
-    blockedDates: ['2023-12-24', '2023-12-25', '2023-12-31', '2024-01-01'],
-    ownerId: '6809371f0c4d1230d7294b99',
-    createdAt: '2023-04-23T20:31:10.673+00:00',
-    updatedAt: '2023-05-07T08:17:58.133+00:00',
-    bedrooms: 0,
-    bathrooms: 1,
+    country: 'Palestine',
+    images: ['/placeholder.svg?height=100&width=100'],
+    city: 'Nablus',
+    availableFrom: '2023-09-01',
+    maxGuests: '1',
   },
   {
-    id: 'prop-2',
-    _id: '6809340ea030eb703c203697',
+    _id: '2',
     title: 'Spacious 2-Bedroom Apartment',
-    location: {
-      city: 'Ramallah',
-      country: 'Palestine',
-    },
-    address: 'Downtown Ramallah, 5 min from Birzeit University',
-    image: '/placeholder.svg?height=80&width=120',
-    images: [
-      '/placeholder.svg?height=300&width=400&text=Property+Image+1',
-      '/placeholder.svg?height=300&width=400&text=Property+Image+2',
-    ],
-    rent: 550,
+    description:
+      'A spacious 2-bedroom apartment with a balcony and great views of the city.',
+    type: 'apartment',
     price: 550,
-    availability: {
-      availableFrom: '2023-08-15',
-      availableTo: '2024-07-31',
-    },
-    status: 'Published',
-    type: 'apartment',
-    description:
-      'A spacious 2-bedroom apartment in downtown Ramallah, perfect for students or young professionals.',
-    amenities: ['wifi', 'ac', 'heating', 'washer', 'parking'],
-    blockedDates: [],
-    ownerId: '6809371f0c4d1230d7294b99',
-    createdAt: '2023-04-23T20:31:10.673+00:00',
-    updatedAt: '2023-05-07T08:17:58.133+00:00',
-    bedrooms: 2,
-    bathrooms: 1,
+    address: '456 College Ave, Ramallah',
+    ownerName: 'Layla Ibrahim',
+    ownerPhoneNumber: '+970 59 234 5678',
+    amenities: ['wifi', 'parking', 'furnished', 'balcony'],
+    country: 'Palestine',
+    images: ['/placeholder.svg?height=100&width=100'],
+    city: 'Ramallah',
+    availableFrom: '2023-08-15',
+    maxGuests: '4',
   },
   {
-    id: 'prop-3',
-    _id: '6809340ea030eb703c203698',
+    _id: '3',
     title: 'Cozy 1-Bedroom Apartment',
-    location: {
-      city: 'Ramallah',
-      country: 'Palestine',
-    },
-    address: 'Al-Tireh, Ramallah',
-    image: '/placeholder.svg?height=80&width=120',
-    images: ['/placeholder.svg?height=300&width=400&text=Property+Image+1'],
-    rent: 400,
-    price: 400,
-    availability: {
-      availableFrom: '2023-09-01',
-      availableTo: '2024-08-31',
-    },
-    status: 'Unpublished',
+    description:
+      'A cozy 1-bedroom apartment with modern amenities, walking distance to campus.',
     type: 'apartment',
-    description:
-      'A cozy 1-bedroom apartment in Al-Tireh, perfect for students or young professionals.',
-    amenities: ['wifi', 'ac', 'furnished'],
-    blockedDates: [],
-    ownerId: '6809371f0c4d1230d7294b99',
-    createdAt: '2023-04-23T20:31:10.673+00:00',
-    updatedAt: '2023-05-07T08:17:58.133+00:00',
-    bedrooms: 1,
-    bathrooms: 1,
+    price: 400,
+    address: '789 Campus Rd, Ramallah',
+    ownerName: 'Omar Nasser',
+    ownerPhoneNumber: '+970 59 345 6789',
+    amenities: ['wifi', 'ac', 'furnished', 'tv'],
+    country: 'Palestine',
+    images: ['/placeholder.svg?height=100&width=100'],
+    city: 'Ramallah',
+    availableFrom: '2023-09-01',
+    maxGuests: '2',
   },
   {
-    id: 'prop-4',
-    _id: '6809340ea030eb703c203699',
+    _id: '4',
     title: 'Luxury 3-Bedroom Condo',
-    location: {
-      city: 'Ramallah',
-      country: 'Palestine',
-    },
-    address: 'Al-Masyoun, Ramallah',
-    image: '/placeholder.svg?height=80&width=120',
-    images: [
-      '/placeholder.svg?height=300&width=400&text=Property+Image+1',
-      '/placeholder.svg?height=300&width=400&text=Property+Image+2',
-    ],
-    rent: 800,
-    price: 800,
-    availability: {
-      availableFrom: '2023-10-01',
-      availableTo: '2024-09-30',
-    },
-    status: 'Published',
-    type: 'condo',
     description:
-      'A luxury 3-bedroom condominium in Al-Masyoun, perfect for families or groups of students.',
-    amenities: [
-      'wifi',
-      'ac',
-      'heating',
-      'washer',
-      'dryer',
-      'parking',
-      'gym',
-      'pool',
-      'security',
-    ],
-    blockedDates: [],
-    ownerId: '6809371f0c4d1230d7294b99',
-    createdAt: '2023-04-23T20:31:10.673+00:00',
-    updatedAt: '2023-05-07T08:17:58.133+00:00',
-    bedrooms: 3,
-    bathrooms: 2,
+      'A luxury 3-bedroom condo with high-end finishes and amenities.',
+    type: 'condo',
+    price: 800,
+    address: '101 Luxury Lane, Ramallah',
+    ownerName: 'Nour Haddad',
+    ownerPhoneNumber: '+970 59 456 7890',
+    amenities: ['wifi', 'parking', 'furnished', 'gym', 'pool'],
+    country: 'Palestine',
+    images: ['/placeholder.svg?height=100&width=100'],
+    city: 'Ramallah',
+    availableFrom: '2023-10-01',
+    maxGuests: '6',
   },
   {
-    id: 'prop-5',
-    _id: '6809340ea030eb703c20369a',
+    _id: '5',
     title: 'Student-Friendly Studio',
-    location: {
-      city: 'Bethlehem',
-      country: 'Palestine',
-    },
-    address: 'Near Bethlehem University',
-    image: '/placeholder.svg?height=80&width=120',
-    images: ['/placeholder.svg?height=300&width=400&text=Property+Image+1'],
-    rent: 300,
-    price: 300,
-    availability: {
-      availableFrom: '2023-09-15',
-      availableTo: '2024-06-15',
-    },
-    status: 'Unpublished',
+    description: 'A budget-friendly studio apartment perfect for students.',
     type: 'studio',
-    description:
-      'A student-friendly studio near Bethlehem University, perfect for students.',
+    price: 300,
+    address: '202 Student Lane, Bethlehem',
+    ownerName: 'Rami Khoury',
+    ownerPhoneNumber: '+970 59 567 8901',
     amenities: ['wifi', 'furnished'],
-    blockedDates: [],
-    ownerId: '6809371f0c4d1230d7294b99',
-    createdAt: '2023-04-23T20:31:10.673+00:00',
-    updatedAt: '2023-05-07T08:17:58.133+00:00',
-    bedrooms: 0,
-    bathrooms: 1,
+    country: 'Palestine',
+    images: ['/placeholder.svg?height=100&width=100'],
+    city: 'Bethlehem',
+    availableFrom: '2023-09-15',
+    maxGuests: '1',
   },
 ];
 
-export default function MyPropertiesPage() {
+// Status options
+const statusOptions = [
+  { value: 'all', label: 'All Status' },
+  { value: 'published', label: 'Published' },
+  { value: 'unpublished', label: 'Unpublished' },
+];
+
+export default function PropertiesPage() {
+  const [properties, setProperties] = useState<Property[]>(sampleProperties);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(
+    null
+  );
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: 'ascending' | 'descending';
-  } | null>(null);
-  const [formDialogOpen, setFormDialogOpen] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [editingProperty, setEditingProperty] = useState<any>(null);
 
   const itemsPerPage = 5;
 
-  // Filter properties based on search term and status
+  // Filter and sort properties
   const filteredProperties = properties.filter((property) => {
     const matchesSearch =
       property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      property.address.toLowerCase().includes(searchTerm.toLowerCase());
+      property.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      property.city.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       statusFilter === 'all' ||
-      property.status.toLowerCase() === statusFilter.toLowerCase();
+      (statusFilter === 'published' && Math.random() > 0.3) || // Mock published status
+      (statusFilter === 'unpublished' && Math.random() <= 0.3); // Mock unpublished status
 
     return matchesSearch && matchesStatus;
   });
 
-  // Sort properties if sortConfig is set
+  // Sort properties
   const sortedProperties = [...filteredProperties].sort((a, b) => {
-    if (!sortConfig) return 0;
+    if (!sortColumn) return 0;
 
-    const { key, direction } = sortConfig;
+    let valueA, valueB;
 
-    if (a[key as keyof typeof a] < b[key as keyof typeof b]) {
-      return direction === 'ascending' ? -1 : 1;
+    switch (sortColumn) {
+      case 'title':
+        valueA = a.title;
+        valueB = b.title;
+        break;
+      case 'location':
+        valueA = a.city;
+        valueB = b.city;
+        break;
+      case 'price':
+        valueA = a.price;
+        valueB = b.price;
+        break;
+      case 'availableFrom':
+        valueA = new Date(a.availableFrom).getTime();
+        valueB = new Date(b.availableFrom).getTime();
+        break;
+      default:
+        return 0;
     }
-    if (a[key as keyof typeof a] > b[key as keyof typeof b]) {
-      return direction === 'ascending' ? 1 : -1;
-    }
+
+    if (valueA < valueB) return sortDirection === 'asc' ? -1 : 1;
+    if (valueA > valueB) return sortDirection === 'asc' ? 1 : -1;
     return 0;
   });
 
   // Paginate properties
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProperties = sortedProperties.slice(
-    indexOfFirstItem,
-    indexOfLastItem
+  const paginatedProperties = sortedProperties.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
+
   const totalPages = Math.ceil(sortedProperties.length / itemsPerPage);
 
-  const handleDeleteClick = (id: string) => {
-    setPropertyToDelete(id);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = () => {
-    // In a real app, you would delete the property here
-    console.log(`Deleting property ${propertyToDelete}`);
-    setDeleteDialogOpen(false);
-    setPropertyToDelete(null);
-  };
-
-  const handleSort = (key: string) => {
-    let direction: 'ascending' | 'descending' = 'ascending';
-
-    if (
-      sortConfig &&
-      sortConfig.key === key &&
-      sortConfig.direction === 'ascending'
-    ) {
-      direction = 'descending';
-    }
-
-    setSortConfig({ key, direction });
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
-  const handleAddProperty = () => {
-    setEditingProperty(null);
-    setFormDialogOpen(true);
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleEditProperty = (property: any) => {
-    setEditingProperty(property);
-    setFormDialogOpen(true);
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleFormSubmit = (data: any) => {
-    if (data.id || data._id) {
-      // Editing existing property
-      console.log('Updating property:', data);
-      // Here you would update the property in your database
+  // Handle sort
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
-      // Adding new property
-      console.log('Adding new property:', data);
-      // Here you would add the property to your database
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  // Handle add/edit property
+  const handleAddEditProperty = (property: Property) => {
+    if (property._id) {
+      // Edit existing property
+      setProperties((prev) =>
+        prev.map((p) => (p._id === property._id ? property : p))
+      );
+      toast.success('Property updated successfully');
+    } else {
+      // Add new property
+      const newProperty = {
+        ...property,
+        _id: Math.random().toString(36).substring(2, 9),
+      };
+      setProperties((prev) => [...prev, newProperty]);
+      toast.success('Property added successfully');
+    }
+    setIsFormOpen(false);
+    setSelectedProperty(null);
+  };
+
+  // Handle delete property
+  const handleDeleteProperty = () => {
+    if (propertyToDelete) {
+      setProperties((prev) => prev.filter((p) => p._id !== propertyToDelete));
+      toast.success('Property deleted successfully');
+      setIsDeleteDialogOpen(false);
+      setPropertyToDelete(null);
     }
   };
 
@@ -337,50 +266,67 @@ export default function MyPropertiesPage() {
         staggerChildren: 0.05,
       },
     },
-    exit: {
-      opacity: 0,
-      transition: { duration: 0.2 },
-    },
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
-      y: 0,
       opacity: 1,
-      transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 100,
+        damping: 15,
+      },
+    },
+  };
+
+  const tableRowVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 100,
+        damping: 15,
+      },
     },
     exit: {
-      y: -20,
       opacity: 0,
-      transition: { duration: 0.2 },
+      x: -20,
+      transition: {
+        duration: 0.2,
+      },
     },
   };
 
   return (
-    <AnimatePresence mode="wait">
+    <div className="container mx-auto py-8 max-w-7xl">
       <motion.div
-        key="my-properties"
-        variants={containerVariants}
         initial="hidden"
         animate="visible"
-        exit="exit"
-        className="p-6 w-full"
+        variants={containerVariants}
+        className="space-y-8"
       >
-        {/* Page Header */}
+        {/* Header */}
         <motion.div
           variants={itemVariants}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8"
+          className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
         >
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold">My Properties</h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
+            <h1 className="text-3xl font-bold tracking-tight">My Properties</h1>
+            <p className="text-muted-foreground mt-1">
               Manage your student housing properties
             </p>
           </div>
           <Button
-            className="bg-primary cursor-pointer"
-            onClick={handleAddProperty}
+            onClick={() => {
+              setSelectedProperty(null);
+              setIsFormOpen(true);
+            }}
+            size="lg"
+            className="bg-primary hover:bg-primary/90"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add New Property
@@ -390,263 +336,284 @@ export default function MyPropertiesPage() {
         {/* Filters */}
         <motion.div
           variants={itemVariants}
-          className="flex flex-col sm:flex-row gap-4 mb-6"
+          className="flex flex-col sm:flex-row gap-4"
         >
           <div className="relative flex-1">
-            <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              size={18}
-            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               placeholder="Search properties..."
-              className="pl-10"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <div className="flex items-center">
                 <Filter className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder="Filter by status" />
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="unpublished">Unpublished</SelectItem>
+              {statusOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </motion.div>
 
         {/* Properties Table */}
-        <motion.div variants={itemVariants} className="mb-6">
-          <Card className="overflow-hidden">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[250px]">
-                      <button
-                        className="flex items-center"
-                        onClick={() => handleSort('title')}
-                      >
-                        Property
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                      </button>
-                    </TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Location
-                    </TableHead>
-                    <TableHead>
-                      <button
-                        className="flex items-center"
-                        onClick={() => handleSort('price')}
-                      >
-                        Rent/month
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                      </button>
-                    </TableHead>
-                    <TableHead className="hidden lg:table-cell">
-                      Available Period
-                    </TableHead>
-                    <TableHead>
-                      <button
-                        className="flex items-center"
-                        onClick={() => handleSort('status')}
-                      >
-                        Status
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                      </button>
-                    </TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <AnimatePresence>
-                    {currentProperties.length > 0 ? (
-                      currentProperties.map((property) => (
-                        <motion.tr
-                          key={property.id}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                        >
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <div className="relative h-12 w-12 rounded-md overflow-hidden">
-                                <Image
-                                  src={property.image || '/placeholder.svg'}
-                                  alt={property.title}
-                                  fill
-                                  className="object-cover"
-                                />
-                              </div>
-                              <div>
-                                <div className="font-medium">
-                                  {property.title}
-                                </div>
-                                <div className="text-sm text-gray-500 dark:text-gray-400">
-                                  {property.type} • {property.bedrooms} bed •{' '}
-                                  {property.bathrooms} bath
-                                </div>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <div
-                              className="max-w-[200px] truncate"
-                              title={property.address}
-                            >
-                              {property.address}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="font-medium">${property.price}</div>
-                          </TableCell>
-                          <TableCell className="hidden lg:table-cell">
-                            <div className="text-sm">
-                              {formatDate(property.availability.availableFrom)}{' '}
-                              - {formatDate(property.availability.availableTo)}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              className={
-                                property.status === 'Published'
-                                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400'
-                                  : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
-                              }
-                            >
-                              {property.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8"
-                              >
-                                <Eye className="h-4 w-4" />
-                                <span className="sr-only">View</span>
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={() => handleEditProperty(property)}
-                              >
-                                <Edit className="h-4 w-4" />
-                                <span className="sr-only">Edit</span>
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-red-500"
-                                onClick={() => handleDeleteClick(property.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                                <span className="sr-only">Delete</span>
-                              </Button>
-
-                              {/* Mobile dropdown for smaller screens */}
-                              <div className="sm:hidden">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-8 w-8 lg:hidden"
-                                    >
-                                      <MoreHorizontal className="h-4 w-4" />
-                                      <span className="sr-only">More</span>
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
-                                      <Eye className="mr-2 h-4 w-4" />
-                                      View
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      onClick={() =>
-                                        handleEditProperty(property)
-                                      }
-                                    >
-                                      <Edit className="mr-2 h-4 w-4" />
-                                      Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      onClick={() =>
-                                        handleDeleteClick(property.id)
-                                      }
-                                      className="text-red-500"
-                                    >
-                                      <Trash2 className="mr-2 h-4 w-4" />
-                                      Delete
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </div>
-                            </div>
-                          </TableCell>
-                        </motion.tr>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={6} className="h-24 text-center">
-                          <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
-                            <Building className="h-12 w-12 mb-2 opacity-30" />
-                            <p className="text-lg font-medium">
-                              No properties found
-                            </p>
-                            <p className="text-sm">
-                              {searchTerm || statusFilter !== 'all'
-                                ? 'Try adjusting your search or filters'
-                                : 'Add your first property to get started'}
-                            </p>
-                            {!searchTerm && statusFilter === 'all' && (
-                              <Button
-                                className="mt-4 bg-emerald-600 hover:bg-emerald-700"
-                                onClick={handleAddProperty}
-                              >
-                                <Plus className="mr-2 h-4 w-4" />
-                                Add New Property
-                              </Button>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
+        <motion.div
+          variants={itemVariants}
+          className="rounded-md border bg-card"
+        >
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[300px]">
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort('title')}
+                    className="flex items-center"
+                  >
+                    Property
+                    {sortColumn === 'title' && (
+                      <ArrowUpDown
+                        className={`ml-2 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`}
+                      />
                     )}
-                  </AnimatePresence>
-                </TableBody>
-              </Table>
-            </div>
-          </Card>
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort('location')}
+                    className="flex items-center"
+                  >
+                    Location
+                    {sortColumn === 'location' && (
+                      <ArrowUpDown
+                        className={`ml-2 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`}
+                      />
+                    )}
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort('price')}
+                    className="flex items-center"
+                  >
+                    Rent/month
+                    {sortColumn === 'price' && (
+                      <ArrowUpDown
+                        className={`ml-2 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`}
+                      />
+                    )}
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort('availableFrom')}
+                    className="flex items-center"
+                  >
+                    Available Period
+                    {sortColumn === 'availableFrom' && (
+                      <ArrowUpDown
+                        className={`ml-2 h-4 w-4 ${sortDirection === 'desc' ? 'rotate-180' : ''}`}
+                      />
+                    )}
+                  </Button>
+                </TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <AnimatePresence>
+                {paginatedProperties.map((property) => {
+                  // Mock status
+                  const status =
+                    Math.random() > 0.3 ? 'published' : 'unpublished';
+
+                  // Mock available period
+                  const availableFrom = new Date(property.availableFrom);
+                  const availableTo = new Date(availableFrom);
+                  availableTo.setMonth(
+                    availableTo.getMonth() + Math.floor(Math.random() * 12) + 1
+                  );
+
+                  // Format dates
+                  const fromDate = new Intl.DateTimeFormat('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  }).format(availableFrom);
+
+                  const toDate = new Intl.DateTimeFormat('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  }).format(availableTo);
+
+                  // Get property details
+                  const bedsCount =
+                    property.type === 'studio'
+                      ? 0
+                      : property.type === 'apartment'
+                        ? property.title.includes('1-Bedroom')
+                          ? 1
+                          : property.title.includes('2-Bedroom')
+                            ? 2
+                            : property.title.includes('3-Bedroom')
+                              ? 3
+                              : 1
+                        : property.title.includes('3-Bedroom')
+                          ? 3
+                          : 1;
+
+                  const bathsCount =
+                    property.type === 'studio'
+                      ? 1
+                      : property.type === 'apartment'
+                        ? 1
+                        : property.title.includes('3-Bedroom')
+                          ? 2
+                          : 1;
+
+                  return (
+                    <motion.tr
+                      key={property._id}
+                      variants={tableRowVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      layout
+                      className="group"
+                    >
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-md bg-muted flex items-center justify-center">
+                            <Building className="h-5 w-5 text-muted-foreground" />
+                          </div>
+                          <div>
+                            <div className="font-medium">{property.title}</div>
+                            <div className="text-sm text-muted-foreground flex items-center gap-3">
+                              <span>{property.type}</span>
+                              <span className="flex items-center">
+                                <Bed className="h-3 w-3 mr-1" />
+                                {bedsCount} bed
+                              </span>
+                              <span className="flex items-center">
+                                <Bath className="h-3 w-3 mr-1" />
+                                {bathsCount} bath
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
+                          <span>{property.city}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">${property.price}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          {fromDate} - {toDate}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            status === 'published' ? 'default' : 'outline'
+                          }
+                          className={
+                            status === 'published'
+                              ? 'bg-green-500 hover:bg-green-600'
+                              : 'text-amber-500 border-amber-500'
+                          }
+                        >
+                          {status === 'published' ? 'Published' : 'Unpublished'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            title="View property"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            title="Edit property"
+                            onClick={() => {
+                              setSelectedProperty(property);
+                              setIsFormOpen(true);
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-destructive hover:text-destructive"
+                            title="Delete property"
+                            onClick={() => {
+                              setPropertyToDelete(property._id);
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </motion.tr>
+                  );
+                })}
+              </AnimatePresence>
+
+              {paginatedProperties.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    No properties found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </motion.div>
 
         {/* Pagination */}
-        {sortedProperties.length > 0 && (
+        {totalPages > 1 && (
           <motion.div
             variants={itemVariants}
             className="flex items-center justify-between"
           >
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              Showing {indexOfFirstItem + 1} to{' '}
-              {Math.min(indexOfLastItem, sortedProperties.length)} of{' '}
+            <div className="text-sm text-muted-foreground">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
+              {Math.min(currentPage * itemsPerPage, sortedProperties.length)} of{' '}
               {sortedProperties.length} properties
             </div>
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setCurrentPage(currentPage - 1)}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
                 <ChevronLeft className="h-4 w-4" />
-                <span className="sr-only">Previous page</span>
               </Button>
               <div className="text-sm font-medium">
                 Page {currentPage} of {totalPages}
@@ -654,53 +621,51 @@ export default function MyPropertiesPage() {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setCurrentPage(currentPage + 1)}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
               >
                 <ChevronRight className="h-4 w-4" />
-                <span className="sr-only">Next page</span>
               </Button>
             </div>
           </motion.div>
         )}
-
-        {/* Delete Confirmation Dialog */}
-        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Delete Property</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to delete this property? This action
-                cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setDeleteDialogOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={handleDeleteConfirm}
-                className="bg-red-600 hover:bg-red-700"
-              >
-                Delete
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Property Form Dialog */}
-        <PropertyFormDialog
-          open={formDialogOpen}
-          onOpenChange={setFormDialogOpen}
-          initialData={editingProperty}
-          isEditing={!!editingProperty}
-          onSubmit={handleFormSubmit}
-        />
       </motion.div>
-    </AnimatePresence>
+
+      {/* Property Form Dialog */}
+      <PropertyFormDialog
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        initialData={selectedProperty}
+        isEditing={!!selectedProperty}
+        onSubmit={(data) => handleAddEditProperty(data as Property)}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              property and remove it from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteProperty}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 }
