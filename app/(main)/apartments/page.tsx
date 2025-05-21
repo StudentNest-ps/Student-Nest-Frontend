@@ -54,24 +54,22 @@ const staggerContainer = {
 
 export default function ApartmentsPage() {
   const searchParams = useSearchParams();
-
-  const initialCity = searchParams.get('city') || 'nablus';
   const initialGuests = searchParams.get('guests') || '1';
   const [apartments, setApartments] = useState<Property[]>([]);
-  const [city, setCity] = useState(initialCity);
+  const [city, setCity] = useState('');
   const [guests, setGuests] = useState(initialGuests);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('availability');
   const [visibleListings, setVisibleListings] = useState(6);
 
   const filteredListings = apartments.filter((listing) => {
-    // if (
-    //   city &&
-    //   city !== 'all' &&
-    //   listing.city.toLowerCase() !== city.toLowerCase()
-    // ) {
-    //   return false;
-    // }
+    if (
+      city &&
+      city !== 'all' &&
+      listing.city.toLowerCase() !== city.toLowerCase()
+    ) {
+      return false;
+    }
 
     if (
       activeFilters.includes('parking') &&
@@ -177,6 +175,8 @@ export default function ApartmentsPage() {
     const fetchApartments = async () => {
       try {
         const response = await admin.getProperties();
+        console.log(response);
+
         setApartments(response);
         console.log(response);
       } catch (error) {

@@ -15,7 +15,7 @@ export interface Property {
   ownerName: string;
   ownerPhoneNumber: string;
   amenities: string[];
-  images: string[];
+  image: string;
   country: string;
   city: string;
   availableFrom: string;

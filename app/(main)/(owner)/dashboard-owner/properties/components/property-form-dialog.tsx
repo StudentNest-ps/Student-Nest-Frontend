@@ -5,10 +5,8 @@ import type React from 'react';
 import { useRef } from 'react';
 import { FormikProvider } from 'formik';
 import { motion, AnimatePresence } from 'framer-motion';
-import { format } from 'date-fns';
 import Image from 'next/image';
 import {
-  CalendarIcon,
   Upload,
   Loader2,
   Plus,
@@ -43,15 +41,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
 import { Property } from '@/module/types/Admin';
 import { useProperty } from './hooks/useProperty';
+import DatePickerForm from './custom-popover';
 
 // Property types
 const propertyTypes = [
@@ -160,8 +152,7 @@ export function PropertyFormDialog({
   onSubmit,
 }: PropertyFormDialogProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const { formik, images, handleImageUpload, removeImage } = useProperty({
+  const { formik, image, handleImageUpload, removeImage } = useProperty({
     initialValues: initialData || undefined,
     onSubmit: (values) => {
       onSubmit(values);
@@ -480,110 +471,8 @@ export function PropertyFormDialog({
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="availableFrom"
-                      className="text-sm font-medium"
-                    >
-                      Available From
-                    </label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={'outline'}
-                          className={cn(
-                            'w-full justify-start text-left font-normal',
-                            !formik.values.availableFrom &&
-                              'text-muted-foreground'
-                          )}
-                          type="button"
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {formik.values.availableFrom ? (
-                            format(new Date(formik.values.availableFrom), 'PPP')
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={
-                            formik.values.availableFrom
-                              ? new Date(formik.values.availableFrom)
-                              : undefined
-                          }
-                          onSelect={(date) =>
-                            formik.setFieldValue(
-                              'availableFrom',
-                              date ? date.toISOString().split('T')[0] : ''
-                            )
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    {formik.touched.availableFrom &&
-                      formik.errors.availableFrom && (
-                        <p className="text-sm text-destructive">
-                          {formik.errors.availableFrom}
-                        </p>
-                      )}
-                  </div>
+                  <DatePickerForm formik={formik} />
 
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="availableTo"
-                      className="text-sm font-medium"
-                    >
-                      Available To
-                    </label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={'outline'}
-                          className={cn(
-                            'w-full justify-start text-left font-normal',
-                            !formik.values.availableTo &&
-                              'text-muted-foreground'
-                          )}
-                          type="button"
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {formik.values.availableTo ? (
-                            format(new Date(formik.values.availableTo), 'PPP')
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={
-                            formik.values.availableTo
-                              ? new Date(formik.values.availableTo)
-                              : undefined
-                          }
-                          onSelect={(date) =>
-                            formik.setFieldValue(
-                              'availableTo',
-                              date ? date.toISOString().split('T')[0] : ''
-                            )
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    {formik.touched.availableTo &&
-                      formik.errors.availableTo && (
-                        <p className="text-sm text-destructive">
-                          {formik.errors.availableTo}
-                        </p>
-                      )}
-                  </div>
-                  
                   <div className="space-y-2">
                     <label htmlFor="maxGuests" className="text-sm font-medium">
                       Maximum Guests
@@ -687,9 +576,9 @@ export function PropertyFormDialog({
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 <AnimatePresence>
-                  {images.map((image: string, index: number) => (
+                  {image ? (
                     <motion.div
-                      key={`${image}-${index}`}
+                      key={image}
                       variants={imageVariants}
                       initial="hidden"
                       animate="visible"
@@ -699,7 +588,7 @@ export function PropertyFormDialog({
                     >
                       <Image
                         src={image || '/placeholder.svg?height=150&width=200'}
-                        alt={`Property image ${index + 1}`}
+                        alt="Property image"
                         fill
                         className="w-full h-full object-cover"
                       />
@@ -708,32 +597,30 @@ export function PropertyFormDialog({
                         variant="destructive"
                         size="icon"
                         className="absolute top-2 right-2 h-6 w-6"
-                        onClick={() => removeImage(index)}
+                        onClick={removeImage}
                       >
                         <Trash className="h-3 w-3" />
                       </Button>
                     </motion.div>
-                  ))}
-                </AnimatePresence>
-
-                {images.length === 0 && (
-                  <div className="col-span-full text-center p-8 border border-dashed rounded-md">
-                    <div className="flex flex-col items-center">
-                      <ImageIcon className="h-10 w-10 text-muted-foreground mb-2" />
-                      <p className="text-muted-foreground mb-2">
-                        No images added yet
-                      </p>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={triggerFileInput}
-                      >
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload Image
-                      </Button>
+                  ) : (
+                    <div className="col-span-full text-center p-8 border border-dashed rounded-md">
+                      <div className="flex flex-col items-center">
+                        <ImageIcon className="h-10 w-10 text-muted-foreground mb-2" />
+                        <p className="text-muted-foreground mb-2">
+                          No image added yet
+                        </p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={triggerFileInput}
+                        >
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload Image
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
