@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/sn/:path*',
-        destination: `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_URL}/:path*`,
       },
     ];
   },
