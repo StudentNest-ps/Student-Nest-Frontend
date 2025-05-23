@@ -297,7 +297,7 @@ export default function ApartmentDetails({ id }: { id: string }) {
                   transition={{ delay: 0.5 }}
                   className="absolute top-4 left-4 z-20"
                 >
-                  <Badge className="bg-primary/90 text-white backdrop-blur-sm border-0 shadow-lg">
+                  <Badge className="bg-primary/50 text-background backdrop-blur-md border-0 p-2 shadow-lg text-sm font-bold rounded-2xl">
                     Featured
                   </Badge>
                 </motion.div>
