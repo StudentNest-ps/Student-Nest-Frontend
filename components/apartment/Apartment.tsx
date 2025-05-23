@@ -26,6 +26,7 @@ import { Badge } from '@/components/ui/badge';
 import admin from '@/module/services/Admin';
 import type { Property } from '@/module/types/Admin';
 import { format } from 'date-fns';
+import { toast } from 'sonner';
 
 // Animation variants
 const pageVariants = {
@@ -285,7 +286,7 @@ export default function ApartmentDetails({ id }: { id: string }) {
                   src={apartment.image || '/placeholder.svg'}
                   alt={apartment.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                   onLoad={() => setImageLoaded(true)}
                 />
 
@@ -310,11 +311,20 @@ export default function ApartmentDetails({ id }: { id: string }) {
                   <Button
                     size="icon"
                     variant="secondary"
-                    className="rounded-full backdrop-blur-sm bg-background/80 hover:bg-background/90 transition-all duration-300"
-                    onClick={() => setIsLiked(!isLiked)}
+                    className="cursor-pointer rounded-full backdrop-blur-sm bg-background/80 hover:bg-background/90 transition-all duration-300"
+                    onClick={() => {
+                      //TODO: Add Favorite Functionality
+                      console.log(`liked apartments: ${apartment._id}`);
+                      setIsLiked(!isLiked);
+                      if (!isLiked) {
+                        toast.success('Apartment added to favorites!');
+                      } else {
+                        toast.success('Apartment removed from favorites!');
+                      }
+                    }}
                   >
                     <Heart
-                      className={`h-4 w-4 transition-all duration-300 ${
+                      className={` h-4 w-4 transition-all duration-300 ${
                         isLiked
                           ? 'fill-red-500 text-red-500 scale-110'
                           : 'text-muted-foreground'
@@ -324,7 +334,21 @@ export default function ApartmentDetails({ id }: { id: string }) {
                   <Button
                     size="icon"
                     variant="secondary"
-                    className="rounded-full backdrop-blur-sm bg-background/80 hover:bg-background/90 transition-all duration-300"
+                    className="cursor-pointer rounded-full backdrop-blur-sm bg-background/80 hover:bg-background/90 transition-all duration-300"
+                    onClick={() => {
+                      navigator.clipboard
+                        .writeText(window.location.href)
+                        .then(() => {
+                          // You could add a toast notification here if you have a toast library
+
+                          toast.success('URL copied to clipboard!');
+                          // If you have a toast library like react-hot-toast or react-toastify, use that instead of alert
+                        })
+                        .catch((err) => {
+                          console.error('Failed to copy URL: ', err);
+                          toast.error('Failed to copy URL. Please try again.');
+                        });
+                    }}
                   >
                     <Share2 className="h-4 w-4" />
                   </Button>
@@ -448,7 +472,7 @@ export default function ApartmentDetails({ id }: { id: string }) {
 
                     <Separator className="my-6 bg-gradient-to-r from-transparent via-border to-transparent" />
 
-                    <Button className="cursor-pointer w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group relative overflow-hidden">
+                    <Button className="cursor-pointer w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-background font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <span className="relative z-10">Book Now</span>
                     </Button>
