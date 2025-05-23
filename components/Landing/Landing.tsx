@@ -47,6 +47,34 @@ const staggerContainer = {
   },
 };
 
+// Feature card data
+const featureCards = [
+  {
+    icon: Home,
+    title: 'Flexible Living',
+    description:
+      'Choose from a variety of rental periods to suit your needs, from a few days to several months.',
+  },
+  {
+    icon: Calendar,
+    title: 'Move-in Ready',
+    description:
+      'All our properties come fully furnished and equipped with everything you need to feel at home.',
+  },
+  {
+    icon: Wifi,
+    title: 'High-speed Wi-Fi',
+    description:
+      'Stay connected with complimentary high-speed internet access in all our properties.',
+  },
+  {
+    icon: Clock,
+    title: '24/7 Support',
+    description:
+      'Our dedicated team is available around the clock to assist with any issues or questions.',
+  },
+];
+
 export default function Landing() {
   // Intersection observer hooks for different sections
   const [heroRef, heroInView] = useInView({
@@ -201,73 +229,21 @@ export default function Landing() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <motion.div variants={fadeInUp}>
-              <Card className="bg-accent rounded-xl h-full">
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4">
-                    <Home className="text-primary" size={24} />
-                  </div>
-                  <CardTitle className="text-xl font-semibold text-headline mb-2">
-                    Flexible Living
-                  </CardTitle>
-                  <p className="text-muted-foreground">
-                    Choose from a variety of rental periods to suit your needs,
-                    from a few days to several months.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div variants={fadeInUp}>
-              <Card className="bg-accent rounded-xl h-full">
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4">
-                    <Calendar className="text-primary" size={24} />
-                  </div>
-                  <CardTitle className="text-xl font-semibold text-headline mb-2">
-                    Move-in Ready
-                  </CardTitle>
-                  <p className="text-muted-foreground">
-                    All our properties come fully furnished and equipped with
-                    everything you need to feel at home.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div variants={fadeInUp}>
-              <Card className="bg-accent rounded-xl h-full">
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4">
-                    <Wifi className="text-primary" size={24} />
-                  </div>
-                  <CardTitle className="text-xl font-semibold text-headline mb-2">
-                    High-speed Wi-Fi
-                  </CardTitle>
-                  <p className="text-muted-foreground">
-                    Stay connected with complimentary high-speed internet access
-                    in all our properties.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div variants={fadeInUp}>
-              <Card className="bg-accent rounded-xl h-full">
-                <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4">
-                    <Clock className="text-primary" size={24} />
-                  </div>
-                  <CardTitle className="text-xl font-semibold text-headline mb-2">
-                    24/7 Support
-                  </CardTitle>
-                  <p className="text-muted-foreground">
-                    Our dedicated team is available around the clock to assist
-                    with any issues or questions.
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
+            {featureCards.map((card, index) => (
+              <motion.div key={index} variants={fadeInUp}>
+                <Card className="bg-accent rounded-xl h-full">
+                  <CardContent className="p-6">
+                    <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4">
+                      <card.icon className="text-primary" size={24} />
+                    </div>
+                    <CardTitle className="text-xl font-semibold text-headline mb-2">
+                      {card.title}
+                    </CardTitle>
+                    <p className="text-muted-foreground">{card.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         </div>
       </motion.section>
@@ -389,7 +365,7 @@ export default function Landing() {
             <motion.div variants={fadeInUp}>
               <Card className="bg-accent rounded-xl h-full">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mx-auto mb-4">
                     <Search className="text-primary" size={24} />
                   </div>
                   <CardTitle className="text-xl font-semibold text-headline mb-2">
@@ -406,7 +382,7 @@ export default function Landing() {
             <motion.div variants={fadeInUp}>
               <Card className="bg-accent rounded-xl h-full">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mx-auto mb-4">
                     <UserPlus className="text-primary" size={24} />
                   </div>
                   <CardTitle className="text-xl font-semibold text-headline mb-2">
@@ -423,7 +399,7 @@ export default function Landing() {
             <motion.div variants={fadeInUp}>
               <Card className="bg-accent rounded-xl h-full">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mx-auto mb-4">
                     <FileText className="text-primary" size={24} />
                   </div>
                   <CardTitle className="text-xl font-semibold text-headline mb-2">
