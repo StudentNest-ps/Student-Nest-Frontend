@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import {
-  Users,
   Search,
   Calendar,
   UserPlus,
@@ -16,14 +15,9 @@ import {
   Home,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
+
+import { redirect } from 'next/navigation';
 
 // Animation variants
 const fadeInUp = {
@@ -56,10 +50,6 @@ const staggerContainer = {
 export default function Landing() {
   // Intersection observer hooks for different sections
   const [heroRef, heroInView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-  const [searchRef, searchInView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
@@ -99,8 +89,6 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* 1. Navbar (inside the layout) */}
-
       {/* 2. Hero Section */}
       <motion.section
         ref={heroRef}
@@ -122,7 +110,12 @@ export default function Landing() {
                 Find your perfect rental home with ease. We offer a wide range
                 of properties to suit your needs and budget.
               </p>
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer">
+              <Button
+                className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
+                onClick={() => {
+                  redirect('/signin');
+                }}
+              >
                 Get Started
               </Button>
             </motion.div>
@@ -138,104 +131,6 @@ export default function Landing() {
               </div>
             </motion.div>
           </div>
-        </div>
-      </motion.section>
-
-      {/* 3. Search Filter Bar */}
-      <motion.section
-        ref={searchRef}
-        initial="hidden"
-        animate={searchInView ? 'visible' : 'hidden'}
-        variants={fadeInUp}
-        className="py-8 bg-background"
-      >
-        <div className="container mx-auto px-8">
-          <Card className="rounded-4xl shadow-md">
-            <CardContent className="py-2">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div className="flex items-center space-x-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 md:pr-4">
-                  <Search className="text-primary mt-6" size={20} />
-                  <div className="w-full">
-                    <label className="block text-sm text-muted-foreground">
-                      City
-                    </label>
-                    <Select defaultValue="london">
-                      <SelectTrigger className="w-full border-0 focus:ring-0 p-2 h-auto">
-                        <SelectValue placeholder="Select city" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="london">London</SelectItem>
-                        <SelectItem value="manchester">Manchester</SelectItem>
-                        <SelectItem value="birmingham">Birmingham</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 md:pr-4">
-                  <Calendar className="text-primary mt-6" size={20} />
-                  <div className="w-full">
-                    <label className="block text-sm text-muted-foreground">
-                      Move-in
-                    </label>
-                    <Select>
-                      <SelectTrigger className="w-full border-0 focus:ring-0 p-2 h-auto">
-                        <SelectValue placeholder="Select date" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="date1">May 1, 2025</SelectItem>
-                        <SelectItem value="date2">May 15, 2025</SelectItem>
-                        <SelectItem value="date3">June 1, 2025</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3 border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 md:pr-4">
-                  <Calendar className="text-primary mt-6" size={20} />
-                  <div className="w-full">
-                    <label className="block text-sm text-muted-foreground">
-                      Move-out
-                    </label>
-                    <Select>
-                      <SelectTrigger className="w-full border-0 focus:ring-0 p-2 h-auto">
-                        <SelectValue placeholder="Select date" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="date1">June 1, 2025</SelectItem>
-                        <SelectItem value="date2">June 15, 2025</SelectItem>
-                        <SelectItem value="date3">July 1, 2025</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  <Users className="text-primary mt-6" size={20} />
-                  <div className="flex-grow">
-                    <label className="block text-sm text-muted-foreground">
-                      Guests
-                    </label>
-                    <Select defaultValue="1">
-                      <SelectTrigger className="w-full border-0 focus:ring-0 p-2 h-auto">
-                        <SelectValue placeholder="Select guests" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">1 Guest</SelectItem>
-                        <SelectItem value="2">2 Guests</SelectItem>
-                        <SelectItem value="3">3+ Guests</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-center">
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer w-full md:w-[300px]">
-                Search
-              </Button>
-            </CardFooter>
-          </Card>
         </div>
       </motion.section>
 
@@ -275,7 +170,10 @@ export default function Landing() {
                 you&apos;re looking for a short-term stay or a long-term home,
                 we have options that fit your needs.
               </p>
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer">
+              <Button
+                className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
+                onClick={() => redirect('/blog')}
+              >
                 Learn More
               </Button>
             </motion.div>
@@ -306,7 +204,7 @@ export default function Landing() {
             <motion.div variants={fadeInUp}>
               <Card className="bg-accent rounded-xl h-full">
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4">
                     <Home className="text-primary" size={24} />
                   </div>
                   <CardTitle className="text-xl font-semibold text-headline mb-2">
@@ -323,7 +221,7 @@ export default function Landing() {
             <motion.div variants={fadeInUp}>
               <Card className="bg-accent rounded-xl h-full">
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4">
                     <Calendar className="text-primary" size={24} />
                   </div>
                   <CardTitle className="text-xl font-semibold text-headline mb-2">
@@ -340,7 +238,7 @@ export default function Landing() {
             <motion.div variants={fadeInUp}>
               <Card className="bg-accent rounded-xl h-full">
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4">
                     <Wifi className="text-primary" size={24} />
                   </div>
                   <CardTitle className="text-xl font-semibold text-headline mb-2">
@@ -357,7 +255,7 @@ export default function Landing() {
             <motion.div variants={fadeInUp}>
               <Card className="bg-accent rounded-xl h-full">
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4">
                     <Clock className="text-primary" size={24} />
                   </div>
                   <CardTitle className="text-xl font-semibold text-headline mb-2">
@@ -422,6 +320,7 @@ export default function Landing() {
             <Button
               variant="outline"
               className="cursor-pointer text-primary border-primary hover:bg-accent"
+              onClick={() => redirect('/apartments')}
             >
               View all spaces
             </Button>
@@ -438,7 +337,7 @@ export default function Landing() {
         className="py-16 md:py-24 relative"
       >
         <div className="absolute inset-0 bg-black/50 z-10"></div>
-        <div className="relative z-20 container mx-auto px-4 text-center text-primary-foreground">
+        <div className="relative z-20 container mx-auto px-4 text-center text-white">
           <motion.h2
             variants={fadeInUp}
             className="text-4xl md:text-5xl font-bold mb-8"
@@ -446,7 +345,10 @@ export default function Landing() {
             Bespoke spaces
           </motion.h2>
           <motion.div variants={fadeInUp}>
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer">
+            <Button
+              onClick={() => redirect('/apartments')}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
+            >
               Start booking
             </Button>
           </motion.div>
@@ -725,6 +627,7 @@ export default function Landing() {
             <Button
               variant="outline"
               className="cursor-pointer text-primary border-primary hover:bg-accent"
+              onClick={() => redirect('/blog')}
             >
               View all posts
             </Button>
@@ -911,7 +814,10 @@ export default function Landing() {
                 is dedicated to providing exceptional service and support
                 throughout your rental journey.
               </p>
-              <Button className="cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button
+                onClick={() => redirect('/contact-us')}
+                className="cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90"
+              >
                 Contact Us
               </Button>
             </motion.div>

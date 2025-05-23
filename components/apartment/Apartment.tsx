@@ -143,7 +143,7 @@ export default function ApartmentDetails({ id }: { id: string }) {
                   </span>
                 </div>
                 <Separator className="my-4" />
-                <Button className="w-full bg-primary hover:bg-primary/90 mt-2">
+                <Button className="cursor-pointer w-full bg-primary hover:bg-primary/90 mt-2">
                   Book Now
                 </Button>
               </CardContent>
