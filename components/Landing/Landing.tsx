@@ -1,4 +1,7 @@
 'use client';
+
+import type React from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -17,8 +20,8 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
 
-// Animation variants
 const fadeInUp = {
   hidden: { opacity: 0, y: 60 },
   visible: {
@@ -46,21 +49,6 @@ const staggerContainer = {
   },
 };
 
-// Enhanced animation variants
-const glowPulse = {
-  initial: { opacity: 0.5, scale: 1 },
-  animate: {
-    opacity: [0.5, 0.8, 0.5],
-    scale: [1, 1.05, 1],
-    transition: {
-      duration: 8,
-      repeat: Infinity,
-      repeatType: 'reverse',
-      ease: 'easeInOut',
-    },
-  },
-};
-
 const cardHover = {
   rest: {
     scale: 1,
@@ -83,7 +71,6 @@ const buttonHover = {
   },
 };
 
-// Feature card data
 const featureCards = [
   {
     icon: Home,
@@ -111,7 +98,6 @@ const featureCards = [
   },
 ];
 
-// Floating Orb Component
 const FloatingOrb = ({
   className,
   size,
@@ -127,13 +113,28 @@ const FloatingOrb = ({
   xMovement: number[];
   yMovement: number[];
 }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div
+        className={`absolute rounded-full blur-3xl opacity-20 ${className}`}
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+
   return (
     <motion.div
       className={`absolute rounded-full blur-3xl ${className}`}
       style={{ width: size, height: size }}
       initial={{ opacity: 0 }}
       animate={{
-        opacity: [0.1, 0.3, 0.1],
+        opacity: [0.1, 0.4, 0.1],
         x: xMovement,
         y: yMovement,
       }}
@@ -148,59 +149,173 @@ const FloatingOrb = ({
   );
 };
 
-// Particle Component
-const Particles = ({
-  count = 20,
-  className,
-}: {
-  count?: number;
-  className?: string;
-}) => {
-  const particles = Array.from({ length: count }).map((_, i) => ({
-    id: i,
-    size: Math.random() * 3 + 1,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    duration: Math.random() * 20 + 10,
-    delay: Math.random() * 5,
-  }));
+const GlowingBackground = () => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-ring/5" />
+      </div>
+    );
+  }
 
   return (
-    <div
-      className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}
-    >
-      {particles.map((particle) => (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      {/* Main gradient background */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-ring/10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 2 }}
+      />
+
+      {/* Animated gradient overlays */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-tr from-chart-1/5 via-transparent to-chart-2/5"
+        animate={{
+          opacity: [0.3, 0.7, 0.3],
+        }}
+        transition={{
+          duration: 8,
+          repeat: Number.POSITIVE_INFINITY,
+          repeatType: 'reverse',
+          ease: 'easeInOut',
+        }}
+      />
+
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-bl from-chart-3/5 via-transparent to-chart-4/5"
+        animate={{
+          opacity: [0.2, 0.6, 0.2],
+        }}
+        transition={{
+          duration: 12,
+          repeat: Number.POSITIVE_INFINITY,
+          repeatType: 'reverse',
+          ease: 'easeInOut',
+          delay: 2,
+        }}
+      />
+
+      {/* Large glowing orbs */}
+      <motion.div
+        className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
+        animate={{
+          scale: [1, 1.3, 1],
+          opacity: [0.2, 0.4, 0.2],
+          x: [0, 100, 0],
+          y: [0, -50, 0],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Number.POSITIVE_INFINITY,
+          repeatType: 'reverse',
+          ease: 'easeInOut',
+        }}
+      />
+
+      <motion.div
+        className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-ring/20 rounded-full blur-3xl"
+        animate={{
+          scale: [1, 1.2, 1],
+          opacity: [0.3, 0.5, 0.3],
+          x: [0, -80, 0],
+          y: [0, 60, 0],
+        }}
+        transition={{
+          duration: 15,
+          repeat: Number.POSITIVE_INFINITY,
+          repeatType: 'reverse',
+          ease: 'easeInOut',
+          delay: 3,
+        }}
+      />
+
+      <motion.div
+        className="absolute top-1/2 right-1/3 w-64 h-64 bg-chart-1/20 rounded-full blur-3xl"
+        animate={{
+          scale: [1, 1.4, 1],
+          opacity: [0.2, 0.6, 0.2],
+          x: [0, -120, 0],
+          y: [0, 80, 0],
+        }}
+        transition={{
+          duration: 18,
+          repeat: Number.POSITIVE_INFINITY,
+          repeatType: 'reverse',
+          ease: 'easeInOut',
+          delay: 1,
+        }}
+      />
+    </div>
+  );
+};
+
+const Particles = ({ count = 30 }: { count?: number }) => {
+  const [particles, setParticles] = useState<React.ReactNode[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    const newParticles = Array.from({ length: count }).map((_, i) => {
+      const size = Math.random() * 3 + 1;
+      const delay = Math.random() * 10;
+      const duration = Math.random() * 15 + 10;
+      const x = Math.random() * 100;
+      const y = Math.random() * 100;
+
+      return (
         <motion.div
-          key={particle.id}
-          className="absolute rounded-full bg-primary/10 dark:bg-primary/20"
+          key={i}
+          className="absolute rounded-full bg-primary/30"
           style={{
-            width: particle.size,
-            height: particle.size,
-            left: `${particle.x}%`,
-            top: `${particle.y}%`,
+            width: `${size}px`,
+            height: `${size}px`,
+            left: `${x}%`,
+            top: `${y}%`,
           }}
-          initial={{ opacity: 0, y: 0 }}
+          initial={{ opacity: 0, scale: 0 }}
           animate={{
-            opacity: [0, 0.5, 0],
-            y: -100,
+            opacity: [0, 0.8, 0],
+            scale: [0, 1.5, 0],
+            x: [0, Math.random() * 40 - 20],
+            y: [0, Math.random() * 40 - 20],
           }}
           transition={{
-            duration: particle.duration,
+            duration: duration,
             repeat: Number.POSITIVE_INFINITY,
-            delay: particle.delay,
-            ease: 'linear',
+            repeatType: 'loop',
+            ease: 'easeInOut',
+            delay: delay,
           }}
         />
-      ))}
-    </div>
+      );
+    });
+    setParticles(newParticles);
+  }, [count, mounted]);
+
+  if (!mounted) return null;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none">{particles}</div>
   );
 };
 
 export default function Landing() {
   const router = useRouter();
   const { scrollYProgress } = useScroll();
+  const [mounted, setMounted] = useState(false);
 
-  // Intersection observer hooks for different sections
   const [heroRef, heroInView] = useInView({
     triggerOnce: false,
     threshold: 0.1,
@@ -242,16 +357,29 @@ export default function Landing() {
     threshold: 0.1,
   });
 
-  // Parallax effects
   const heroImageY = useTransform(scrollYProgress, [0, 0.2], [0, 50]);
   const featureImageY = useTransform(scrollYProgress, [0.1, 0.3], [50, 0]);
   const bespokeScale = useTransform(scrollYProgress, [0.4, 0.6], [1, 1.1]);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Enhanced glowing background */}
+      <GlowingBackground />
+
+      {/* Floating particles */}
+      <Particles count={40} />
+
       {/* Global floating orbs */}
       <FloatingOrb
-        className="bg-primary/10 dark:bg-primary/20 left-[10%] top-[5%]"
+        className="bg-primary/20 left-[10%] top-[5%]"
         size="300px"
         delay={0}
         duration={15}
@@ -259,7 +387,7 @@ export default function Landing() {
         yMovement={[0, 30, 0]}
       />
       <FloatingOrb
-        className="bg-ring/10 dark:bg-ring/20 right-[15%] top-[20%]"
+        className="bg-ring/20 right-[15%] top-[20%]"
         size="250px"
         delay={2}
         duration={18}
@@ -267,7 +395,7 @@ export default function Landing() {
         yMovement={[0, 20, 0]}
       />
       <FloatingOrb
-        className="bg-chart-1/10 dark:bg-chart-1/20 left-[20%] bottom-[10%]"
+        className="bg-chart-1/20 left-[20%] bottom-[10%]"
         size="200px"
         delay={1}
         duration={20}
@@ -275,7 +403,7 @@ export default function Landing() {
         yMovement={[0, -40, 0]}
       />
       <FloatingOrb
-        className="bg-chart-2/10 dark:bg-chart-2/20 right-[5%] bottom-[30%]"
+        className="bg-chart-2/20 right-[5%] bottom-[30%]"
         size="350px"
         delay={3}
         duration={25}
@@ -283,10 +411,7 @@ export default function Landing() {
         yMovement={[0, -30, 0]}
       />
 
-      {/* Particles effect */}
-      <Particles count={30} className="z-0" />
-
-      {/* 2. Hero Section */}
+      {/* Hero Section */}
       <motion.section
         ref={heroRef}
         initial="hidden"
@@ -294,26 +419,27 @@ export default function Landing() {
         variants={fadeIn}
         className="py-16 md:py-24 bg-background relative z-10"
       >
-        {/* Section-specific glowing effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent dark:from-primary/10 dark:via-transparent dark:to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        />
-
         <div className="container mx-auto px-4 relative">
           <div className="flex flex-col md:flex-row items-center">
             <motion.div
               variants={fadeInUp}
               className="md:w-1/2 mb-10 md:mb-0 md:pr-10 relative z-10"
             >
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="absolute -left-10 -top-10 w-20 h-20 rounded-full bg-primary/10 dark:bg-primary/20 blur-xl"
-              />
+              {mounted && (
+                <motion.div
+                  className="absolute -left-10 -top-10 w-32 h-32 rounded-full bg-primary/20 blur-2xl"
+                  animate={{
+                    scale: [1, 1.3, 1],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{
+                    duration: 6,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: 'reverse',
+                    ease: 'easeInOut',
+                  }}
+                />
+              )}
 
               <motion.h1
                 className="text-4xl md:text-5xl font-bold mb-6 text-primary relative"
@@ -323,12 +449,14 @@ export default function Landing() {
               >
                 <span className="relative inline-block">
                   We rent your property
-                  <motion.span
-                    className="absolute -bottom-2 left-0 w-full h-1 bg-primary/30 dark:bg-primary/50 rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: '100%' }}
-                    transition={{ delay: 0.8, duration: 0.8 }}
-                  />
+                  {mounted && (
+                    <motion.span
+                      className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-ring/50 rounded-full"
+                      initial={{ width: 0, opacity: 0 }}
+                      animate={{ width: '100%', opacity: 1 }}
+                      transition={{ delay: 0.8, duration: 1.2 }}
+                    />
+                  )}
                 </span>
               </motion.h1>
 
@@ -348,16 +476,18 @@ export default function Landing() {
                 variants={buttonHover}
               >
                 <Button
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer relative overflow-hidden group"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer relative overflow-hidden group shadow-lg shadow-primary/25"
                   onClick={() => router.push('/signin')}
                 >
-                  <motion.span
-                    className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary-foreground/20 to-primary/0 dark:from-primary/0 dark:via-primary-foreground/10 dark:to-primary/0"
-                    initial={{ x: '-100%' }}
-                    whileHover={{ x: '100%' }}
-                    transition={{ duration: 0.8 }}
-                  />
-                  Get Started
+                  {mounted && (
+                    <motion.span
+                      className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary-foreground/20 to-primary/0"
+                      initial={{ x: '-100%' }}
+                      whileHover={{ x: '100%' }}
+                      transition={{ duration: 0.8 }}
+                    />
+                  )}
+                  <span className="relative z-10">Get Started</span>
                 </Button>
               </motion.div>
             </motion.div>
@@ -365,21 +495,37 @@ export default function Landing() {
             <motion.div
               variants={fadeInUp}
               className="md:w-1/2 relative"
-              style={{ y: heroImageY }}
+              style={mounted ? { y: heroImageY } : {}}
             >
-              <motion.div
-                className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full bg-ring/10 dark:bg-ring/20 blur-xl"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3, duration: 1 }}
-              />
+              {mounted && (
+                <motion.div
+                  className="absolute -right-10 -bottom-10 w-40 h-40 rounded-full bg-ring/20 blur-2xl"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.4, 0.7, 0.4],
+                  }}
+                  transition={{
+                    duration: 8,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: 'reverse',
+                    ease: 'easeInOut',
+                    delay: 1,
+                  }}
+                />
+              )}
 
               <motion.div
-                className="rounded-xl overflow-hidden shadow-lg relative"
+                className="rounded-xl overflow-hidden shadow-2xl relative group"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.5 }}
               >
-                <motion.div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent dark:from-primary/30 dark:to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 z-10" />
+                {mounted && (
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-ring/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                  />
+                )}
 
                 <Image
                   src="/Hero.jpg"
@@ -394,24 +540,25 @@ export default function Landing() {
         </div>
       </motion.section>
 
-      {/* 4. Feature Highlight Section */}
+      {/* Feature Highlight Section */}
       <motion.section
         ref={featureRef}
         initial="hidden"
         animate={featureInView ? 'visible' : 'hidden'}
         variants={fadeIn}
-        className="py-16 md:py-24 bg-accent relative"
+        className="py-16 md:py-24 bg-accent/50 relative"
       >
-        {/* Section-specific glowing effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-accent via-accent/50 to-accent dark:from-accent/80 dark:via-accent dark:to-accent/80"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        />
+        {mounted && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-accent/80 via-accent/40 to-accent/80"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          />
+        )}
 
         <FloatingOrb
-          className="bg-chart-3/10 dark:bg-chart-3/20 left-[5%] top-[30%]"
+          className="bg-chart-3/20 left-[5%] top-[30%]"
           size="200px"
           delay={1.5}
           duration={12}
@@ -424,14 +571,20 @@ export default function Landing() {
             <motion.div
               variants={fadeInUp}
               className="md:w-1/2 mb-10 md:mb-0 order-2 md:order-1"
-              style={{ y: featureImageY }}
+              style={mounted ? { y: featureImageY } : {}}
             >
               <motion.div
-                className="rounded-xl overflow-hidden relative"
+                className="rounded-xl overflow-hidden relative group"
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.5 }}
               >
-                <motion.div className="absolute inset-0 bg-gradient-to-bl from-ring/20 to-transparent dark:from-ring/30 dark:to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 z-10" />
+                {mounted && (
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-bl from-ring/30 to-chart-1/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                  />
+                )}
 
                 <Image
                   src="/Flexible.jpg"
@@ -445,14 +598,24 @@ export default function Landing() {
 
             <motion.div
               variants={fadeInUp}
-              className="md:w-1/2 md:pl-16 order-1 md:order-2"
+              className="md:w-1/2 md:pl-16 order-1 md:order-2 relative"
             >
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="absolute right-10 top-20 w-20 h-20 rounded-full bg-ring/10 dark:bg-ring/20 blur-xl"
-              />
+              {mounted && (
+                <motion.div
+                  className="absolute right-10 top-20 w-24 h-24 rounded-full bg-ring/20 blur-xl"
+                  animate={{
+                    scale: [1, 1.4, 1],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{
+                    duration: 7,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: 'reverse',
+                    ease: 'easeInOut',
+                    delay: 0.5,
+                  }}
+                />
+              )}
 
               <motion.h2
                 className="text-3xl md:text-4xl font-bold text-headline mb-6 text-primary relative"
@@ -462,12 +625,14 @@ export default function Landing() {
               >
                 <span className="relative inline-block">
                   The future is flexible
-                  <motion.span
-                    className="absolute -bottom-2 left-0 w-full h-1 bg-primary/30 dark:bg-primary/50 rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: '100%' }}
-                    transition={{ delay: 0.8, duration: 0.8 }}
-                  />
+                  {mounted && (
+                    <motion.span
+                      className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-ring/50 rounded-full"
+                      initial={{ width: 0, opacity: 0 }}
+                      animate={{ width: '100%', opacity: 1 }}
+                      transition={{ delay: 0.8, duration: 1.2 }}
+                    />
+                  )}
                 </span>
               </motion.h2>
 
@@ -488,16 +653,18 @@ export default function Landing() {
                 variants={buttonHover}
               >
                 <Button
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer relative overflow-hidden group"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer relative overflow-hidden group shadow-lg shadow-primary/25"
                   onClick={() => router.push('/blog')}
                 >
-                  <motion.span
-                    className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary-foreground/20 to-primary/0 dark:from-primary/0 dark:via-primary-foreground/10 dark:to-primary/0"
-                    initial={{ x: '-100%' }}
-                    whileHover={{ x: '100%' }}
-                    transition={{ duration: 0.8 }}
-                  />
-                  Learn More
+                  {mounted && (
+                    <motion.span
+                      className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary-foreground/20 to-primary/0"
+                      initial={{ x: '-100%' }}
+                      whileHover={{ x: '100%' }}
+                      transition={{ duration: 0.8 }}
+                    />
+                  )}
+                  <span className="relative z-10">Learn More</span>
                 </Button>
               </motion.div>
             </motion.div>
@@ -505,7 +672,7 @@ export default function Landing() {
         </div>
       </motion.section>
 
-      {/* 5. Feature Cards Grid */}
+      {/* Feature Cards Grid */}
       <motion.section
         ref={cardsRef}
         initial="hidden"
@@ -513,16 +680,17 @@ export default function Landing() {
         variants={staggerContainer}
         className="py-16 md:py-24 bg-background relative"
       >
-        {/* Section-specific glowing effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent dark:from-transparent dark:via-primary/10 dark:to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        />
+        {mounted && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          />
+        )}
 
         <FloatingOrb
-          className="bg-chart-4/10 dark:bg-chart-4/20 right-[15%] top-[10%]"
+          className="bg-chart-4/20 right-[15%] top-[10%]"
           size="180px"
           delay={2}
           duration={14}
@@ -540,12 +708,14 @@ export default function Landing() {
             >
               <span className="relative inline-block">
                 Our Features
-                <motion.span
-                  className="absolute -bottom-2 left-0 w-full h-1 bg-primary/30 dark:bg-primary/50 rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: '100%' }}
-                  transition={{ delay: 0.8, duration: 0.8 }}
-                />
+                {mounted && (
+                  <motion.span
+                    className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-ring/50 rounded-full"
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: '100%', opacity: 1 }}
+                    transition={{ delay: 0.8, duration: 1.2 }}
+                  />
+                )}
               </span>
             </motion.h2>
 
@@ -572,28 +742,36 @@ export default function Landing() {
               >
                 <motion.div
                   variants={cardHover}
-                  className="bg-accent rounded-xl h-full relative overflow-hidden group"
+                  className="bg-accent/80 rounded-xl h-full relative overflow-hidden group backdrop-blur-sm border border-primary/10"
                 >
-                  <motion.div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent dark:from-primary/20 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {mounted && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-ring/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                    />
+                  )}
 
                   <CardContent className="p-6 relative z-10">
                     <motion.div
-                      className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4 relative overflow-hidden"
+                      className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4 relative overflow-hidden shadow-lg"
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 dark:from-primary/20 dark:via-transparent dark:to-primary/20"
-                        animate={{
-                          x: ['-100%', '100%'],
-                        }}
-                        transition={{
-                          repeat: Number.POSITIVE_INFINITY,
-                          repeatType: 'loop',
-                          duration: 3,
-                          ease: 'linear',
-                        }}
-                      />
+                      {mounted && (
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-ring/20"
+                          animate={{
+                            x: ['-100%', '100%'],
+                          }}
+                          transition={{
+                            repeat: Number.POSITIVE_INFINITY,
+                            repeatType: 'loop',
+                            duration: 3,
+                            ease: 'linear',
+                          }}
+                        />
+                      )}
                       <card.icon
                         className="text-primary relative z-10"
                         size={24}
@@ -613,7 +791,7 @@ export default function Landing() {
         </div>
       </motion.section>
 
-      {/* 6. Location Picker */}
+      {/* Location Picker */}
       <motion.section
         ref={locationRef}
         initial="hidden"
@@ -621,16 +799,17 @@ export default function Landing() {
         variants={fadeIn}
         className="py-16 md:py-24 bg-background relative"
       >
-        {/* Section-specific glowing effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-ring/5 to-transparent dark:from-transparent dark:via-ring/10 dark:to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        />
+        {mounted && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-ring/5 to-transparent"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          />
+        )}
 
         <FloatingOrb
-          className="bg-chart-5/10 dark:bg-chart-5/20 left-[25%] bottom-[10%]"
+          className="bg-chart-5/20 left-[25%] bottom-[10%]"
           size="220px"
           delay={1}
           duration={16}
@@ -647,12 +826,14 @@ export default function Landing() {
           >
             <span className="relative inline-block">
               Choose your location
-              <motion.span
-                className="absolute -bottom-2 left-0 w-full h-1 bg-primary/30 dark:bg-primary/50 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-              />
+              {mounted && (
+                <motion.span
+                  className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-ring/50 rounded-full"
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: '100%', opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 1.2 }}
+                />
+              )}
             </span>
           </motion.h2>
 
@@ -677,8 +858,14 @@ export default function Landing() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1, duration: 0.5 }}
                 >
-                  <Card className="rounded-xl overflow-hidden shadow-md mb-3 relative group">
-                    <motion.div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent dark:from-primary/30 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+                  <Card className="rounded-xl overflow-hidden shadow-lg mb-3 relative group border border-primary/10">
+                    {mounted && (
+                      <motion.div
+                        className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-ring/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
+                        initial={{ opacity: 0 }}
+                        whileHover={{ opacity: 1 }}
+                      />
+                    )}
 
                     <Image
                       src={`/placeholder.svg?height=200&width=250&text=${location}`}
@@ -704,23 +891,25 @@ export default function Landing() {
             >
               <Button
                 variant="outline"
-                className="cursor-pointer text-primary border-primary hover:bg-accent relative overflow-hidden group"
+                className="cursor-pointer text-primary border-primary hover:bg-accent relative overflow-hidden group shadow-lg shadow-primary/10"
                 onClick={() => router.push('/apartments')}
               >
-                <motion.span
-                  className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 dark:from-accent/0 dark:via-accent/30 dark:to-accent/0"
-                  initial={{ x: '-100%' }}
-                  whileHover={{ x: '100%' }}
-                  transition={{ duration: 0.8 }}
-                />
-                View all spaces
+                {mounted && (
+                  <motion.span
+                    className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0"
+                    initial={{ x: '-100%' }}
+                    whileHover={{ x: '100%' }}
+                    transition={{ duration: 0.8 }}
+                  />
+                )}
+                <span className="relative z-10">View all spaces</span>
               </Button>
             </motion.div>
           </div>
         </div>
       </motion.section>
 
-      {/* 7. Bespoke Spaces Section */}
+      {/* Bespoke Spaces Section */}
       <motion.section
         ref={bespokeRef}
         initial="hidden"
@@ -729,18 +918,20 @@ export default function Landing() {
         className="py-16 md:py-24 relative"
       >
         <motion.div
-          className="absolute inset-0 bg-black/50 z-10"
+          className="absolute inset-0 bg-black/60 z-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
         />
 
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-transparent dark:from-primary/40 dark:to-transparent mix-blend-overlay z-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 1 }}
-        />
+        {mounted && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-tr from-primary/40 to-ring/40 mix-blend-overlay z-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 1 }}
+          />
+        )}
 
         <div className="relative z-20 container mx-auto px-4 text-center text-white">
           <motion.h2
@@ -750,67 +941,73 @@ export default function Landing() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <motion.span
-              className="absolute -left-8 -top-8 w-16 h-16 rounded-full bg-white/10 blur-xl"
-              animate={{
-                opacity: [0.5, 0.8, 0.5],
-                scale: [1, 1.05, 1],
-                transition: {
-                  duration: 8,
-                  repeat: Infinity,
-                  repeatType: 'reverse',
-                  ease: 'easeInOut',
-                },
-              }}
-              initial={glowPulse.initial}
-            />
+            {mounted && (
+              <>
+                <motion.span
+                  className="absolute -left-8 -top-8 w-16 h-16 rounded-full bg-white/20 blur-xl"
+                  animate={{
+                    opacity: [0.3, 0.8, 0.3],
+                    scale: [1, 1.3, 1],
+                  }}
+                  transition={{
+                    duration: 6,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: 'reverse',
+                    ease: 'easeInOut',
+                  }}
+                />
+
+                <motion.span
+                  className="absolute -right-8 -bottom-8 w-16 h-16 rounded-full bg-white/20 blur-xl"
+                  animate={{
+                    opacity: [0.3, 0.8, 0.3],
+                    scale: [1, 1.3, 1],
+                  }}
+                  transition={{
+                    duration: 6,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: 'reverse',
+                    ease: 'easeInOut',
+                    delay: 1,
+                  }}
+                />
+              </>
+            )}
 
             <span className="relative inline-block">
               Bespoke spaces
-              <motion.span
-                className="absolute -bottom-2 left-0 w-full h-1 bg-white/50 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-              />
+              {mounted && (
+                <motion.span
+                  className="absolute -bottom-2 left-0 w-full h-1 bg-white/60 rounded-full"
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: '100%', opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 1.2 }}
+                />
+              )}
             </span>
-
-            <motion.span
-              className="absolute -right-8 -bottom-8 w-16 h-16 rounded-full bg-white/10 blur-xl"
-              animate={{
-                opacity: [0.5, 0.8, 0.5],
-                scale: [1, 1.05, 1],
-                transition: {
-                  duration: 8,
-                  repeat: Infinity,
-                  repeatType: 'reverse',
-                  ease: 'easeInOut',
-                },
-              }}
-              initial={glowPulse.initial}
-              transition={{ delay: 0.5 }}
-            />
           </motion.h2>
 
           <motion.div variants={fadeInUp} whileHover="hover" initial="rest">
             <Button
               onClick={() => router.push('/apartments')}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer relative overflow-hidden group"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer relative overflow-hidden group shadow-2xl shadow-primary/30"
             >
-              <motion.span
-                className="absolute inset-0 bg-gradient-to-r from-primary-foreground/0 via-primary-foreground/20 to-primary-foreground/0"
-                initial={{ x: '-100%' }}
-                whileHover={{ x: '100%' }}
-                transition={{ duration: 0.8 }}
-              />
-              Start booking
+              {mounted && (
+                <motion.span
+                  className="absolute inset-0 bg-gradient-to-r from-primary-foreground/0 via-primary-foreground/30 to-primary-foreground/0"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '100%' }}
+                  transition={{ duration: 0.8 }}
+                />
+              )}
+              <span className="relative z-10">Start booking</span>
             </Button>
           </motion.div>
         </div>
 
         <motion.div
           className="absolute inset-0 z-0"
-          style={{ scale: bespokeScale }}
+          style={mounted ? { scale: bespokeScale } : {}}
         >
           <Image
             src="/couch.jpg"
@@ -821,7 +1018,7 @@ export default function Landing() {
         </motion.div>
       </motion.section>
 
-      {/* 8. Corporate Partnerships */}
+      {/* Corporate Partnerships */}
       <motion.section
         ref={corporateRef}
         initial="hidden"
@@ -829,16 +1026,17 @@ export default function Landing() {
         variants={fadeIn}
         className="py-16 md:py-24 bg-background relative"
       >
-        {/* Section-specific glowing effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-transparent via-chart-1/5 to-transparent dark:from-transparent dark:via-chart-1/10 dark:to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        />
+        {mounted && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-b from-transparent via-chart-1/5 to-transparent"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          />
+        )}
 
         <FloatingOrb
-          className="bg-chart-2/10 dark:bg-chart-2/20 right-[10%] top-[20%]"
+          className="bg-chart-2/20 right-[10%] top-[20%]"
           size="250px"
           delay={2.5}
           duration={18}
@@ -856,12 +1054,14 @@ export default function Landing() {
             >
               <span className="relative inline-block">
                 Corporate Partnerships
-                <motion.span
-                  className="absolute -bottom-2 left-0 w-full h-1 bg-primary/30 dark:bg-primary/50 rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: '100%' }}
-                  transition={{ delay: 0.8, duration: 0.8 }}
-                />
+                {mounted && (
+                  <motion.span
+                    className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-ring/50 rounded-full"
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: '100%', opacity: 1 }}
+                    transition={{ delay: 0.8, duration: 1.2 }}
+                  />
+                )}
               </span>
             </motion.h2>
 
@@ -909,28 +1109,36 @@ export default function Landing() {
               >
                 <motion.div
                   variants={cardHover}
-                  className="bg-accent rounded-xl h-full relative overflow-hidden group"
+                  className="bg-accent/80 rounded-xl h-full relative overflow-hidden group backdrop-blur-sm border border-primary/10"
                 >
-                  <motion.div className="absolute inset-0 bg-gradient-to-tr from-chart-1/10 to-transparent dark:from-chart-1/20 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {mounted && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-tr from-chart-1/20 to-ring/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                    />
+                  )}
 
                   <CardContent className="p-6 text-center relative z-10">
                     <motion.div
-                      className="w-12 h-12 bg-background rounded-full flex items-center justify-center mx-auto mb-4 relative overflow-hidden"
+                      className="w-12 h-12 bg-background rounded-full flex items-center justify-center mx-auto mb-4 relative overflow-hidden shadow-lg"
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-chart-1/10 via-transparent to-chart-1/10 dark:from-chart-1/20 dark:via-transparent dark:to-chart-1/20"
-                        animate={{
-                          x: ['-100%', '100%'],
-                        }}
-                        transition={{
-                          repeat: Number.POSITIVE_INFINITY,
-                          repeatType: 'loop',
-                          duration: 3,
-                          ease: 'linear',
-                        }}
-                      />
+                      {mounted && (
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-chart-1/20 via-transparent to-ring/20"
+                          animate={{
+                            x: ['-100%', '100%'],
+                          }}
+                          transition={{
+                            repeat: Number.POSITIVE_INFINITY,
+                            repeatType: 'loop',
+                            duration: 3,
+                            ease: 'linear',
+                          }}
+                        />
+                      )}
                       <card.icon
                         className="text-primary relative z-10"
                         size={24}
@@ -950,24 +1158,25 @@ export default function Landing() {
         </div>
       </motion.section>
 
-      {/* 9. Testimonials Section */}
+      {/* Testimonials Section */}
       <motion.section
         ref={testimonialRef}
         initial="hidden"
         animate={testimonialInView ? 'visible' : 'hidden'}
         variants={fadeIn}
-        className="py-16 md:py-24 bg-accent relative"
+        className="py-16 md:py-24 bg-accent/50 relative"
       >
-        {/* Section-specific glowing effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-accent via-accent/50 to-accent dark:from-accent/80 dark:via-accent dark:to-accent/80"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        />
+        {mounted && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-accent/80 via-accent/40 to-accent/80"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          />
+        )}
 
         <FloatingOrb
-          className="bg-chart-3/10 dark:bg-chart-3/20 left-[15%] top-[20%]"
+          className="bg-chart-3/20 left-[15%] top-[20%]"
           size="180px"
           delay={1}
           duration={15}
@@ -984,12 +1193,14 @@ export default function Landing() {
           >
             <span className="relative inline-block">
               What our partners think
-              <motion.span
-                className="absolute -bottom-2 left-0 w-full h-1 bg-primary/30 dark:bg-primary/50 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-              />
+              {mounted && (
+                <motion.span
+                  className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-ring/50 rounded-full"
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: '100%', opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 1.2 }}
+                />
+              )}
             </span>
           </motion.h2>
 
@@ -1030,14 +1241,20 @@ export default function Landing() {
               >
                 <motion.div
                   variants={cardHover}
-                  className="rounded-xl p-8 shadow-md h-full bg-background relative overflow-hidden group"
+                  className="rounded-xl p-8 shadow-lg h-full bg-background/80 backdrop-blur-sm relative overflow-hidden group border border-primary/10"
                 >
-                  <motion.div className="absolute inset-0 bg-gradient-to-tr from-chart-2/10 to-transparent dark:from-chart-2/20 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {mounted && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-tr from-chart-2/20 to-ring/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                    />
+                  )}
 
                   <CardContent className="p-0 relative z-10">
                     <div className="flex items-center mb-6">
                       <motion.div
-                        className="w-12 h-12 rounded-full bg-gray-200 mr-4 overflow-hidden"
+                        className="w-12 h-12 rounded-full bg-gray-200 mr-4 overflow-hidden shadow-lg"
                         whileHover={{ scale: 1.1 }}
                         transition={{ duration: 0.3 }}
                       >
@@ -1074,20 +1291,22 @@ export default function Landing() {
               <Button
                 variant="outline"
                 size="icon"
-                className="cursor-pointer rounded-full bg-white text-primary relative overflow-hidden"
+                className="cursor-pointer rounded-full bg-white text-primary relative overflow-hidden shadow-lg"
               >
-                <motion.span
-                  className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 dark:from-primary/0 dark:via-primary/20 dark:to-primary/0"
-                  animate={{
-                    x: ['-100%', '100%'],
-                  }}
-                  transition={{
-                    repeat: Number.POSITIVE_INFINITY,
-                    repeatType: 'loop',
-                    duration: 3,
-                    ease: 'linear',
-                  }}
-                />
+                {mounted && (
+                  <motion.span
+                    className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/20 to-primary/0"
+                    animate={{
+                      x: ['-100%', '100%'],
+                    }}
+                    transition={{
+                      repeat: Number.POSITIVE_INFINITY,
+                      repeatType: 'loop',
+                      duration: 3,
+                      ease: 'linear',
+                    }}
+                  />
+                )}
                 <ChevronLeft size={20} className="relative z-10" />
                 <span className="sr-only">Previous testimonial</span>
               </Button>
@@ -1099,20 +1318,22 @@ export default function Landing() {
             >
               <Button
                 size="icon"
-                className="cursor-pointer rounded-full bg-primary text-white relative overflow-hidden"
+                className="cursor-pointer rounded-full bg-primary text-white relative overflow-hidden shadow-lg"
               >
-                <motion.span
-                  className="absolute inset-0 bg-gradient-to-r from-primary-foreground/0 via-primary-foreground/20 to-primary-foreground/0"
-                  animate={{
-                    x: ['-100%', '100%'],
-                  }}
-                  transition={{
-                    repeat: Number.POSITIVE_INFINITY,
-                    repeatType: 'loop',
-                    duration: 3,
-                    ease: 'linear',
-                  }}
-                />
+                {mounted && (
+                  <motion.span
+                    className="absolute inset-0 bg-gradient-to-r from-primary-foreground/0 via-primary-foreground/30 to-primary-foreground/0"
+                    animate={{
+                      x: ['-100%', '100%'],
+                    }}
+                    transition={{
+                      repeat: Number.POSITIVE_INFINITY,
+                      repeatType: 'loop',
+                      duration: 3,
+                      ease: 'linear',
+                    }}
+                  />
+                )}
                 <ChevronRight size={20} className="relative z-10" />
                 <span className="sr-only">Next testimonial</span>
               </Button>
@@ -1121,7 +1342,7 @@ export default function Landing() {
         </div>
       </motion.section>
 
-      {/* 10. Blog Preview Section */}
+      {/* Blog Preview Section */}
       <motion.section
         ref={blogRef}
         initial="hidden"
@@ -1129,16 +1350,17 @@ export default function Landing() {
         variants={fadeIn}
         className="py-16 md:py-24 bg-background relative"
       >
-        {/* Section-specific glowing effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-transparent via-chart-4/5 to-transparent dark:from-transparent dark:via-chart-4/10 dark:to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        />
+        {mounted && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-b from-transparent via-chart-4/5 to-transparent"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          />
+        )}
 
         <FloatingOrb
-          className="bg-chart-5/10 dark:bg-chart-5/20 right-[20%] bottom-[15%]"
+          className="bg-chart-5/20 right-[20%] bottom-[15%]"
           size="200px"
           delay={2}
           duration={16}
@@ -1155,12 +1377,14 @@ export default function Landing() {
           >
             <span className="relative inline-block">
               Read our blog
-              <motion.span
-                className="absolute -bottom-2 left-0 w-full h-1 bg-primary/30 dark:bg-primary/50 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-              />
+              {mounted && (
+                <motion.span
+                  className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-ring/50 rounded-full"
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: '100%', opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 1.2 }}
+                />
+              )}
             </span>
           </motion.h2>
 
@@ -1194,9 +1418,15 @@ export default function Landing() {
               >
                 <motion.div
                   variants={cardHover}
-                  className="rounded-xl overflow-hidden shadow-md h-full bg-background relative group"
+                  className="rounded-xl overflow-hidden shadow-lg h-full bg-background/80 backdrop-blur-sm relative group border border-primary/10"
                 >
-                  <motion.div className="absolute inset-0 bg-gradient-to-tr from-chart-4/10 to-transparent dark:from-chart-4/20 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+                  {mounted && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-tr from-chart-4/20 to-ring/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                    />
+                  )}
 
                   <div className="relative overflow-hidden">
                     <Image
@@ -1234,23 +1464,25 @@ export default function Landing() {
             >
               <Button
                 variant="outline"
-                className="cursor-pointer text-primary border-primary hover:bg-accent relative overflow-hidden group"
+                className="cursor-pointer text-primary border-primary hover:bg-accent relative overflow-hidden group shadow-lg shadow-primary/10"
                 onClick={() => router.push('/blog')}
               >
-                <motion.span
-                  className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 dark:from-accent/0 dark:via-accent/30 dark:to-accent/0"
-                  initial={{ x: '-100%' }}
-                  whileHover={{ x: '100%' }}
-                  transition={{ duration: 0.8 }}
-                />
-                View all posts
+                {mounted && (
+                  <motion.span
+                    className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0"
+                    initial={{ x: '-100%' }}
+                    whileHover={{ x: '100%' }}
+                    transition={{ duration: 0.8 }}
+                  />
+                )}
+                <span className="relative z-10">View all posts</span>
               </Button>
             </motion.div>
           </div>
         </div>
       </motion.section>
 
-      {/* 11. Useful Links */}
+      {/* Useful Links */}
       <motion.section
         ref={linksRef}
         initial="hidden"
@@ -1258,13 +1490,14 @@ export default function Landing() {
         variants={fadeIn}
         className="py-16 md:py-24 bg-background relative"
       >
-        {/* Section-specific glowing effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-b from-transparent via-ring/5 to-transparent dark:from-transparent dark:via-ring/10 dark:to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        />
+        {mounted && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-b from-transparent via-ring/5 to-transparent"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          />
+        )}
 
         <div className="container mx-auto px-4 relative z-10">
           <motion.h2
@@ -1275,12 +1508,14 @@ export default function Landing() {
           >
             <span className="relative inline-block">
               Useful links
-              <motion.span
-                className="absolute -bottom-2 left-0 w-full h-1 bg-primary/30 dark:bg-primary/50 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: '100%' }}
-                transition={{ delay: 0.8, duration: 0.8 }}
-              />
+              {mounted && (
+                <motion.span
+                  className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-ring/50 rounded-full"
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: '100%', opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 1.2 }}
+                />
+              )}
             </span>
           </motion.h2>
 
@@ -1307,7 +1542,9 @@ export default function Landing() {
                         href="#"
                         className="text-muted-foreground hover:text-primary transition-colors relative group"
                       >
-                        <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary/30 dark:bg-primary/50 group-hover:w-full transition-all duration-300" />
+                        {mounted && (
+                          <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary/50 to-ring/50 group-hover:w-full transition-all duration-300" />
+                        )}
                         {link}
                       </Link>
                     </motion.li>
@@ -1335,7 +1572,9 @@ export default function Landing() {
                         href="#"
                         className="text-muted-foreground hover:text-primary transition-colors relative group"
                       >
-                        <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary/30 dark:bg-primary/50 group-hover:w-full transition-all duration-300" />
+                        {mounted && (
+                          <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary/50 to-ring/50 group-hover:w-full transition-all duration-300" />
+                        )}
                         {link}
                       </Link>
                     </motion.li>
@@ -1365,7 +1604,9 @@ export default function Landing() {
                         href="#"
                         className="text-muted-foreground hover:text-primary transition-colors relative group"
                       >
-                        <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary/30 dark:bg-primary/50 group-hover:w-full transition-all duration-300" />
+                        {mounted && (
+                          <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary/50 to-ring/50 group-hover:w-full transition-all duration-300" />
+                        )}
                         {link}
                       </Link>
                     </motion.li>
@@ -1393,7 +1634,9 @@ export default function Landing() {
                         href="#"
                         className="text-muted-foreground hover:text-primary transition-colors relative group"
                       >
-                        <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary/30 dark:bg-primary/50 group-hover:w-full transition-all duration-300" />
+                        {mounted && (
+                          <motion.span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary/50 to-ring/50 group-hover:w-full transition-all duration-300" />
+                        )}
                         {link}
                       </Link>
                     </motion.li>
@@ -1405,24 +1648,25 @@ export default function Landing() {
         </div>
       </motion.section>
 
-      {/* 12. Final CTA Section */}
+      {/* Final CTA Section */}
       <motion.section
         ref={ctaRef}
         initial="hidden"
         animate={ctaInView ? 'visible' : 'hidden'}
         variants={fadeIn}
-        className="py-16 md:py-24 bg-accent relative"
+        className="py-16 md:py-24 bg-accent/50 relative"
       >
-        {/* Section-specific glowing effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-accent via-accent/50 to-accent dark:from-accent/80 dark:via-accent dark:to-accent/80"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        />
+        {mounted && (
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-accent/80 via-accent/40 to-accent/80"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          />
+        )}
 
         <FloatingOrb
-          className="bg-chart-3/10 dark:bg-chart-3/20 left-[10%] top-[30%]"
+          className="bg-chart-3/20 left-[10%] top-[30%]"
           size="220px"
           delay={1.5}
           duration={14}
@@ -1434,14 +1678,24 @@ export default function Landing() {
           <div className="flex flex-col md:flex-row items-center">
             <motion.div
               variants={fadeInUp}
-              className="md:w-1/2 mb-10 md:mb-0 md:pr-10"
+              className="md:w-1/2 mb-10 md:mb-0 md:pr-10 relative"
             >
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className="absolute left-10 top-20 w-20 h-20 rounded-full bg-chart-5/10 dark:bg-chart-5/20 blur-xl"
-              />
+              {mounted && (
+                <motion.div
+                  className="absolute left-10 top-20 w-24 h-24 rounded-full bg-chart-5/20 blur-xl"
+                  animate={{
+                    scale: [1, 1.3, 1],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{
+                    duration: 7,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: 'reverse',
+                    ease: 'easeInOut',
+                    delay: 0.2,
+                  }}
+                />
+              )}
 
               <motion.h2
                 className="text-3xl md:text-4xl font-bold text-headline mb-6 text-primary relative"
@@ -1451,12 +1705,14 @@ export default function Landing() {
               >
                 <span className="relative inline-block">
                   Dictum nunc
-                  <motion.span
-                    className="absolute -bottom-2 left-0 w-full h-1 bg-primary/30 dark:bg-primary/50 rounded-full"
-                    initial={{ width: 0 }}
-                    animate={{ width: '100%' }}
-                    transition={{ delay: 0.8, duration: 0.8 }}
-                  />
+                  {mounted && (
+                    <motion.span
+                      className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-ring/50 rounded-full"
+                      initial={{ width: 0, opacity: 0 }}
+                      animate={{ width: '100%', opacity: 1 }}
+                      transition={{ delay: 0.8, duration: 1.2 }}
+                    />
+                  )}
                 </span>
               </motion.h2>
 
@@ -1477,34 +1733,52 @@ export default function Landing() {
                 variants={buttonHover}
               >
                 <Button
-                  className="cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 relative overflow-hidden group"
+                  className="cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 relative overflow-hidden group shadow-lg shadow-primary/25"
                   onClick={() => router.push('/contact-us')}
                 >
-                  <motion.span
-                    className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary-foreground/20 to-primary/0 dark:from-primary/0 dark:via-primary-foreground/10 dark:to-primary/0"
-                    initial={{ x: '-100%' }}
-                    whileHover={{ x: '100%' }}
-                    transition={{ duration: 0.8 }}
-                  />
-                  Contact Us
+                  {mounted && (
+                    <motion.span
+                      className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary-foreground/20 to-primary/0"
+                      initial={{ x: '-100%' }}
+                      whileHover={{ x: '100%' }}
+                      transition={{ duration: 0.8 }}
+                    />
+                  )}
+                  <span className="relative z-10">Contact Us</span>
                 </Button>
               </motion.div>
             </motion.div>
 
-            <motion.div variants={fadeInUp} className="md:w-1/2">
-              <motion.div
-                className="absolute right-10 bottom-20 w-40 h-40 rounded-full bg-chart-2/10 dark:bg-chart-2/20 blur-xl"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3, duration: 1 }}
-              />
+            <motion.div variants={fadeInUp} className="md:w-1/2 relative">
+              {mounted && (
+                <motion.div
+                  className="absolute right-10 bottom-20 w-40 h-40 rounded-full bg-chart-2/20 blur-xl"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.4, 0.7, 0.4],
+                  }}
+                  transition={{
+                    duration: 9,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatType: 'reverse',
+                    ease: 'easeInOut',
+                    delay: 0.3,
+                  }}
+                />
+              )}
 
               <motion.div
-                className="rounded-xl overflow-hidden shadow-lg relative"
+                className="rounded-xl overflow-hidden shadow-2xl relative group"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.5 }}
               >
-                <motion.div className="absolute inset-0 bg-gradient-to-tr from-chart-2/20 to-transparent dark:from-chart-2/30 dark:to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 z-10" />
+                {mounted && (
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-tr from-chart-2/30 to-ring/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                  />
+                )}
 
                 <Image
                   src="/placeholder.svg?height=400&width=500"
@@ -1518,8 +1792,6 @@ export default function Landing() {
           </div>
         </div>
       </motion.section>
-
-      {/* 13. Footer */}
     </div>
   );
 }

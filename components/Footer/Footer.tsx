@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Added useEffect
 import { motion } from 'framer-motion';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
@@ -10,10 +10,31 @@ import { usePathname } from 'next/navigation';
 import { hiddenFooterPaths } from '@/data/hiddenPaths';
 import Logo from '../Header/Logo';
 
+interface FloatingParticle {
+  id: number;
+  left: string;
+  bottom: string;
+  duration: number;
+  delay: number;
+}
+
 const Footer = () => {
   const pathname = usePathname();
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [particles, setParticles] = useState<FloatingParticle[]>([]); // State for particles
+
+  useEffect(() => {
+    // Generate particles on client-side
+    const newParticles = Array.from({ length: 6 }).map((_, i) => ({
+      id: i,
+      left: `${20 + Math.random() * 60}%`, // Use Math.random here
+      bottom: `${10 + Math.random() * 10}%`,
+      duration: 4 + Math.random() * 2,
+      delay: i * 0.5 + Math.random(),
+    }));
+    setParticles(newParticles);
+  }, []);
 
   const handleSubscribe = () => {
     if (email) {
@@ -78,23 +99,23 @@ const Footer = () => {
             style={{ bottom: '10%', right: '15%' }}
           />
 
-          {/* Floating particles */}
-          {[...Array(6)].map((_, i) => (
+          {/* Floating particles - Updated to use state */}
+          {particles.map((particle) => (
             <motion.div
-              key={i}
+              key={particle.id}
               className="absolute w-2 h-2 bg-primary/20 rounded-full"
               animate={{
                 y: [0, -100, 0],
                 opacity: [0, 1, 0],
               }}
               transition={{
-                duration: 4 + i,
+                duration: particle.duration,
                 repeat: Number.POSITIVE_INFINITY,
-                delay: i * 0.5,
+                delay: particle.delay,
               }}
               style={{
-                left: `${20 + i * 15}%`,
-                bottom: '10%',
+                left: particle.left,
+                bottom: particle.bottom,
               }}
             />
           ))}
