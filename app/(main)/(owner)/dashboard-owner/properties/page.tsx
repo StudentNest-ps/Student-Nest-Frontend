@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
   Plus,
-  Eye,
   Edit,
   Trash2,
   ArrowUpDown,
@@ -44,17 +43,35 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Badge } from '@/components/ui/badge';
 
 import { toast } from 'sonner';
 import { Property } from '@/module/types/Admin';
 import { PropertyFormDialog } from './components/property-form-dialog';
+import owner from '@/module/services/Owner';
 
 const statusOptions = [
   { value: 'all', label: 'All Status' },
   { value: 'published', label: 'Published' },
   { value: 'unpublished', label: 'Unpublished' },
 ];
+
+const initialData = {
+  _id: '',
+  title: '',
+  description: '',
+  type: '',
+  price: 0,
+  address: '',
+  ownerName: '',
+  ownerPhoneNumber: '',
+  amenities: [],
+  image: '',
+  country: '',
+  city: '',
+  availableFrom: '',
+  availableTo: '',
+  maxGuests: '',
+};
 
 export default function PropertiesPage() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -64,13 +81,18 @@ export default function PropertiesPage() {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(
-    null
-  );
+  const [selectedProperty, setSelectedProperty] = useState<Property>();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const fetchProperties = async () => {
+      const res = await owner.getPropertiesByOwnerId();
+      setProperties(res);
+    };
+
+    fetchProperties();
+  }, []);
   const itemsPerPage = 5;
 
   const filteredProperties = properties.filter((property) => {
@@ -136,12 +158,14 @@ export default function PropertiesPage() {
     }
   };
 
-  const handleAddEditProperty = (property: Property) => {
-    if (property._id) {
+  const handleAddEditProperty = (property: Property, isEditing: boolean) => {
+    if (isEditing) {
+      
       setProperties((prev) =>
         prev.map((p) => (p._id === property._id ? property : p))
       );
       toast.success('Property updated successfully');
+      
     } else {
       const newProperty = {
         ...property,
@@ -151,7 +175,7 @@ export default function PropertiesPage() {
       toast.success('Property added successfully');
     }
     setIsFormOpen(false);
-    setSelectedProperty(null);
+    setSelectedProperty(initialData);
   };
 
   const handleDeleteProperty = () => {
@@ -227,7 +251,7 @@ export default function PropertiesPage() {
           </div>
           <Button
             onClick={() => {
-              setSelectedProperty(null);
+              setSelectedProperty(initialData);
               setIsFormOpen(true);
             }}
             size="lg"
@@ -305,6 +329,7 @@ export default function PropertiesPage() {
                     )}
                   </Button>
                 </TableHead>
+                <TableHead>Address</TableHead>
                 <TableHead>
                   <Button
                     variant="ghost"
@@ -333,7 +358,6 @@ export default function PropertiesPage() {
                     )}
                   </Button>
                 </TableHead>
-                <TableHead>Available Period</TableHead>
                 <TableHead>Max Guests</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -373,7 +397,6 @@ export default function PropertiesPage() {
                         : property.title.includes('3-Bedroom')
                           ? 3
                           : 1;
-
                   const bathsCount =
                     property.type === 'studio'
                       ? 1
@@ -382,11 +405,6 @@ export default function PropertiesPage() {
                         : property.title.includes('3-Bedroom')
                           ? 2
                           : 1;
-                  const status =
-                    parseInt(property._id) % 3 !== 0
-                      ? 'published'
-                      : 'unpublished';
-
                   return (
                     <motion.tr
                       key={property._id}
@@ -424,6 +442,8 @@ export default function PropertiesPage() {
                           <span>{property.city}</span>
                         </div>
                       </TableCell>
+                      <TableCell>{property.address}</TableCell>
+
                       <TableCell>
                         <div className="font-medium">${property.price}</div>
                       </TableCell>
@@ -432,30 +452,9 @@ export default function PropertiesPage() {
                           {fromDate} - {toDate}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            status === 'published' ? 'default' : 'outline'
-                          }
-                          className={
-                            status === 'published'
-                              ? 'bg-green-500 hover:bg-green-600'
-                              : 'text-amber-500 border-amber-500'
-                          }
-                        >
-                          {status === 'published' ? 'Published' : 'Unpublished'}
-                        </Badge>
-                      </TableCell>
+                      <TableCell>{property.maxGuests}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            title="View property"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -542,7 +541,7 @@ export default function PropertiesPage() {
         onOpenChange={setIsFormOpen}
         initialData={selectedProperty}
         isEditing={!!selectedProperty}
-        onSubmit={(data) => handleAddEditProperty(data as Property)}
+        onSubmit={(data, isEditing) => handleAddEditProperty(data as Property, isEditing)}
       />
 
       {/* Delete Confirmation Dialog */}

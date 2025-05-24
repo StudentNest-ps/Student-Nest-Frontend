@@ -23,10 +23,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import admin from '@/module/services/Admin';
 import type { Property } from '@/module/types/Admin';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import property from '@/module/services/Property';
 
 // Animation variants
 const pageVariants = {
@@ -180,11 +180,10 @@ export default function ApartmentDetails({ id }: { id: string }) {
   useEffect(() => {
     const fetchApartments = async () => {
       try {
-        const response = await admin.getProperties();
-        const desiredApartment = response.find(
-          (apartment) => apartment._id === id
-        );
-        setApartment(desiredApartment || null);
+        // const response = await admin.getProperties();
+        const response = await property.getPropertyById(id);
+
+        setApartment(response || null);
       } catch (error) {
         console.error('Error fetching apartment:', error);
       } finally {
