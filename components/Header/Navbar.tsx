@@ -155,12 +155,8 @@ const Navbar = () => {
                   </Button>
                 </motion.div>
               )}
-              <motion.div
-                whileHover={{ scale: 1.1, rotate: 180 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ModeToggle />
-              </motion.div>
+
+              <ModeToggle />
             </div>
 
             {/* Mobile Menu Button */}

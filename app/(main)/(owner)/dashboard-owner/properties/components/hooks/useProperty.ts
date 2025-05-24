@@ -9,10 +9,15 @@ import { toast } from 'sonner';
 
 interface UsePropertyProps {
   initialValues?: Partial<Property>;
-  onSubmit: (values: Partial<Property>) => void;
+  onSubmit: (values: Partial<Property>, isEditing: boolean) => void;
+  isEditing: boolean;
 }
 
-export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
+export const useProperty = ({
+  initialValues,
+  onSubmit,
+  isEditing,
+}: UsePropertyProps) => {
   const [image, setImage] = useState<string>(initialValues?.image || '');
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -36,10 +41,10 @@ export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
 
   const formik = useFormik({
     initialValues: defaultValues,
+    enableReinitialize: true, // Enable updates to initialValues
     validationSchema: propertySchema,
     onSubmit: async (values) => {
       try {
-        // Upload image file first (if it exists)
         let finalImagePath = image;
 
         if (imageFile) {
@@ -55,7 +60,7 @@ export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
 
           if (result.success && result.filePath) {
             finalImagePath = result.filePath;
-            setImage(finalImagePath); // Update the local state with the correct uploaded path
+            setImage(finalImagePath);
           } else {
             console.error('Upload failed:', result.error);
             throw new Error(`Upload failed: ${result.error}`);
@@ -66,14 +71,21 @@ export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
           ...values,
           image: finalImagePath,
         };
+
         const res = await owner.addProperty(fullValues as Property);
+
         if (res) {
-          toast.success('Property added successfully');
+          toast.success(
+            isEditing
+              ? 'Property modified successfully'
+              : 'Property added successfully'
+          );
+          onSubmit(fullValues, isEditing);
         } else {
-          toast.error('Failed adding property');
+          toast.error(`Failed ${isEditing ? 'editing' : 'adding'} property`);
         }
+
         console.log('Final Values Submitted:', fullValues);
-        onSubmit(fullValues);
       } catch (error) {
         console.error('Error during form submission:', error);
         throw error;
@@ -83,7 +95,6 @@ export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
 
   const handleImageUpload = (files: FileList | null) => {
     if (!files || files.length === 0) return;
-
     const file = files[0];
     if (!file.type.startsWith('image/')) return;
 
@@ -97,11 +108,25 @@ export const useProperty = ({ initialValues, onSubmit }: UsePropertyProps) => {
     formik.setFieldValue('image', '');
   };
 
+  // Exposed function to update form values externally
+  const setFormValues = (newValues: Property) => {
+    formik.setValues({
+      ...defaultValues, // start from default to avoid missing keys
+      ...newValues,
+    });
+
+    // Update image preview if provided
+    if (newValues.image) {
+      setImage(newValues.image);
+    }
+  };
+
   return {
     formik,
     image,
     imageFile,
     handleImageUpload,
     removeImage,
+    setFormValues, // ✅ Expose this to use externally
   };
 };

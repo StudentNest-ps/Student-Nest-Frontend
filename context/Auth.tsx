@@ -45,6 +45,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         Cookies.set('role', res.data?.role || '', {
           expires: 30,
         });
+        Cookies.set('user-id', res.data?.userId || '', {
+          expires: 30,
+        });
         localStorage.setItem('userData', JSON.stringify(res.data));
         setUser(res.data!);
         toast.success('Sign in successful');

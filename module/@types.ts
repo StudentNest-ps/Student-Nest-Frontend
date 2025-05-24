@@ -15,6 +15,7 @@ export interface User {
 export interface UserResponse {
   token: string;
   role: string;
+  userId: string;
 }
 
 export enum Role {

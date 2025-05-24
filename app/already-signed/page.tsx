@@ -4,9 +4,30 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Home, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+interface Particle {
+  id: number;
+  left: string;
+  top: string;
+  duration: number;
+  delay: number;
+}
 
 export default function AlreadySignInPage() {
   const router = useRouter();
+  const [particles, setParticles] = useState<Particle[]>([]);
+
+  useEffect(() => {
+    const newParticles = Array.from({ length: 6 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      duration: 4 + Math.random() * 2,
+      delay: Math.random() * 2,
+    }));
+    setParticles(newParticles);
+  }, []);
 
   const handleGoHome = () => {
     router.push('/');
@@ -22,7 +43,7 @@ export default function AlreadySignInPage() {
         transition={{ duration: 1 }}
       >
         <motion.div
-          className="w-[800px] h-[800px] rounded-full bg-gradient-to-r from-primary/20 via-ring/30 to-accent/20 dark:from-primary/20 dark:via-sidebar-ring/30 dark:to-accent/20 blur-3xl"
+          className="w-[800px] h-[800px] rounded-full bg-gradient-to-r from-primary/30 via-primary/20 to-primary/10 dark:from-sidebar-primary/30 dark:via-sidebar-primary/20 dark:to-sidebar-primary/10 blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             rotate: [0, 180, 360],
@@ -36,9 +57,9 @@ export default function AlreadySignInPage() {
         />
       </motion.div>
 
-      {/* Secondary Glowing Elements */}
+      {/* Secondary Glowing Elements - Updated to use primary/accent/secondary */}
       <motion.div
-        className="absolute top-20 left-20 w-32 h-32 rounded-full bg-gradient-to-r from-chart-1/20 to-chart-2/20 blur-2xl"
+        className="absolute top-20 left-20 w-32 h-32 rounded-full bg-gradient-to-r from-primary/15 via-accent/15 to-primary/10 dark:from-sidebar-primary/15 dark:via-sidebar-accent/15 dark:to-sidebar-primary/10 blur-2xl"
         animate={{
           x: [0, 50, 0],
           y: [0, -30, 0],
@@ -52,7 +73,7 @@ export default function AlreadySignInPage() {
       />
 
       <motion.div
-        className="absolute bottom-32 right-32 w-24 h-24 rounded-full bg-gradient-to-r from-chart-4/20 to-chart-5/20 blur-2xl"
+        className="absolute bottom-32 right-32 w-24 h-24 rounded-full bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/5 dark:from-sidebar-primary/10 dark:via-sidebar-secondary/10 dark:to-sidebar-accent/5 blur-2xl"
         animate={{
           x: [0, -40, 0],
           y: [0, 40, 0],
@@ -183,23 +204,23 @@ export default function AlreadySignInPage() {
         </motion.div>
       </motion.div>
 
-      {/* Floating Particles */}
-      {[...Array(6)].map((_, i) => (
+      {/* Floating Particles - Updated to use state */}
+      {particles.map((particle) => (
         <motion.div
-          key={i}
+          key={particle.id}
           className="absolute w-1 h-1 bg-primary/30 dark:bg-sidebar-primary/30 rounded-full"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
+            left: particle.left,
+            top: particle.top,
           }}
           animate={{
             y: [0, -100, 0],
             opacity: [0, 1, 0],
           }}
           transition={{
-            duration: 4 + Math.random() * 2,
+            duration: particle.duration,
             repeat: Number.POSITIVE_INFINITY,
-            delay: Math.random() * 2,
+            delay: particle.delay,
             ease: 'easeInOut',
           }}
         />

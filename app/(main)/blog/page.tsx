@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button';
 import BlogCarousel from './components/BlogCarousel';
 import CategoryTabs from './components/CategoryTabs';
 import FeaturedPostsSlider from './components/FeaturedPostsSlider';
-import NewsletterSection from './components/NewsletterSection';
 
 // Animation variants
 const fadeInUp = {
@@ -317,7 +316,7 @@ export default function BlogPage() {
                         height={400}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-foreground">
+                      <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-foreground">
                         {post.category}
                       </div>
                     </div>
@@ -378,7 +377,7 @@ export default function BlogPage() {
                             height={400}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           />
-                          <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-foreground">
+                          <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-foreground">
                             {post.category}
                           </div>
                         </div>
@@ -422,7 +421,7 @@ export default function BlogPage() {
             <div className="flex justify-center mt-12">
               <Button
                 onClick={handleLoadMore}
-                className="bg-primary text-white hover:bg-primary/90 rounded-full px-8 cursor-pointer"
+                className="bg-primary text-background hover:bg-primary/90 rounded-full px-8 cursor-pointer"
               >
                 Load more
               </Button>
@@ -434,8 +433,6 @@ export default function BlogPage() {
       {/* Featured Posts Slider */}
       <FeaturedPostsSlider />
 
-      {/* Newsletter Section */}
-      <NewsletterSection />
     </div>
   );
 }
