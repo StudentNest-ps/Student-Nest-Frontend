@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Role } from '../@types';
 import { token } from './token';
-import { Property, User } from '../types/Admin';
+import { IRegisterUser, Property, User } from '../types/Admin';
 
 class Admin {
   async getUsersByRole(role: Role) {
@@ -48,6 +48,17 @@ class Admin {
     );
 
     return res.status === 200;
+  }
+
+  async addAccount(values: IRegisterUser) : Promise<boolean>  {
+    const res = await axios.post(`/api/sn/api/admin/users`, values, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(res.data);
+    return res.status === 201; 
   }
 }
 
