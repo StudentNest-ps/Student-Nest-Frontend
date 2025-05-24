@@ -22,3 +22,11 @@ export interface Property {
   availableTo: string;
   maxGuests: string;
 }
+
+export type IRegisterUser = {
+  username: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  role: string
+}

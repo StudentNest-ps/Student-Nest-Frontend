@@ -16,7 +16,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, User, UserCog, AtSign, Lock, Phone } from 'lucide-react';
+import { Shield, User, AtSign, Lock, Phone } from 'lucide-react';
+import admin from '@/module/services/Admin';
+import { toast } from 'sonner';
 
 type AccountRole = 'admin' | 'owner';
 
@@ -25,15 +27,8 @@ interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
-  fullName: string;
   phoneNumber: string;
   role: AccountRole;
-  // Owner-specific fields
-  company?: string;
-  address?: string;
-  // Admin-specific fields
-  department?: string;
-  accessLevel?: string;
 }
 
 export default function AccountCreationForm() {
@@ -43,11 +38,8 @@ export default function AccountCreationForm() {
     email: '',
     password: '',
     confirmPassword: '',
-    fullName: '',
     phoneNumber: '',
     role: 'admin',
-    department: '',
-    accessLevel: 'standard',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,19 +52,24 @@ export default function AccountCreationForm() {
     setFormData((prev) => ({
       ...prev,
       role: value,
-      // Reset role-specific fields when switching roles
-      company: value === 'owner' ? prev.company || '' : undefined,
-      address: value === 'owner' ? prev.address || '' : undefined,
-      department: value === 'admin' ? prev.department || '' : undefined,
-      accessLevel:
-        value === 'admin' ? prev.accessLevel || 'standard' : undefined,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Here you would typically send the data to your API
+    const values = {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      phoneNumber: formData.phoneNumber,
+      role: formData.role,
+    };
+    const res = await admin.addAccount(values);
+    if (res) {
+      toast.success('Account created successfully');
+    } else {
+      toast.error('Account creation failed');
+    }
   };
 
   // Animation variants
@@ -148,24 +145,6 @@ export default function AccountCreationForm() {
               >
                 {/* Common Fields */}
                 <div className="grid gap-6 md:grid-cols-2">
-                  <motion.div variants={itemVariants} className="space-y-2">
-                    <Label
-                      htmlFor="fullName"
-                      className="flex items-center gap-2"
-                    >
-                      <UserCog className="h-4 w-4 text-primary" />
-                      Full Name
-                    </Label>
-                    <Input
-                      id="fullName"
-                      name="fullName"
-                      placeholder="John Doe"
-                      value={formData.fullName}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </motion.div>
-
                   <motion.div variants={itemVariants} className="space-y-2">
                     <Label
                       htmlFor="username"
