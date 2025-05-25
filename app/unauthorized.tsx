@@ -141,9 +141,9 @@ export default function Unauthorized() {
 
               <Button
                 asChild
-                className="bg-primary text-white hover:bg-primary/90"
+                className="bg-primary text-background hover:bg-primary/90"
               >
-                <Link href="/auth/signin" className="flex items-center gap-2">
+                <Link href="/signin" className="flex items-center gap-2">
                   <LogIn size={16} />
                   Sign In
                 </Link>
