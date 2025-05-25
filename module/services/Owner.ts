@@ -4,6 +4,7 @@ import { Property } from '../types/Admin';
 import Cookies from 'js-cookie';
 class Owner {
   ownerId = Cookies.get('user-id');
+
   async addProperty(property: Property | null) {
     const res = await axios.post(
       `/api/sn/api/owner/${this.ownerId}/properties`,
@@ -16,7 +17,7 @@ class Owner {
     );
 
     console.log(res.data);
-    return res.status === 200;
+    return res.status === 201;
   }
 
   async getPropertiesByOwnerId() {
@@ -45,6 +46,23 @@ class Owner {
     );
 
     console.log(res.data);
+  }
+
+  async deleteProperty(propertyId: string) {
+    console.log(propertyId);
+    console.log(this.ownerId);
+
+    const res = await axios.delete(
+      `/api/sn/api/owner/${this.ownerId}/properties/${propertyId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(res.data);
+    return res.status === 200;
   }
 }
 

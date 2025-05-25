@@ -71,6 +71,7 @@ export const useProperty = ({
           ...values,
           image: finalImagePath,
         };
+        console.log('added apartment', fullValues);
 
         const res = await owner.addProperty(fullValues as Property);
 

@@ -55,8 +55,7 @@ const statusOptions = [
   { value: 'unpublished', label: 'Unpublished' },
 ];
 
-const initialData = {
-  _id: '',
+const initialData: Property = {
   title: '',
   description: '',
   type: '',
@@ -84,7 +83,7 @@ export default function PropertiesPage() {
   const [selectedProperty, setSelectedProperty] = useState<Property>();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
-
+  const [isEditing, setIsEditing] = useState(false);
   useEffect(() => {
     const fetchProperties = async () => {
       const res = await owner.getPropertiesByOwnerId();
@@ -100,8 +99,10 @@ export default function PropertiesPage() {
       property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       property.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
       property.city.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const isPublished = parseInt(property._id) % 3 !== 0;
+    let isPublished = false;
+    if (property._id) {
+      isPublished = parseInt(property._id) % 3 !== 0;
+    }
 
     const matchesStatus =
       statusFilter === 'all' ||
@@ -160,12 +161,10 @@ export default function PropertiesPage() {
 
   const handleAddEditProperty = (property: Property, isEditing: boolean) => {
     if (isEditing) {
-      
       setProperties((prev) =>
         prev.map((p) => (p._id === property._id ? property : p))
       );
       toast.success('Property updated successfully');
-      
     } else {
       const newProperty = {
         ...property,
@@ -178,10 +177,16 @@ export default function PropertiesPage() {
     setSelectedProperty(initialData);
   };
 
-  const handleDeleteProperty = () => {
+  const handleDeleteProperty = async () => {
     if (propertyToDelete) {
       setProperties((prev) => prev.filter((p) => p._id !== propertyToDelete));
-      toast.success('Property deleted successfully');
+      try {
+        await owner.deleteProperty(propertyToDelete);
+        toast.success('Property deleted successfully');
+      } catch (error) {
+        console.error(error);
+        toast.error('Failed deleting property');
+      }
       setIsDeleteDialogOpen(false);
       setPropertyToDelete(null);
     }
@@ -198,7 +203,7 @@ export default function PropertiesPage() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 0 },
     visible: {
       opacity: 1,
       y: 0,
@@ -211,16 +216,18 @@ export default function PropertiesPage() {
   };
 
   const tableRowVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
+    hidden: { opacity: 0, y: 10 },
+    visible: (customDelay: number) => ({
       opacity: 1,
       x: 0,
+      y: 0,
       transition: {
         type: 'spring',
         stiffness: 100,
         damping: 15,
+        delay: customDelay, // delay based on row index or custom number
       },
-    },
+    }),
     exit: {
       opacity: 0,
       x: -20,
@@ -364,7 +371,7 @@ export default function PropertiesPage() {
             </TableHeader>
             <TableBody>
               <AnimatePresence>
-                {paginatedProperties.map((property) => {
+                {paginatedProperties.map((property, index) => {
                   // Format dates without random month addition
                   const availableFrom = new Date(property.availableFrom);
                   const availableTo = new Date(property.availableTo);
@@ -414,6 +421,7 @@ export default function PropertiesPage() {
                       exit="exit"
                       layout
                       className="group"
+                      custom={index * 0.1}
                     >
                       <TableCell>
                         <div className="flex items-center gap-3">
@@ -462,6 +470,7 @@ export default function PropertiesPage() {
                             title="Edit property"
                             onClick={() => {
                               setSelectedProperty(property);
+                              setIsEditing(true);
                               setIsFormOpen(true);
                             }}
                           >
@@ -473,7 +482,7 @@ export default function PropertiesPage() {
                             className="h-8 w-8 text-destructive hover:text-destructive"
                             title="Delete property"
                             onClick={() => {
-                              setPropertyToDelete(property._id);
+                              setPropertyToDelete(property._id!);
                               setIsDeleteDialogOpen(true);
                             }}
                           >
@@ -540,8 +549,10 @@ export default function PropertiesPage() {
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
         initialData={selectedProperty}
-        isEditing={!!selectedProperty}
-        onSubmit={(data, isEditing) => handleAddEditProperty(data as Property, isEditing)}
+        isEditing={isEditing}
+        onSubmit={(data, isEditing) =>
+          handleAddEditProperty(data as Property, isEditing)
+        }
       />
 
       {/* Delete Confirmation Dialog */}

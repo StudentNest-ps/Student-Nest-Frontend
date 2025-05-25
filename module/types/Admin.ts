@@ -6,7 +6,7 @@ export interface User {
 }
 
 export interface Property {
-  _id: string;
+  _id?: string;
   title: string;
   description: string;
   type: 'apartment' | 'house' | 'studio' | string;
