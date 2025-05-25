@@ -93,7 +93,10 @@ const Navbar = () => {
                   { href: '/blog', label: 'Blog' },
                   { href: '/contact-us', label: 'Contacts' },
                   ...(user?.role === Role.STUDENT
-                    ? [{ href: '/apartments', label: 'Book Now' }]
+                    ? [
+                        { href: '/apartments', label: 'Book Now' },
+                        { href: '/my-bookings', label: 'My Bookings' },
+                      ]
                     : []),
                 ].map((item) => (
                   <motion.div
