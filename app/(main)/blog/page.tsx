@@ -421,7 +421,7 @@ export default function BlogPage() {
             <div className="flex justify-center mt-12">
               <Button
                 onClick={handleLoadMore}
-                className="bg-primary text-background hover:bg-primary/90 rounded-full px-8 cursor-pointer"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 cursor-pointer"
               >
                 Load more
               </Button>

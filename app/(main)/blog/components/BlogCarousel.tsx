@@ -113,7 +113,7 @@ export default function BlogCarousel({ items }: BlogCarouselProps) {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="max-w-lg bg-white/90 backdrop-blur-sm rounded-3xl p-8 ml-4 md:ml-12"
+                className="max-w-lg bg-background/90 backdrop-blur-sm rounded-3xl p-8 ml-4 md:ml-12"
               >
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
                   {items[currentIndex].title}
@@ -129,7 +129,7 @@ export default function BlogCarousel({ items }: BlogCarouselProps) {
 
       <button
         onClick={handlePrev}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-3 shadow-md cursor-pointer z-10 hover:bg-white transition-colors duration-300"
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm rounded-full p-3 shadow-md cursor-pointer z-10 hover:bg-white transition-colors duration-300"
         aria-label="Previous slide"
       >
         <ChevronLeft size={24} className="text-primary" />
@@ -137,7 +137,7 @@ export default function BlogCarousel({ items }: BlogCarouselProps) {
 
       <button
         onClick={handleNext}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 backdrop-blur-sm rounded-full p-3 shadow-md cursor-pointer z-10 hover:bg-white transition-colors duration-300"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm rounded-full p-3 shadow-md cursor-pointer z-10 hover:bg-white transition-colors duration-300"
         aria-label="Next slide"
       >
         <ChevronRight size={24} className="text-primary" />
@@ -150,8 +150,8 @@ export default function BlogCarousel({ items }: BlogCarouselProps) {
             onClick={() => handleDotClick(index)}
             className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${
               index === currentIndex
-                ? 'bg-white scale-125'
-                : 'bg-white/50 hover:bg-white/80'
+                ? 'bg-background scale-125'
+                : 'bg-white/50 hover:bg-background/80'
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />
