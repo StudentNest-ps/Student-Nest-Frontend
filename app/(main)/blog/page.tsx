@@ -243,7 +243,7 @@ export default function BlogPage() {
   const trendingPosts = blogPosts.filter((post) => post.featured).slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-hidden">
       {/* Fixed header with search and title */}
       <motion.div
         className="sticky top-0 z-50"
@@ -432,7 +432,6 @@ export default function BlogPage() {
 
       {/* Featured Posts Slider */}
       <FeaturedPostsSlider />
-
     </div>
   );
 }
