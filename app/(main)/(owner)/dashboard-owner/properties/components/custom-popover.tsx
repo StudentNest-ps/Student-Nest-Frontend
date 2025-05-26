@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar'; // Adjust import path as needed
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 // Popover Component Props
 interface PopoverProps {
@@ -90,11 +91,11 @@ const DatePickerInput: React.FC<DatePickerInputProps> = ({
           />
         }
       >
-        <button
+        <Button
           type="button"
           onClick={() => setOpen(!open)}
           className={cn(
-            `w-full flex items-center justify-between px-3 py-2 
+            `cursor-pointer w-full flex items-center justify-between px-3 py-2 
     rounded-md text-left transition-colors duration-200
     border bg-background text-foreground
     hover:border-muted-foreground focus:outline-none`,
@@ -106,7 +107,7 @@ const DatePickerInput: React.FC<DatePickerInputProps> = ({
             {value ? formatDate(value) : placeholder}
           </span>
           <Calendar className="h-4 w-4 text-muted-foreground" />
-        </button>
+        </Button>
       </Popover>
 
       {touched && error && <p className="text-sm text-red-400">{error}</p>}

@@ -9,7 +9,6 @@ import Image from 'next/image';
 import {
   Upload,
   Loader2,
-  Plus,
   Trash,
   ImageIcon,
   Wifi,
@@ -576,16 +575,7 @@ export function PropertyFormDialog({
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <label className="text-sm font-medium">Property Images</label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={triggerFileInput}
-                    className="cursor-pointer flex items-center"
-                  >
-                    <Plus className="mr-1 h-4 w-4" />
-                    Add Image
-                  </Button>
+
                   <input
                     type="file"
                     ref={fileInputRef}
