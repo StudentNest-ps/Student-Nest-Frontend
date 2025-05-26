@@ -31,16 +31,25 @@ import {
   SelectItem,
   SelectGroup,
 } from '@/components/ui/select';
+import Loading from '../loading';
 
 export default function UsersTable() {
   const [searchTerm, setSearchTerm] = useState('');
   const [users, setUsers] = useState<User[]>([]);
   const [role, setRole] = useState<Role>(Role.STUDENT);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const res = await Admin.getUsersByRole(role);
-      setUsers(res);
+      try {
+        setLoading(true);
+        const res = await Admin.getUsersByRole(role);
+        setUsers(res);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchUsers();
   }, [role]);
@@ -51,6 +60,10 @@ export default function UsersTable() {
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user._id.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <motion.div
