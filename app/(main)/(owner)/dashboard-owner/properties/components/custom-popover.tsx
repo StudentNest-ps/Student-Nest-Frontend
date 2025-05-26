@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar'; // Adjust import path as needed
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 // Popover Component Props
 interface PopoverProps {
@@ -75,7 +76,7 @@ const DatePickerInput: React.FC<DatePickerInputProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-white">{label}</label>
+      <label className="text-sm font-medium text-foreground">{label}</label>
 
       <Popover
         open={open}
@@ -90,11 +91,11 @@ const DatePickerInput: React.FC<DatePickerInputProps> = ({
           />
         }
       >
-        <button
+        <Button
           type="button"
           onClick={() => setOpen(!open)}
           className={cn(
-            `w-full flex items-center justify-between px-3 py-2 
+            `cursor-pointer w-full flex items-center justify-between px-3 py-2 
     rounded-md text-left transition-colors duration-200
     border bg-background text-foreground
     hover:border-muted-foreground focus:outline-none`,
@@ -106,7 +107,7 @@ const DatePickerInput: React.FC<DatePickerInputProps> = ({
             {value ? formatDate(value) : placeholder}
           </span>
           <Calendar className="h-4 w-4 text-muted-foreground" />
-        </button>
+        </Button>
       </Popover>
 
       {touched && error && <p className="text-sm text-red-400">{error}</p>}
@@ -149,7 +150,7 @@ const DatePickerForm: React.FC<DatePickerFormProps> = ({ formik }) => {
         label="Available From"
         value={formik.values.availableFrom}
         onChange={(date: string) => formik.setFieldValue('availableFrom', date)}
-        placeholder="Select start date"
+        placeholder="Start date"
         error={formik.errors.availableFrom}
         touched={formik.touched.availableFrom}
       />
@@ -158,7 +159,7 @@ const DatePickerForm: React.FC<DatePickerFormProps> = ({ formik }) => {
         label="Available To"
         value={formik.values.availableTo}
         onChange={(date: string) => formik.setFieldValue('availableTo', date)}
-        placeholder="Select end date"
+        placeholder="End date"
         error={formik.errors.availableTo}
         touched={formik.touched.availableTo}
       />

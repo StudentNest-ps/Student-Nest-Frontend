@@ -48,6 +48,7 @@ import { toast } from 'sonner';
 import { Property } from '@/module/types/Admin';
 import { PropertyFormDialog } from './components/property-form-dialog';
 import owner from '@/module/services/Owner';
+import Loading from './loading';
 
 const statusOptions = [
   { value: 'all', label: 'All Status' },
@@ -84,10 +85,19 @@ export default function PropertiesPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchProperties = async () => {
-      const res = await owner.getPropertiesByOwnerId();
-      setProperties(res);
+      try {
+        setLoading(true);
+        const res = await owner.getPropertiesByOwnerId();
+        setProperties(res);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProperties();
@@ -237,6 +247,10 @@ export default function PropertiesPage() {
     },
   };
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div className="container mx-auto py-8 max-w-7xl">
       <motion.div
@@ -262,7 +276,7 @@ export default function PropertiesPage() {
               setIsFormOpen(true);
             }}
             size="lg"
-            className="bg-primary hover:bg-primary/90"
+            className="cursor-pointer bg-primary hover:bg-primary/90"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add New Property
@@ -284,7 +298,7 @@ export default function PropertiesPage() {
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectTrigger className="cursor-pointer w-full sm:w-[180px]">
               <div className="flex items-center">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Filter by status" />
@@ -292,7 +306,11 @@ export default function PropertiesPage() {
             </SelectTrigger>
             <SelectContent>
               {statusOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem
+                  className="cursor-pointer"
+                  key={option.value}
+                  value={option.value}
+                >
                   {option.label}
                 </SelectItem>
               ))}
@@ -312,7 +330,7 @@ export default function PropertiesPage() {
                   <Button
                     variant="ghost"
                     onClick={() => handleSort('title')}
-                    className="flex items-center"
+                    className="cursor-pointer flex items-center"
                   >
                     Property
                     {sortColumn === 'title' && (
@@ -326,7 +344,7 @@ export default function PropertiesPage() {
                   <Button
                     variant="ghost"
                     onClick={() => handleSort('location')}
-                    className="flex items-center"
+                    className="cursor-pointer flex items-center"
                   >
                     Location
                     {sortColumn === 'location' && (
@@ -341,7 +359,7 @@ export default function PropertiesPage() {
                   <Button
                     variant="ghost"
                     onClick={() => handleSort('price')}
-                    className="flex items-center"
+                    className="cursor-pointer flex items-center"
                   >
                     Rent/month
                     {sortColumn === 'price' && (
@@ -355,7 +373,7 @@ export default function PropertiesPage() {
                   <Button
                     variant="ghost"
                     onClick={() => handleSort('availableFrom')}
-                    className="flex items-center"
+                    className="cursor-pointer flex items-center"
                   >
                     Available Period
                     {sortColumn === 'availableFrom' && (
@@ -466,7 +484,7 @@ export default function PropertiesPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
+                            className="cursor-pointer h-8 w-8"
                             title="Edit property"
                             onClick={() => {
                               setSelectedProperty(property);
@@ -479,7 +497,7 @@ export default function PropertiesPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-destructive hover:text-destructive"
+                            className="cursor-pointer h-8 w-8 text-destructive hover:text-destructive"
                             title="Delete property"
                             onClick={() => {
                               setPropertyToDelete(property._id!);
@@ -523,6 +541,7 @@ export default function PropertiesPage() {
                 size="icon"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
+                className="cursor-pointer"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -536,6 +555,7 @@ export default function PropertiesPage() {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
+                className="cursor-pointer"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
@@ -569,10 +589,12 @@ export default function PropertiesPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="cursor-pointer">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteProperty}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="cursor-pointer bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
             </AlertDialogAction>
