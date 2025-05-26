@@ -65,75 +65,6 @@ const amenitiesList = [
   { id: 'pool', label: 'Swimming Pool', icon: Waves },
   { id: 'security', label: 'Security System', icon: ShieldCheck },
   { id: 'balcony', label: 'Balcony', icon: Balcony },
-  {
-    id: 'furnished',
-    label: 'Furnished',
-    icon: () => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M20 10V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3" />
-        <path d="M2 12h20" />
-        <path d="M4 12v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8" />
-        <path d="M12 7v5" />
-      </svg>
-    ),
-  },
-  {
-    id: 'washer',
-    label: 'Washer',
-    icon: () => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <rect width="18" height="18" x="3" y="3" rx="3" />
-        <circle cx="12" cy="12" r="5" />
-        <circle cx="12" cy="12" r="1" />
-        <path d="M6 6h.01" />
-        <path d="M18 6h.01" />
-      </svg>
-    ),
-  },
-  {
-    id: 'pets',
-    label: 'Pet Friendly',
-    icon: () => (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M10 5.172C10 3.782 8.423 2.679 6.5 3c-2.823.47-4.113 6.006-4 7 .08.703 1.725 1.722 3.656 1 1.261-.472 1.96-1.45 2.344-2.5" />
-        <path d="M14.5 5.172c0-1.39 1.577-2.493 3.5-2.172 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.96-1.45-2.344-2.5" />
-        <path d="M8 14v.5" />
-        <path d="M16 14v.5" />
-        <path d="M11.25 16.25h1.5L12 17l-.75-.75Z" />
-        <path d="M4.42 11.247A13.152 13.152 0 0 0 4 14.556C4 18.728 7.582 21 12 21s8-2.272 8-6.444c0-1.061-.162-2.2-.493-3.309m-9.243-6.082A8.801 8.801 0 0 1 12 5c.78 0 1.5.108 2.161.306" />
-      </svg>
-    ),
-  },
 ];
 
 interface PropertyFormDialogProps {
@@ -192,6 +123,21 @@ export function PropertyFormDialog({
         type: 'spring',
         stiffness: 100,
         damping: 15,
+        staggerChildren: 0.05, // Add stagger effect to children
+      },
+    },
+  };
+
+  // Field animation variants
+  const fieldVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 100,
+        damping: 15,
       },
     },
   };
@@ -241,7 +187,7 @@ export function PropertyFormDialog({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Left Column */}
                 <div className="space-y-4">
-                  <div className="space-y-2">
+                  <motion.div className="space-y-2" variants={fieldVariants}>
                     <label htmlFor="title" className="text-sm font-medium">
                       Property Title
                     </label>
@@ -263,9 +209,9 @@ export function PropertyFormDialog({
                         {formik.errors.title}
                       </p>
                     )}
-                  </div>
+                  </motion.div>
 
-                  <div className="space-y-2">
+                  <motion.div className="space-y-2" variants={fieldVariants}>
                     <label htmlFor="type" className="text-sm font-medium">
                       Property Type
                     </label>
@@ -291,9 +237,9 @@ export function PropertyFormDialog({
                         {formik.errors.type}
                       </p>
                     )}
-                  </div>
+                  </motion.div>
 
-                  <div className="space-y-2">
+                  <motion.div className="space-y-2" variants={fieldVariants}>
                     <label htmlFor="price" className="text-sm font-medium">
                       Monthly Rent (USD)
                     </label>
@@ -316,9 +262,9 @@ export function PropertyFormDialog({
                         {formik.errors.price}
                       </p>
                     )}
-                  </div>
+                  </motion.div>
 
-                  <div className="space-y-2">
+                  <motion.div className="space-y-2" variants={fieldVariants}>
                     <label htmlFor="address" className="text-sm font-medium">
                       Address
                     </label>
@@ -340,9 +286,12 @@ export function PropertyFormDialog({
                         {formik.errors.address}
                       </p>
                     )}
-                  </div>
+                  </motion.div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <motion.div
+                    className="grid grid-cols-2 gap-4"
+                    variants={fieldVariants}
+                  >
                     <div className="space-y-2">
                       <label
                         htmlFor="location.city"
@@ -396,12 +345,12 @@ export function PropertyFormDialog({
                         </p>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
 
                 {/* Right Column */}
                 <div className="space-y-4">
-                  <div className="space-y-2">
+                  <motion.div className="space-y-2" variants={fieldVariants}>
                     <label
                       htmlFor="description"
                       className="text-sm font-medium"
@@ -428,9 +377,12 @@ export function PropertyFormDialog({
                           {formik.errors.description}
                         </p>
                       )}
-                  </div>
+                  </motion.div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <motion.div
+                    className="grid grid-cols-2 gap-4"
+                    variants={fieldVariants}
+                  >
                     <div className="space-y-2">
                       <label
                         htmlFor="ownerName"
@@ -486,9 +438,12 @@ export function PropertyFormDialog({
                           </p>
                         )}
                     </div>
-                  </div>
+                  </motion.div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <motion.div
+                    className="grid grid-cols-2 gap-4"
+                    variants={fieldVariants}
+                  >
                     <DatePickerForm formik={formik} />
 
                     <div className="space-y-2">
@@ -518,9 +473,9 @@ export function PropertyFormDialog({
                         </p>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
 
-                  <div className="space-y-3">
+                  <motion.div className="space-y-3" variants={fieldVariants}>
                     <label className="text-sm font-medium">Amenities</label>
                     <div className="grid grid-cols-2 gap-3">
                       {amenitiesList.map((amenity) => {
@@ -567,12 +522,12 @@ export function PropertyFormDialog({
                         {formik.errors.amenities}
                       </p>
                     )}
-                  </div>
+                  </motion.div>
                 </div>
               </div>
 
               {/* Images Section */}
-              <div className="space-y-4">
+              <motion.div className="space-y-4" variants={fieldVariants}>
                 <div className="flex justify-between items-center">
                   <label className="text-sm font-medium">Property Images</label>
 
@@ -635,35 +590,37 @@ export function PropertyFormDialog({
                     )}
                   </AnimatePresence>
                 </div>
-              </div>
+              </motion.div>
 
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => onOpenChange(false)}
-                  disabled={formik.isSubmitting}
-                  className="cursor-pointer "
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={formik.isSubmitting}
-                  className="cursor-pointer"
-                >
-                  {formik.isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {isEditing ? 'Updating...' : 'Creating...'}
-                    </>
-                  ) : isEditing ? (
-                    'Update Property'
-                  ) : (
-                    'Create Property'
-                  )}
-                </Button>
-              </DialogFooter>
+              <motion.div variants={fieldVariants}>
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => onOpenChange(false)}
+                    disabled={formik.isSubmitting}
+                    className="cursor-pointer "
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={formik.isSubmitting}
+                    className="cursor-pointer"
+                  >
+                    {formik.isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {isEditing ? 'Updating...' : 'Creating...'}
+                      </>
+                    ) : isEditing ? (
+                      'Update Property'
+                    ) : (
+                      'Create Property'
+                    )}
+                  </Button>
+                </DialogFooter>
+              </motion.div>
             </motion.form>
           </ScrollArea>
         </FormikProvider>
