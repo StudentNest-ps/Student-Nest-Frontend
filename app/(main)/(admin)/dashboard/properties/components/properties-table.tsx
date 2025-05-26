@@ -21,7 +21,6 @@ import { Input } from '@/components/ui/input';
 import { Search, Home, Building, Building2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
@@ -29,10 +28,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import DeletePropertyButton from './delete-property-button';
-import EditPropertyDialog from './edit-property-dialog';
+
 import { Property } from '@/module/types/Admin';
 import Admin from '@/module/services/Admin';
 import { toast } from 'sonner';
+import Loading from '../loading';
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('en-US', {
@@ -63,16 +63,19 @@ const PropertyTypeIcon = ({ type }: { type: string }) => {
 export default function PropertiesTable() {
   const [searchTerm, setSearchTerm] = useState('');
   const [properties, setProperties] = useState<Property[]>([]);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(
-    null
-  );
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchProperties = async () => {
-      const res = await Admin.getProperties();
-      console.log(res);
-      setProperties(res);
+      try {
+        const res = await Admin.getProperties();
+        console.log(res);
+        setProperties(res);
+      } catch (error) {
+        console.error(error);
+        toast.error('Failed to fetch properties.');
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProperties();
@@ -101,19 +104,9 @@ export default function PropertiesTable() {
       property.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleEditProperty = (propertyId: string) => {
-    const property = properties.find((p) => p._id === propertyId);
-    if (property) {
-      setSelectedProperty(property);
-      setEditDialogOpen(true);
-    }
-  };
-
-  const handleSaveProperty = (updatedProperty: Property) => {
-    console.log('Updated property:', updatedProperty);
-    setEditDialogOpen(false);
-    // In a real application, you would update the property in your data store here
-  };
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <motion.div
@@ -134,7 +127,7 @@ export default function PropertiesTable() {
             <Search className="h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search properties..."
-              className="border-0 p-0 shadow-none focus-visible:ring-0"
+              className="px-2 border-0 shadow-none focus-visible:ring-0"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -239,30 +232,10 @@ export default function PropertiesTable() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="cursor-pointer text-primary hover:text-card-foreground dark:hover:bg-indigo-950/50"
-                            onClick={() => handleEditProperty(property._id)}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                              <path d="m15 5 4 4" />
-                            </svg>
-                            <span className="sr-only">Edit property</span>
-                          </Button>
                           <DeletePropertyButton
-                            onDelete={() => handlePropertyDelete(property._id)}
+                            onDelete={() =>
+                              handlePropertyDelete(property._id || '')
+                            }
                           />
                         </div>
                       </TableCell>
@@ -274,15 +247,6 @@ export default function PropertiesTable() {
           </div>
         </CardContent>
       </Card>
-
-      <EditPropertyDialog
-        property={selectedProperty}
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-        onSave={(updatedProperty) => {
-          handleSaveProperty(updatedProperty as unknown as Property);
-        }}
-      />
     </motion.div>
   );
 }
