@@ -5,12 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2, Mail, Lock } from 'lucide-react';
+import { Loader2, Mail, Lock, Eye } from 'lucide-react';
 import { useSignIn } from '../signin/hooks/useSignIn';
+import { useState } from 'react';
 
 export default function SignInForm() {
   const { formik, isSubmitting } = useSignIn();
-
+  const [showPassword, setShowPassword] = useState(false);
   const formFields = [
     {
       id: 'email',
@@ -66,18 +67,35 @@ export default function SignInForm() {
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
                   {field.icon}
                 </div>
-                <Input
-                  id={field.id}
-                  name={field.id}
-                  type={field.type}
-                  placeholder={field.placeholder}
-                  className={`pl-10 ${formik.touched[field.id as keyof typeof formik.touched] && formik.errors[field.id as keyof typeof formik.errors] ? 'border-destructive' : ''}`}
-                  value={String(
-                    formik.values[field.id as keyof typeof formik.values]
+                <div className="relative">
+                  <Input
+                    id={field.id}
+                    name={field.id}
+                    type={
+                      field.type === 'password' && !showPassword
+                        ? 'password'
+                        : field.type === 'password' && showPassword
+                          ? 'text'
+                          : field.type
+                    }
+                    placeholder={field.placeholder}
+                    className={`pl-10 ${formik.touched[field.id as keyof typeof formik.touched] && formik.errors[field.id as keyof typeof formik.errors] ? 'border-destructive' : ''}`}
+                    value={String(
+                      formik.values[field.id as keyof typeof formik.values]
+                    )}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {field.type === 'password' && (
+                    <Eye
+                      className="cursor-pointer absolute top-1/2 -translate-1/2 right-0 h-5 w-5 transition duration-200 text-muted-foreground hover:text-foreground"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowPassword(!showPassword);
+                      }}
+                    />
                   )}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
+                </div>
               </div>
               {formik.touched[field.id as keyof typeof formik.touched] &&
               formik.errors[field.id as keyof typeof formik.errors] ? (
