@@ -48,6 +48,7 @@ import { toast } from 'sonner';
 import { Property } from '@/module/types/Admin';
 import { PropertyFormDialog } from './components/property-form-dialog';
 import owner from '@/module/services/Owner';
+import Loading from './loading';
 
 const statusOptions = [
   { value: 'all', label: 'All Status' },
@@ -84,10 +85,19 @@ export default function PropertiesPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchProperties = async () => {
-      const res = await owner.getPropertiesByOwnerId();
-      setProperties(res);
+      try {
+        setLoading(true);
+        const res = await owner.getPropertiesByOwnerId();
+        setProperties(res);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchProperties();
@@ -236,6 +246,10 @@ export default function PropertiesPage() {
       },
     },
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="container mx-auto py-8 max-w-7xl">

@@ -75,7 +75,7 @@ const DatePickerInput: React.FC<DatePickerInputProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-white">{label}</label>
+      <label className="text-sm font-medium text-foreground">{label}</label>
 
       <Popover
         open={open}
@@ -149,7 +149,7 @@ const DatePickerForm: React.FC<DatePickerFormProps> = ({ formik }) => {
         label="Available From"
         value={formik.values.availableFrom}
         onChange={(date: string) => formik.setFieldValue('availableFrom', date)}
-        placeholder="Select start date"
+        placeholder="Start date"
         error={formik.errors.availableFrom}
         touched={formik.touched.availableFrom}
       />
@@ -158,7 +158,7 @@ const DatePickerForm: React.FC<DatePickerFormProps> = ({ formik }) => {
         label="Available To"
         value={formik.values.availableTo}
         onChange={(date: string) => formik.setFieldValue('availableTo', date)}
-        placeholder="Select end date"
+        placeholder="End date"
         error={formik.errors.availableTo}
         touched={formik.touched.availableTo}
       />
