@@ -22,6 +22,16 @@ class Student {
 
     return res.data as Booking[];
   }
+
+  async cancelBooking(bookingId: string) {
+    const res = await axios.delete(`/api/sn/api/bookings/${bookingId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.status === 200; // OK
+  }
 }
 
 const student = new Student();
