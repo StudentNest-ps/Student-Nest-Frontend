@@ -19,7 +19,7 @@ import { BookingTable } from './components/BookingTable';
 import { BookingSkeleton } from './components/BookingSkeleton';
 
 import type { Booking } from './types/booking';
-import { bookingsData } from './types/bookings';
+import student from '@/module/services/Student';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
@@ -56,24 +56,19 @@ export default function MyBookingsPage() {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   useEffect(() => {
-    // Simulate API call
-    const loadBookings = async () => {
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      // Convert rejected status to already_booked for better UX
-      const updatedBookings = bookingsData.map((booking: Booking) => ({
-        ...booking,
-        status:
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          booking.status === ('rejected' as any)
-            ? 'already_booked'
-            : booking.status,
-      }));
-      setBookings(updatedBookings as Booking[]);
-      setIsLoading(false);
+    const fetchBookings = async () => {
+      try {
+        setIsLoading(true);
+        const data = await student.getMyBookings();
+        console.log(data);
+        setBookings(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-
-    loadBookings();
+    fetchBookings();
   }, []);
 
   const handleCancelBooking = (bookingId: string) => {
