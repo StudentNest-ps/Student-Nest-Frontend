@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IBooking } from '../types/Student';
+import { Booking, IBooking } from '../types/Student';
 import { token } from './token';
 
 class Student {
@@ -11,6 +11,16 @@ class Student {
     });
 
     return res.status === 201; // Created
+  }
+
+  async getMyBookings() {
+    const res = await axios.get(`/api/sn/api/bookings/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.data as Booking[];
   }
 }
 
