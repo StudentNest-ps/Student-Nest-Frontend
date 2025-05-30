@@ -22,18 +22,14 @@ import {
   MapPin,
   Users,
   CreditCard,
-  Star,
-  Bed,
-  Bath,
-  Square,
   X,
   AlertTriangle,
   Trash2,
   MessageCircle,
 } from 'lucide-react';
-import type { Booking } from '../types/booking';
 import Image from 'next/image';
 import { ChatPopup } from './ChatPopup';
+import { Booking } from '../types/booking';
 
 interface BookingCardProps {
   bookings: Booking[];
@@ -64,7 +60,7 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case 'pending':
       return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
-    case 'accepted':
+    case 'confirmed':
       return 'bg-green-500/10 text-green-500 border-green-500/20';
     case 'already_booked':
       return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
@@ -74,16 +70,7 @@ const getStatusColor = (status: string) => {
 };
 
 const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'pending':
-      return 'Pending';
-    case 'accepted':
-      return 'Accepted';
-    case 'already_booked':
-      return 'Already Booked';
-    default:
-      return status.charAt(0).toUpperCase() + status.slice(1);
-  }
+  return status.charAt(0).toUpperCase() + status.slice(1);
 };
 
 export function BookingCard({
@@ -163,14 +150,6 @@ export function BookingCard({
                     {getStatusLabel(booking.status)}
                   </Badge>
                 </div>
-                <div className="absolute bottom-4 left-4">
-                  <div className="flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1">
-                    <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                    <span className="text-white text-xs font-medium">
-                      {booking.apartment.rating}
-                    </span>
-                  </div>
-                </div>
               </div>
 
               <CardHeader className="pb-3">
@@ -194,24 +173,6 @@ export function BookingCard({
               </CardHeader>
 
               <CardContent className="space-y-4">
-                {/* Apartment Details */}
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
-                      <Bed className="h-3 w-3" />
-                      {booking.apartment.bedrooms}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Bath className="h-3 w-3" />
-                      {booking.apartment.bathrooms}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Square className="h-3 w-3" />
-                      {booking.apartment.area}
-                    </div>
-                  </div>
-                </div>
-
                 {/* Booking Details */}
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
@@ -249,7 +210,7 @@ export function BookingCard({
 
                 {/* Action Buttons */}
                 <div className="flex gap-2">
-                  {booking.status === 'accepted' && (
+                  {booking.status === 'confirmed' && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}

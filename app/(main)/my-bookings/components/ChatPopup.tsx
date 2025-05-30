@@ -19,7 +19,6 @@ import {
   Paperclip,
   Smile,
   MapPin,
-  Star,
 } from 'lucide-react';
 import type { Booking } from '../types/booking';
 import Image from 'next/image';
@@ -227,12 +226,6 @@ export function ChatPopup({ isOpen, onClose, booking }: ChatPopupProps) {
                       </span>
                     </div>
                     <div className="flex items-center gap-2 mt-1">
-                      <div className="flex items-center gap-1">
-                        <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                        <span className="text-xs text-muted-foreground">
-                          {booking.apartment.rating}
-                        </span>
-                      </div>
                       <Badge variant="outline" className="text-xs">
                         Booking #{booking.id.slice(-4)}
                       </Badge>
