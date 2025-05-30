@@ -18,8 +18,9 @@ import { BookingCard } from './components/BookingCard';
 import { BookingTable } from './components/BookingTable';
 import { BookingSkeleton } from './components/BookingSkeleton';
 
-import type { Booking } from './types/booking';
+import { BookingStatus, type Booking } from './types/booking';
 import student from '@/module/services/Student';
+import { toast } from 'sonner';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
@@ -71,8 +72,22 @@ export default function MyBookingsPage() {
     fetchBookings();
   }, []);
 
-  const handleCancelBooking = (bookingId: string) => {
-    setBookings((prev) => prev.filter((b) => b.id !== bookingId));
+  const handleCancelBooking = async (bookingId: string) => {
+    try {
+      const res = await student.cancelBooking(bookingId);
+      if (res) {
+        setBookings((prev) =>
+          prev.map((b) =>
+            b.id == bookingId ? { ...b, status: BookingStatus.Cancelled } : b
+          )
+        );
+        toast.success('Booking cancelled successfully');
+      } else {
+        toast.error('Failed to cancel booking');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleRemoveBooking = (bookingId: string) => {
