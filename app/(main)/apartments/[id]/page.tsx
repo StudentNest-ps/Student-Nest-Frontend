@@ -6,7 +6,5 @@ export default async function ApartmentDetailsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  console.log(id);
-  console.log(typeof id);
   return <ApartmentDetails id={id} />;
 }

@@ -1,4 +1,4 @@
-import type { Booking } from '../types/booking';
+import { BookingStatus, type Booking } from '../types/booking';
 
 export const bookingsData: Booking[] = [
   {
@@ -8,14 +8,9 @@ export const bookingsData: Booking[] = [
       name: 'Modern Downtown Loft',
       location: 'Downtown, New York',
       image: '/images/1748107375075-huy-nguyen-AB-q9lwCVv8-unsplash.jpg',
-      rating: 4.8,
-      bedrooms: 2,
-      bathrooms: 2,
-      area: '1200 sq ft',
       owner: {
         id: 'OWN001',
         name: 'Sarah Johnson',
-        avatar: '/images/SNPublicAsset-Flexible.jpg',
         phone: '+1 (555) 123-4567',
         email: 'sarah.johnson@email.com',
       },
@@ -24,7 +19,7 @@ export const bookingsData: Booking[] = [
     checkOut: 'Dec 20, 2024',
     guests: 4,
     totalAmount: 1250,
-    status: 'accepted',
+    status: BookingStatus.Confirmed,
     bookingDate: 'Nov 28, 2024',
   },
   {
@@ -34,14 +29,9 @@ export const bookingsData: Booking[] = [
       name: 'Cozy Studio Apartment',
       location: 'Brooklyn, New York',
       image: '/images/1748189981265-ian-dooley-_-JR5TxKNSo-unsplash.jpg',
-      rating: 4.5,
-      bedrooms: 1,
-      bathrooms: 1,
-      area: '600 sq ft',
       owner: {
         id: 'OWN002',
         name: 'Michael Chen',
-        avatar: '/images/1748107375075-huy-nguyen-AB-q9lwCVv8-unsplash.jpg',
         phone: '+1 (555) 987-6543',
         email: 'michael.chen@email.com',
       },
@@ -50,7 +40,7 @@ export const bookingsData: Booking[] = [
     checkOut: 'Jan 12, 2025',
     guests: 2,
     totalAmount: 875,
-    status: 'pending',
+    status: BookingStatus.Pending,
     bookingDate: 'Dec 1, 2024',
   },
   {
@@ -60,14 +50,9 @@ export const bookingsData: Booking[] = [
       name: 'Luxury Penthouse Suite',
       location: 'Manhattan, New York',
       image: '/images/1748107375075-huy-nguyen-AB-q9lwCVv8-unsplash.jpg',
-      rating: 4.9,
-      bedrooms: 3,
-      bathrooms: 3,
-      area: '2000 sq ft',
       owner: {
         id: 'OWN003',
         name: 'Emily Rodriguez',
-        avatar: '/placeholder.svg?height=100&width=100',
         phone: '+1 (555) 456-7890',
         email: 'emily.rodriguez@email.com',
       },
@@ -76,7 +61,7 @@ export const bookingsData: Booking[] = [
     checkOut: 'Feb 21, 2025',
     guests: 6,
     totalAmount: 2800,
-    status: 'already_booked',
+    status: BookingStatus.AlreadyBooked,
     bookingDate: 'Nov 25, 2024',
   },
   {
@@ -86,14 +71,10 @@ export const bookingsData: Booking[] = [
       name: 'Charming Garden Apartment',
       location: 'Queens, New York',
       image: '/images/1748189981265-ian-dooley-_-JR5TxKNSo-unsplash.jpg',
-      rating: 4.6,
-      bedrooms: 2,
-      bathrooms: 1,
-      area: '900 sq ft',
       owner: {
         id: 'OWN004',
         name: 'David Thompson',
-        avatar: '/images/1748107375075-huy-nguyen-AB-q9lwCVv8-unsplash.jpg',
+
         phone: '+1 (555) 321-0987',
         email: 'david.thompson@email.com',
       },
@@ -102,7 +83,7 @@ export const bookingsData: Booking[] = [
     checkOut: 'Mar 17, 2025',
     guests: 3,
     totalAmount: 980,
-    status: 'pending',
+    status: BookingStatus.Pending,
     bookingDate: 'Dec 3, 2024',
   },
   {
@@ -112,14 +93,10 @@ export const bookingsData: Booking[] = [
       name: 'Waterfront Condo',
       location: 'Staten Island, New York',
       image: '/images/1748189981265-ian-dooley-_-JR5TxKNSo-unsplash.jpg',
-      rating: 4.7,
-      bedrooms: 2,
-      bathrooms: 2,
-      area: '1100 sq ft',
       owner: {
         id: 'OWN005',
         name: 'Lisa Park',
-        avatar: '/images/1748107375075-huy-nguyen-AB-q9lwCVv8-unsplash.jpg',
+
         phone: '+1 (555) 654-3210',
         email: 'lisa.park@email.com',
       },
@@ -128,7 +105,7 @@ export const bookingsData: Booking[] = [
     checkOut: 'Apr 9, 2025',
     guests: 4,
     totalAmount: 1400,
-    status: 'accepted',
+    status: BookingStatus.Confirmed,
     bookingDate: 'Nov 30, 2024',
   },
   {
@@ -138,14 +115,9 @@ export const bookingsData: Booking[] = [
       name: 'Historic Brownstone',
       location: 'Harlem, New York',
       image: '/images/1748189981265-ian-dooley-_-JR5TxKNSo-unsplash.jpg',
-      rating: 4.4,
-      bedrooms: 3,
-      bathrooms: 2,
-      area: '1500 sq ft',
       owner: {
         id: 'OWN006',
         name: 'James Wilson',
-        avatar: '/placeholder.svg?height=100&width=100',
         phone: '+1 (555) 789-0123',
         email: 'james.wilson@email.com',
       },
@@ -154,7 +126,7 @@ export const bookingsData: Booking[] = [
     checkOut: 'May 22, 2025',
     guests: 5,
     totalAmount: 1750,
-    status: 'already_booked',
+    status: BookingStatus.AlreadyBooked,
     bookingDate: 'Dec 2, 2024',
   },
 ];

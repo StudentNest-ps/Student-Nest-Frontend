@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/table';
 import {
   CreditCard,
-  Star,
   MapPin,
   X,
   AlertTriangle,
@@ -191,16 +190,6 @@ export function BookingTable({
                                 {booking.apartment.location}
                               </span>
                             </div>
-                            <div className="flex items-center gap-1 mt-1">
-                              <Star className="h-3 w-3 text-yellow-400 fill-current" />
-                              <span className="text-xs text-muted-foreground font-medium">
-                                {booking.apartment.rating}
-                              </span>
-                              <span className="text-xs text-muted-foreground ml-2">
-                                {booking.apartment.bedrooms}BR •{' '}
-                                {booking.apartment.bathrooms}BA
-                              </span>
-                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -256,7 +245,7 @@ export function BookingTable({
                           </motion.div>
 
                           {/* Status-specific actions */}
-                          {booking.status === 'accepted' && (
+                          {booking.status === 'confirmed' && (
                             <motion.div
                               initial={{ opacity: 0, scale: 0.8 }}
                               animate={{ opacity: 1, scale: 1 }}
