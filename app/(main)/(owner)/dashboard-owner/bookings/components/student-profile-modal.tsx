@@ -1,8 +1,6 @@
 'use client';
 import { format } from 'date-fns';
 import {
-  Check,
-  X,
   MessageSquare,
   Mail,
   Phone,
@@ -20,6 +18,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { BookingStatus } from '@/module/types/Student';
 
 // Define the student booking type
 export interface StudentBooking {
@@ -27,6 +26,7 @@ export interface StudentBooking {
   propertyId: string;
   propertyName: string;
   studentId: string;
+  propertyImage: string;
   studentName: string;
   studentEmail: string;
   studentPhone: string;
@@ -34,7 +34,7 @@ export interface StudentBooking {
   studentImage: string;
   checkIn: Date;
   checkOut: Date;
-  status: 'pending' | 'approved' | 'rejected';
+  status: BookingStatus;
   createdAt: Date;
   notes?: string;
 }
@@ -44,8 +44,6 @@ interface StudentProfileModalProps {
   student: StudentBooking;
   isOpen: boolean;
   onClose: () => void;
-  onApprove?: () => void;
-  onReject?: () => void;
   onMessage: () => void;
 }
 
@@ -53,24 +51,22 @@ export default function StudentProfileModal({
   student,
   isOpen,
   onClose,
-  onApprove,
-  onReject,
+
   onMessage,
 }: StudentProfileModalProps) {
- 
   const getStatusBadge = (status: StudentBooking['status']) => {
     switch (status) {
-      case 'approved':
+      case BookingStatus.Confirmed:
         return (
           <Badge className="bg-emerald-500 hover:bg-emerald-600">
             Approved
           </Badge>
         );
-      case 'rejected':
+      case BookingStatus.AlreadyBooked:
         return (
           <Badge className="bg-rose-500 hover:bg-rose-600">Rejected</Badge>
         );
-      case 'pending':
+      case BookingStatus.Pending:
       default:
         return (
           <Badge className="bg-amber-500 hover:bg-amber-600">Pending</Badge>
@@ -123,7 +119,7 @@ export default function StudentProfileModal({
           </div>
 
           {/* Booking Info */}
-          <div className="bg-gray-50 p-3 rounded-md">
+          <div className="bg-background p-3 rounded-md">
             <div className="flex items-center justify-between mb-2">
               <h4 className="font-medium">Booking Details</h4>
               {getStatusBadge(student.status)}
@@ -155,34 +151,6 @@ export default function StudentProfileModal({
 
           {/* Action Buttons */}
           <div className="flex space-x-2 pt-2">
-            {onApprove && (
-              <Button
-                variant="outline"
-                className="flex-1 cursor-pointer"
-                onClick={() => {
-                  onApprove();
-                  onClose();
-                }}
-              >
-                <Check className="h-4 w-4 mr-1 text-emerald-600" />
-                Approve
-              </Button>
-            )}
-
-            {onReject && (
-              <Button
-                variant="outline"
-                className="flex-1 cursor-pointer"
-                onClick={() => {
-                  onReject();
-                  onClose();
-                }}
-              >
-                <X className="h-4 w-4 mr-1 text-rose-600" />
-                Reject
-              </Button>
-            )}
-
             <Button
               variant="outline"
               className="flex-1 cursor-pointer"
@@ -195,7 +163,7 @@ export default function StudentProfileModal({
               Message
             </Button>
           </div>
-        </div>  
+        </div>
       </DialogContent>
     </Dialog>
   );
