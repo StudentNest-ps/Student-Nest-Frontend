@@ -217,8 +217,10 @@ export default function ApartmentDetails({ id }: { id: string }) {
       };
 
       const res = await student.bookProperty(booking);
-      if (res)
+      if (res === 201)
         toast.success("Booking Requested! Waiting for Owner's Approval.");
+      else if (res === 204)
+        toast.warning("You've Already Booked This Apartment!");
       else toast.error('Something went wrong! Please try again.');
     } catch (error) {
       console.error('Error booking apartment:', error);
@@ -511,7 +513,7 @@ export default function ApartmentDetails({ id }: { id: string }) {
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       {isBooking ? (
-                        <LoaderCircle className="p-2 animate-spin text-primary" />
+                        <LoaderCircle className="h-6 w-6 animate-spin text-background z-10" />
                       ) : (
                         <span className="relative z-10">Book Now</span>
                       )}

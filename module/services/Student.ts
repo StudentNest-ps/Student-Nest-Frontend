@@ -10,7 +10,7 @@ class Student {
       },
     });
 
-    return res.status === 201; // Created
+    return res.status
   }
 
   async getMyBookings() {
