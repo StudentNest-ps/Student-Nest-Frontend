@@ -13,7 +13,7 @@ export enum BookingStatus {
   }
   
   export interface Owner {
-    id: string;
+    id: string;              
     name: string;
     phone?: string;
     email?: string;
@@ -26,6 +26,13 @@ export enum BookingStatus {
     image?: string;
     owner?: Owner;
   }
+
+  export interface Student {
+    id: string;
+    name: string;
+    email: string;
+    phone?: string;
+  }
   
   export interface Booking {
     id: string;
@@ -36,5 +43,6 @@ export enum BookingStatus {
     totalAmount: number;
     status: BookingStatus;
     bookingDate: string;
+    student: Student;
   }
   

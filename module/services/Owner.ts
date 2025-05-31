@@ -64,6 +64,45 @@ class Owner {
     console.log(res.data);
     return res.status === 200;
   }
+
+  async getBookings() {
+    const res = await axios.get(`/api/sn/api/bookings/owner`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log(res.data);
+    return res.data; // Add this line to return the data
+  }
+
+  async approveBooking(bookingId: string) {
+    const res = await axios.patch(
+      `/api/sn/api/bookings/${bookingId}/approve`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.status === 200;
+  }
+
+  async rejectBooking(bookingId: string) {
+    const res = await axios.patch(
+      `/api/sn/api/bookings/${bookingId}/reject`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.status === 200;
+  }
 }
 
 const owner = new Owner();
