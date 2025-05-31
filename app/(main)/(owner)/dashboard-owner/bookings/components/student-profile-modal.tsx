@@ -54,15 +54,19 @@ export default function StudentProfileModal({
 
   onMessage,
 }: StudentProfileModalProps) {
-  const getStatusBadge = (status: StudentBooking['status']) => {
+  const getStatusBadge = (status: BookingStatus) => {
     switch (status) {
       case BookingStatus.Confirmed:
         return (
           <Badge className="bg-emerald-500 hover:bg-emerald-600">
-            Approved
+            Confirmed
           </Badge>
         );
       case BookingStatus.AlreadyBooked:
+        return (
+          <Badge className="bg-sky-500 hover:bg-sky-600">Already Booked</Badge>
+        );
+      case BookingStatus.Cancelled:
         return (
           <Badge className="bg-rose-500 hover:bg-rose-600">Rejected</Badge>
         );

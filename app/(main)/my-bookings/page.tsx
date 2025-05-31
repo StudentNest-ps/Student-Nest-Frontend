@@ -106,7 +106,7 @@ export default function MyBookingsPage() {
     return {
       total: bookings.length,
       pending: stats.pending || 0,
-      accepted: stats.accepted || 0,
+      confirmed: stats.confirmed || 0,
       already_booked: stats.already_booked || 0,
     };
   };
@@ -194,9 +194,9 @@ export default function MyBookingsPage() {
                   <CheckCircle className="h-5 w-5 text-green-500" />
                 </div>
                 <div className="text-2xl font-bold text-headline">
-                  {stats.accepted}
+                  {stats.confirmed}
                 </div>
-                <div className="text-sm text-muted-foreground">Accepted</div>
+                <div className="text-sm text-muted-foreground">Confirmed</div>
               </CardContent>
             </Card>
 

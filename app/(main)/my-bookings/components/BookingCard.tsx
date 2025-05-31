@@ -26,10 +26,13 @@ import {
   AlertTriangle,
   Trash2,
   MessageCircle,
+  Loader2,
 } from 'lucide-react';
 import Image from 'next/image';
 import { ChatPopup } from './ChatPopup';
 import { Booking } from '../types/booking';
+import payment from '@/module/services/payment';
+import { toast } from 'sonner';
 
 interface BookingCardProps {
   bookings: Booking[];
@@ -83,9 +86,17 @@ export function BookingCard({
   const router = useRouter();
   const [chatOpen, setChatOpen] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
-
-  const handlePayment = (bookingId: string) => {
-    router.push(`/payment?booking=${bookingId}`);
+  const [isPaying, setIsPaying] = useState<string | null>(null);
+  const handlePayment = async (bookingId: string) => {
+    // TODO: Handle payment via Lahza API
+    try {
+      setIsPaying(bookingId);
+      await payment.initiatePayment(bookingId);
+    } catch {
+      toast.error('Something went wrong. Please contact our Support!');
+    } finally {
+      setIsPaying(null);
+    }
   };
 
   const handleCancelBooking = async (bookingId: string) => {
@@ -179,21 +190,14 @@ export function BookingCard({
                     <Calendar className="h-4 w-4 text-primary" />
                     <span className="text-muted-foreground">Check-in:</span>
                     <span className="font-medium text-headline">
-                      {booking.checkIn}
+                      {new Date(booking.checkIn).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-primary" />
                     <span className="text-muted-foreground">Check-out:</span>
                     <span className="font-medium text-headline">
-                      {booking.checkOut}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Users className="h-4 w-4 text-primary" />
-                    <span className="text-muted-foreground">Guests:</span>
-                    <span className="font-medium text-headline">
-                      {booking.guests}
+                      {new Date(booking.checkOut).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
@@ -204,7 +208,8 @@ export function BookingCard({
                     Booking ID: {booking.id}
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Booked on: {booking.bookingDate}
+                    Booked on:{' '}
+                    {new Date(booking.bookingDate).toLocaleDateString()}
                   </div>
                 </div>
 
@@ -221,8 +226,12 @@ export function BookingCard({
                         onClick={() => handlePayment(booking.id)}
                         className="cursor-pointer w-full bg-primary hover:from-primary/90 hover:to-accent/90 text-background shadow-lg shadow-primary/25"
                       >
-                        <CreditCard className="h-4 w-4 mr-2" />
-                        Pay Now
+                        {isPaying === booking.id ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <CreditCard className="h-4 w-4 mr-2" />
+                        )}
+                        {isPaying === booking.id ? 'Processing...' : 'Pay Now'}
                       </Button>
                     </motion.div>
                   )}

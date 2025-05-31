@@ -11,6 +11,7 @@ import {
   ChevronDown,
   ChevronUp,
   Calendar,
+  LoaderCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -73,6 +74,8 @@ export default function BookingsPage() {
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
+  const [loadingApprove, setLoadingApprove] = useState<string | null>(null);
+  const [loadingReject, setLoadingReject] = useState<string | null>(null);
 
   // Convert API booking to StudentBooking format
   //TODO: Utils folder
@@ -163,13 +166,16 @@ export default function BookingsPage() {
     newStatus: BookingStatus
   ) => {
     try {
+      // Set loading state based on action type
       if (newStatus === BookingStatus.Confirmed) {
+        setLoadingApprove(bookingId);
         await owner.approveBooking(bookingId);
       } else if (newStatus === BookingStatus.AlreadyBooked) {
+        setLoadingReject(bookingId);
         await owner.rejectBooking(bookingId);
       }
 
-      toast.success('Booking status updated successfully'); // Show toa
+      toast.success('Booking status updated successfully');
 
       // Update local state
       const updatedBookings = bookings.map((booking) =>
@@ -178,6 +184,10 @@ export default function BookingsPage() {
       setBookings(updatedBookings);
     } catch (error) {
       toast.error('Error updating booking status: ' + error);
+    } finally {
+      // Clear loading states
+      setLoadingApprove(null);
+      setLoadingReject(null);
     }
   };
 
@@ -203,6 +213,10 @@ export default function BookingsPage() {
           </Badge>
         );
       case BookingStatus.AlreadyBooked:
+        return (
+          <Badge className="bg-sky-500 hover:bg-sky-600">Already Booked</Badge>
+        );
+      case BookingStatus.Cancelled:
         return (
           <Badge className="bg-rose-500 hover:bg-rose-600">Rejected</Badge>
         );
@@ -439,8 +453,16 @@ export default function BookingsPage() {
                                       BookingStatus.Confirmed
                                     )
                                   }
+                                  disabled={
+                                    loadingApprove === booking.id ||
+                                    loadingReject === booking.id
+                                  }
                                 >
-                                  <Check className="h-4 w-4 text-emerald-600" />
+                                  {loadingApprove === booking.id ? (
+                                    <LoaderCircle className="h-4 w-4 animate-spin text-emerald-600" />
+                                  ) : (
+                                    <Check className="h-4 w-4 text-emerald-600" />
+                                  )}
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
@@ -462,8 +484,16 @@ export default function BookingsPage() {
                                       BookingStatus.AlreadyBooked
                                     )
                                   }
+                                  disabled={
+                                    loadingApprove === booking.id ||
+                                    loadingReject === booking.id
+                                  }
                                 >
-                                  <X className="h-4 w-4 text-rose-600" />
+                                  {loadingReject === booking.id ? (
+                                    <LoaderCircle className="h-4 w-4 animate-spin text-rose-600" />
+                                  ) : (
+                                    <X className="h-4 w-4 text-rose-600" />
+                                  )}
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
@@ -620,9 +650,19 @@ export default function BookingsPage() {
                                 BookingStatus.Confirmed
                               )
                             }
+                            disabled={
+                              loadingApprove === booking.id ||
+                              loadingReject === booking.id
+                            }
                           >
-                            <Check className="h-4 w-4 mr-1 text-emerald-600" />
-                            Approve
+                            {loadingApprove === booking.id ? (
+                              <LoaderCircle className="h-4 w-4 mr-1 animate-spin text-emerald-600" />
+                            ) : (
+                              <Check className="h-4 w-4 mr-1 text-emerald-600" />
+                            )}
+                            {loadingApprove === booking.id
+                              ? 'Approving...'
+                              : 'Approve'}
                           </Button>
 
                           <Button
@@ -635,9 +675,19 @@ export default function BookingsPage() {
                                 BookingStatus.AlreadyBooked
                               )
                             }
+                            disabled={
+                              loadingApprove === booking.id ||
+                              loadingReject === booking.id
+                            }
                           >
-                            <X className="h-4 w-4 mr-1 text-rose-600" />
-                            Reject
+                            {loadingReject === booking.id ? (
+                              <LoaderCircle className="h-4 w-4 mr-1 animate-spin text-rose-600" />
+                            ) : (
+                              <X className="h-4 w-4 mr-1 text-rose-600" />
+                            )}
+                            {loadingReject === booking.id
+                              ? 'Rejecting...'
+                              : 'Reject'}
                           </Button>
                         </>
                       )}
