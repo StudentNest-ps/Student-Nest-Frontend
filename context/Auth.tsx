@@ -13,10 +13,21 @@ type AuthContextType = {
   logout: () => void;
 };
 
+export interface UserProfile {
+  _id: string;
+  email: string;
+  username: string;
+  phoneNumber: string;
+  role: 'student' | 'landlord' | 'admin';
+  __v: number;
+}
+
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserResponse | null>(null);
+
   const router = useRouter();
   useEffect(() => {
     try {

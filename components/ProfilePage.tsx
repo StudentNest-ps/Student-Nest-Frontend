@@ -5,21 +5,13 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Mail, Phone, ShieldCheck } from 'lucide-react';
-
-export interface User {
-  _id: string;
-  email: string;
-  username: string;
-  phoneNumber: string;
-  role: 'student' | 'landlord' | 'admin';
-  __v: number;
-}
+import { UserProfile } from '@/context/Auth';
 
 export interface UserProfileProps {
-  user: User;
+  user: UserProfile;
 }
 
-const getRoleStyle = (role: User['role']) => {
+const getRoleStyle = (role: UserProfile['role']) => {
   switch (role) {
     case 'student':
       return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';

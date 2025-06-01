@@ -5,10 +5,10 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get('auth-token')?.value;
   const url = req.nextUrl;
   const pathname = url.pathname;
-
+  const role = req.cookies.get('role')?.value;
   // Pages that require authentication
   const protectedRoutes = ['/apartments', '/landlords'];
-  
+
   // Auth pages that should redirect if user is already logged in
   const authPages = ['/signin', '/signup'];
 
@@ -19,7 +19,6 @@ export function middleware(req: NextRequest) {
 
   // Redirect admin users from home page to dashboard
   if (pathname === '/' && token) {
-    const role = req.cookies.get('role')?.value;
     if (role === Role.ADMIN) {
       return NextResponse.redirect(new URL('/dashboard', req.url));
     }
@@ -46,6 +45,14 @@ export function middleware(req: NextRequest) {
     if (pathname === '/landlords' && role !== Role.OWNER) {
       return roleBasedRedirect(req, role);
     }
+  }
+
+  if (pathname == '/' && role == Role.OWNER) {
+    return NextResponse.redirect(new URL('/dashboard-owner', req.url));
+  }
+
+  if (pathname == '/' && role == Role.ADMIN) {
+    return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
   return NextResponse.next();
