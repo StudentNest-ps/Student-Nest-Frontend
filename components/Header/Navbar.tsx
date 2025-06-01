@@ -3,16 +3,17 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/button';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/Auth';
 import { Role } from '@/module/@types';
 import { hiddenHeaderPaths } from '@/data/hiddenPaths';
 import { ModeToggle } from '../providers/theme-provider';
 import Logo from './Logo';
-import { Menu, X } from 'lucide-react';
+import { Menu, User, X } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const router = useRouter();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -127,21 +128,35 @@ const Navbar = () => {
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center gap-3 relative z-10">
               {user ? (
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    variant="outline"
-                    className="relative overflow-hidden text-primary border-primary hover:bg-accent cursor-pointer group transition-all duration-300"
-                    onClick={logout}
+                <div className="flex gap-2">
+                  <motion.div
+                    className=""
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <span className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <Link href="/signin" className="relative z-10">
-                      Logout
-                    </Link>
-                  </Button>
-                </motion.div>
+                    <Button
+                      className="cursor-pointer"
+                      onClick={() => router.push('/profile')}
+                    >
+                      <User />
+                    </Button>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      variant="outline"
+                      className="relative overflow-hidden text-primary border-primary hover:bg-accent cursor-pointer group transition-all duration-300"
+                      onClick={logout}
+                    >
+                      <span className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <Link href="/signin" className="relative z-10">
+                        Logout
+                      </Link>
+                    </Button>
+                  </motion.div>
+                </div>
               ) : (
                 <motion.div
                   whileHover={{ scale: 1.05 }}
@@ -158,8 +173,12 @@ const Navbar = () => {
                   </Button>
                 </motion.div>
               )}
-
-              <ModeToggle />
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <ModeToggle />
+              </motion.div>
             </div>
 
             {/* Mobile Menu Button */}
