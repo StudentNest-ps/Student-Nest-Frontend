@@ -20,7 +20,6 @@ import {
 import {
   Calendar,
   MapPin,
-  Users,
   CreditCard,
   X,
   AlertTriangle,
@@ -31,8 +30,8 @@ import {
 import Image from 'next/image';
 import { ChatPopup } from './ChatPopup';
 import { Booking } from '../types/booking';
-import payment from '@/module/services/payment';
 import { toast } from 'sonner';
+import payment from '@/module/services/Payment';
 
 interface BookingCardProps {
   bookings: Booking[];
@@ -91,7 +90,10 @@ export function BookingCard({
     // TODO: Handle payment via Lahza API
     try {
       setIsPaying(bookingId);
-      await payment.initiatePayment(bookingId);
+      const paymentDetails = await payment.initiatePayment(bookingId);
+      router.replace(
+        `${paymentDetails.checkout_url}?transaction_id=${paymentDetails.transaction_id}`
+      );
     } catch {
       toast.error('Something went wrong. Please contact our Support!');
     } finally {

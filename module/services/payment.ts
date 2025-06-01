@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { token } from './token';
+import { IPayment } from '../types/Payment';
 
 class Payment {
-  async initiatePayment(bookingId: string) {
+  async initiatePayment(bookingId: string): Promise<IPayment> {
     const res = await axios.post(
       `/api/sn/api/lahza/initiate/${bookingId}`,
       {},
@@ -13,8 +14,7 @@ class Payment {
       }
     );
 
-    console.log(res.data);
-    // return res.data;
+    return res.data as IPayment;
   }
 }
 
