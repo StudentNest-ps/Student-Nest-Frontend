@@ -232,7 +232,10 @@ const Navbar = () => {
                     { href: '/blog', label: 'Blog' },
                     { href: '/contact-us', label: 'Contacts' },
                     ...(user?.role === Role.STUDENT
-                      ? [{ href: '/apartments', label: 'Book Now' }]
+                      ? [
+                          { href: '/apartments', label: 'Book Now' },
+                          { href: '/my-bookings', label: 'My Bookings' },
+                        ]
                       : []),
                   ].map((item, index) => (
                     <motion.div
@@ -258,16 +261,30 @@ const Navbar = () => {
                     className="pt-4 border-t border-border flex items-center gap-3"
                   >
                     {user ? (
-                      <Button
-                        variant="outline"
-                        className="text-primary border-primary hover:bg-accent cursor-pointer"
-                        onClick={() => {
-                          logout();
-                          setIsMobileMenuOpen(false);
-                        }}
-                      >
-                        <Link href="/signin">Logout</Link>
-                      </Button>
+                      <>
+                        <motion.div
+                          className=""
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Button
+                            className="cursor-pointer"
+                            onClick={() => router.push('/profile')}
+                          >
+                            <User />
+                          </Button>
+                        </motion.div>
+                        <Button
+                          variant="outline"
+                          className="text-primary border-primary hover:bg-accent cursor-pointer"
+                          onClick={() => {
+                            logout();
+                            setIsMobileMenuOpen(false);
+                          }}
+                        >
+                          <Link href="/signin">Logout</Link>
+                        </Button>
+                      </>
                     ) : (
                       <Button
                         variant="outline"
