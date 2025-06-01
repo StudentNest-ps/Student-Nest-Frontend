@@ -6,7 +6,6 @@ import {
   IconFileAi,
   IconFileDescription,
   IconInnerShadowTop,
-  IconSettings,
   IconUsers,
   IconBuilding,
   IconShieldPlus,
@@ -130,13 +129,7 @@ const data = {
       ],
     },
   ],
-  navSecondary: [
-    {
-      title: 'Settings',
-      url: '#',
-      icon: IconSettings,
-    },
-  ],
+  navSecondary: [],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

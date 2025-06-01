@@ -7,6 +7,7 @@ export const hiddenFooterPaths = [
   '/unauthorized',
   '/my-bookings',
   '/apartments',
+  '/profile',
 ];
 
 export const hiddenHeaderPaths = ['/dashboard', '/dashboard-owner'];

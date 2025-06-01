@@ -1,10 +1,6 @@
 'use client';
 
-import {
-  IconDotsVertical,
-  IconLogout,
-  IconNotification,
-} from '@tabler/icons-react';
+import { IconDotsVertical, IconLogout } from '@tabler/icons-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -23,6 +19,8 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { useAuth } from '@/context/Auth';
+import { User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export function NavUser({
   user,
@@ -35,6 +33,7 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar();
   const { logout } = useAuth();
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -80,9 +79,12 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="cursor-pointer">
-                <IconNotification />
-                Account
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => router.push('/profile')}
+              >
+                <User />
+                Profile
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
