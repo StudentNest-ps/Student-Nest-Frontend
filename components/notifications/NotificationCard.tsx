@@ -1,10 +1,19 @@
 import React from 'react';
-import { InfoIcon, CheckCircleIcon, XCircleIcon, BellIcon } from 'lucide-react';
+import {
+  InfoIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  BellIcon,
+  Check,
+} from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Button } from '../ui/button';
 
 dayjs.extend(relativeTime);
+
 type NotificationProps = {
+  _id: string;
   message: string;
   type: 'info' | 'success' | 'error' | 'system';
   seen: boolean;
@@ -26,15 +35,19 @@ const getIcon = (type: NotificationProps['type']) => {
 };
 
 const NotificationCard: React.FC<NotificationProps> = ({
+  _id,
   message,
   type,
   seen,
   createdAt,
 }) => {
+  const onMarkAsSeen = (id: string) => {
+    console.log('this notification is seen: ', id);
+  };
   return (
     <div
-      className={`flex items-start gap-3 p-4 rounded-lg shadow-md transition-all border ${
-        seen ? 'bg-muted border-green-500' : 'bg-accent border-red-500'
+      className={`flex items-start gap-3 p-4 rounded-lg shadow-md transition-all border-2 ${
+        seen ? 'bg-muted/50 border-muted' : 'bg-accent/50 border-accent'
       }`}
     >
       <div className="mt-1">{getIcon(type)}</div>
@@ -44,6 +57,15 @@ const NotificationCard: React.FC<NotificationProps> = ({
           {dayjs(createdAt).fromNow()}
         </p>
       </div>
+      {!seen && (
+        <Button
+          onClick={() => onMarkAsSeen(_id)}
+          variant="outline"
+          className="cursor-pointer text-sm hover:underline flex items-center gap-1"
+        >
+          <Check size={16} />
+        </Button>
+      )}
     </div>
   );
 };

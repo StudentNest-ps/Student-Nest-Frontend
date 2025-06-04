@@ -20,6 +20,7 @@ const dummyNotifications: Notification[] = [
 const Notifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchNotifications = async () => {
       setLoading(true);
@@ -37,6 +38,7 @@ const Notifications = () => {
     fetchNotifications();
   }, []);
 
+
   if (loading) {
     return (
       <LoaderCircle className="h-4 w-4 animate-spin text-primary mx-auto" />
@@ -51,6 +53,7 @@ const Notifications = () => {
         notifications.map((n) => (
           <NotificationCard
             key={n._id}
+            _id={n._id}
             message={n.message}
             type={n.type}
             seen={n.seen}
