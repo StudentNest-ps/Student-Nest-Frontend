@@ -11,6 +11,7 @@ import { ModeToggle } from '../providers/theme-provider';
 import Logo from './Logo';
 import { Bell, Menu, User, X } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import Notifications from '../notifications/Notifications';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -18,7 +19,6 @@ const Navbar = () => {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [notificationOpen, setNotificationOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -150,15 +150,12 @@ const Navbar = () => {
                   >
                     <Popover>
                       <PopoverTrigger asChild>
-                        <Button
-                          className="cursor-pointer"
-                          onClick={() => setNotificationOpen(!notificationOpen)}
-                        >
+                        <Button className="cursor-pointer">
                           <Bell />
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-80">
-                        <div className="grid gap-4">Notifications Content</div>
+                        <Notifications />
                       </PopoverContent>
                     </Popover>
                   </motion.div>
