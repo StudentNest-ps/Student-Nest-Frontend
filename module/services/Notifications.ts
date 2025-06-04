@@ -24,6 +24,10 @@ class Notifications {
     console.log(res.status);
     console.log(res.data);
   }
+
+  async createNotification(){
+    
+  }
 }
 
 const NotificationService = new Notifications();
