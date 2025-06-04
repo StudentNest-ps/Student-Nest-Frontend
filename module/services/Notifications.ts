@@ -10,6 +10,20 @@ class Notifications {
     });
     return res.data;
   }
+
+  async markAsSeen(notificationId: string) {
+    const res = await axios.put(
+      `/api/sn/api/notifications/${notificationId}/seen`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log(res.status);
+    console.log(res.data);
+  }
 }
 
 const NotificationService = new Notifications();
