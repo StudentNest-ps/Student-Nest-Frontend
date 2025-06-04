@@ -18,6 +18,7 @@ import {
   Car,
   Coffee,
   Tv,
+  LoaderCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,6 +28,8 @@ import type { Property } from '@/module/types/Admin';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import property from '@/module/services/Property';
+import { IBooking } from '@/module/types/Student';
+import student from '@/module/services/Student';
 
 // Animation variants
 const pageVariants = {
@@ -174,6 +177,8 @@ export default function ApartmentDetails({ id }: { id: string }) {
   const [apartment, setApartment] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
+  const [userId, setUserId] = useState('');
+  const [isBooking, setIsBooking] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setImageLoaded] = useState(false);
 
@@ -192,7 +197,38 @@ export default function ApartmentDetails({ id }: { id: string }) {
     };
 
     fetchApartments();
+
+    const userData = JSON.parse(localStorage.getItem('userData') || '{}') as {
+      role: string;
+      userId: string;
+      token: string;
+    };
+    setUserId(userData.userId);
   }, [id]);
+
+  const handleBookNow = async () => {
+    try {
+      setIsBooking(true);
+      const booking: IBooking = {
+        propertyId: apartment?._id || '',
+        studentId: userId,
+        dateFrom: apartment?.availableFrom || '',
+        dateTo: apartment?.availableTo || '',
+      };
+
+      const res = await student.bookProperty(booking);
+      if (res === 201)
+        toast.success("Booking Requested! Waiting for Owner's Approval.");
+      else if (res === 204)
+        toast.warning("You've Already Booked This Apartment!");
+      else toast.error('Something went wrong! Please try again.');
+    } catch (error) {
+      console.error('Error booking apartment:', error);
+      toast.error('Something went wrong! Please contact an administrator.');
+    } finally {
+      setIsBooking(false);
+    }
+  };
 
   if (loading) {
     return <LoadingSkeleton />;
@@ -471,9 +507,16 @@ export default function ApartmentDetails({ id }: { id: string }) {
 
                     <Separator className="my-6 bg-gradient-to-r from-transparent via-border to-transparent" />
 
-                    <Button className="cursor-pointer w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-background font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group relative overflow-hidden">
+                    <Button
+                      onClick={handleBookNow}
+                      className="cursor-pointer w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-background font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group relative overflow-hidden"
+                    >
                       <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <span className="relative z-10">Book Now</span>
+                      {isBooking ? (
+                        <LoaderCircle className="h-6 w-6 animate-spin text-background z-10" />
+                      ) : (
+                        <span className="relative z-10">Book Now</span>
+                      )}
                     </Button>
                   </CardContent>
                 </Card>

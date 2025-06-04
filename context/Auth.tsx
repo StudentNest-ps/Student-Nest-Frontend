@@ -6,17 +6,31 @@ import Cookies from 'js-cookie';
 import { toast } from 'sonner';
 import { User, UserResponse } from '@/module/@types';
 import { useRouter } from 'next/navigation';
+import { usePersistentState } from '@/hooks/usePersistentState';
 
 type AuthContextType = {
   user: UserResponse | null;
   login: (userData: User, callback?: () => void) => void;
   logout: () => void;
+  userInformation: UserProfile | null;
 };
+
+export interface UserProfile {
+  _id: string;
+  email: string;
+  username: string;
+  phoneNumber: string;
+  role: 'student' | 'landlord' | 'admin';
+  __v: number;
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserResponse | null>(null);
+  const [userInformation, setUserInformation] =
+    usePersistentState<UserProfile | null>('userInformation', null);
+
   const router = useRouter();
   useEffect(() => {
     try {
@@ -50,6 +64,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
         localStorage.setItem('userData', JSON.stringify(res.data));
         setUser(res.data!);
+        const userInformation = await auth.getUserInformation(
+          res.data?.token || ''
+        );
+        setUserInformation(userInformation);
         toast.success('Sign in successful');
         router.push('/apartments');
       } else {
@@ -71,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, userInformation }}>
       {children}
     </AuthContext.Provider>
   );

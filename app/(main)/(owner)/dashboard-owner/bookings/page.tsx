@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import {
   Check,
   X,
@@ -11,6 +11,7 @@ import {
   ChevronDown,
   ChevronUp,
   Calendar,
+  LoaderCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,142 +46,89 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import StudentProfileModal, { StudentBooking } from './components/student-profile-modal';
+import StudentProfileModal, {
+  StudentBooking,
+} from './components/student-profile-modal';
+import { BookingStatus, Booking } from '@/module/types/Student';
+import owner from '@/module/services/Owner';
+import { toast } from 'sonner';
+import Image from 'next/image';
 
-// Define property type for the filter
 interface Property {
   id: string;
   name: string;
 }
 
-// Define status type
-type BookingStatus = 'pending' | 'approved' | 'rejected';
-
-// Sample data for bookings
-const bookingsData: StudentBooking[] = [
-  {
-    id: '1',
-    propertyId: 'prop1',
-    propertyName: 'Cozy Apartment near City Center',
-    studentId: 'stud1',
-    studentName: 'Ahmed Khalil',
-    studentEmail: 'ahmed.k@example.com',
-    studentPhone: '+970 59 123 4567',
-    studentUniversity: 'Birzeit University',
-    studentImage: '/placeholder.svg?height=100&width=100',
-    checkIn: new Date('2023-09-01'),
-    checkOut: new Date('2024-06-30'),
-    status: 'pending',
-    createdAt: new Date('2023-08-15'),
-    notes: 'First-year student looking for accommodation near campus',
-  },
-  {
-    id: '2',
-    propertyId: 'prop2',
-    propertyName: 'Modern Studio in Downtown',
-    studentId: 'stud2',
-    studentName: 'Layla Omar',
-    studentEmail: 'layla.o@example.com',
-    studentPhone: '+970 59 987 6543',
-    studentUniversity: 'Al-Quds University',
-    studentImage: '/placeholder.svg?height=100&width=100',
-    checkIn: new Date('2023-08-15'),
-    checkOut: new Date('2024-05-30'),
-    status: 'approved',
-    createdAt: new Date('2023-07-20'),
-    notes: 'Graduate student, quiet and studious',
-  },
-  {
-    id: '3',
-    propertyId: 'prop3',
-    propertyName: 'Spacious 2BR near Al-Quds University',
-    studentId: 'stud3',
-    studentName: 'Mahmoud Nasser',
-    studentEmail: 'mahmoud.n@example.com',
-    studentPhone: '+970 59 456 7890',
-    studentUniversity: 'Al-Quds University',
-    studentImage: '/placeholder.svg?height=100&width=100',
-    checkIn: new Date('2023-09-01'),
-    checkOut: new Date('2024-06-15'),
-    status: 'rejected',
-    createdAt: new Date('2023-08-05'),
-    notes: 'Looking to share with a roommate',
-  },
-  {
-    id: '4',
-    propertyId: 'prop1',
-    propertyName: 'Cozy Apartment near City Center',
-    studentId: 'stud4',
-    studentName: 'Nour Haddad',
-    studentEmail: 'nour.h@example.com',
-    studentPhone: '+970 59 234 5678',
-    studentUniversity: 'Birzeit University',
-    studentImage: '/placeholder.svg?height=100&width=100',
-    checkIn: new Date('2023-09-15'),
-    checkOut: new Date('2024-07-01'),
-    status: 'pending',
-    createdAt: new Date('2023-08-10'),
-    notes: 'Third-year engineering student',
-  },
-  {
-    id: '5',
-    propertyId: 'prop4',
-    propertyName: 'Luxury Condo with Mountain View',
-    studentId: 'stud5',
-    studentName: 'Rami Ayyad',
-    studentEmail: 'rami.a@example.com',
-    studentPhone: '+970 59 345 6789',
-    studentUniversity: 'An-Najah National University',
-    studentImage: '/placeholder.svg?height=100&width=100',
-    checkIn: new Date('2023-08-20'),
-    checkOut: new Date('2024-06-20'),
-    status: 'approved',
-    createdAt: new Date('2023-07-25'),
-    notes: 'Medical student, needs quiet study environment',
-  },
-  {
-    id: '6',
-    propertyId: 'prop2',
-    propertyName: 'Modern Studio in Downtown',
-    studentId: 'stud6',
-    studentName: 'Samira Khoury',
-    studentEmail: 'samira.k@example.com',
-    studentPhone: '+970 59 876 5432',
-    studentUniversity: 'Bethlehem University',
-    studentImage: '/placeholder.svg?height=100&width=100',
-    checkIn: new Date('2023-09-05'),
-    checkOut: new Date('2024-05-25'),
-    status: 'pending',
-    createdAt: new Date('2023-08-12'),
-    notes: 'International student from Jordan',
-  },
-];
-
-// Get unique properties for the filter
-const properties: Property[] = [
-  ...new Set(bookingsData.map((booking) => booking.propertyName)),
-].map((name) => ({
-  id: bookingsData.find((b) => b.propertyName === name)?.propertyId || '',
-  name,
-}));
-
 export default function BookingsPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [bookings, setBookings] = useState<StudentBooking[]>(bookingsData);
-  const [filteredBookings, setFilteredBookings] = useState<StudentBooking[]>(bookingsData);
+  const [bookings, setBookings] = useState<StudentBooking[]>([]);
+  const [filteredBookings, setFilteredBookings] = useState<StudentBooking[]>(
+    []
+  );
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [propertyFilter, setPropertyFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedStudent, setSelectedStudent] = useState<StudentBooking | null>(null);
+  const [selectedStudent, setSelectedStudent] = useState<StudentBooking | null>(
+    null
+  );
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loadingApprove, setLoadingApprove] = useState<string | null>(null);
+  const [loadingReject, setLoadingReject] = useState<string | null>(null);
 
-  // Simulate loading
+  // Convert API booking to StudentBooking format
+  //TODO: Utils folder
+  const mapBookingToStudentBooking = (booking: Booking): StudentBooking => {
+    return {
+      id: booking.id,
+      propertyId: booking.apartment.id,
+      propertyName: booking.apartment.name,
+      propertyImage: booking.apartment.image || '',
+      studentId: booking.student.id,
+      studentName: booking.student.name,
+      studentEmail: booking.student.email || '',
+      studentPhone: booking.student.phone || '',
+      studentUniversity: 'AnNajah National', // This might need to be added to the Student interface if needed
+      studentImage: '/placeholder.svg?height=100&width=100', // Student image placeholder
+      checkIn: parseISO(booking.checkIn),
+      checkOut: parseISO(booking.checkOut),
+      status: booking.status,
+      createdAt: parseISO(booking.bookingDate),
+      notes: `Guests: ${booking.guests}, Total Amount: $${booking.totalAmount}`,
+    };
+  };
+
+  // Fetch bookings from API
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+    const fetchBookings = async () => {
+      try {
+        const data = await owner.getBookings();
+        if (data && Array.isArray(data)) {
+          const mappedBookings = data.map(mapBookingToStudentBooking);
+          setBookings(mappedBookings);
+          setFilteredBookings(mappedBookings);
+
+          // Extract unique properties for the filter
+          const uniqueProperties = [
+            ...new Set(mappedBookings.map((b) => b.propertyId)),
+          ].map((id) => {
+            const booking = mappedBookings.find((b) => b.propertyId === id);
+            return {
+              id,
+              name: booking?.propertyName || 'Unknown Property',
+            };
+          });
+          setProperties(uniqueProperties);
+        }
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBookings();
   }, []);
 
   // Filter bookings when filters change
@@ -213,15 +161,34 @@ export default function BookingsPage() {
   }, [statusFilter, propertyFilter, searchQuery, bookings]);
 
   // Handle booking status change
-  const handleStatusChange = (bookingId: string, newStatus: BookingStatus) => {
-    // In a real app, you would call an API here
-    console.log(`Changing booking ${bookingId} status to ${newStatus}`);
+  const handleStatusChange = async (
+    bookingId: string,
+    newStatus: BookingStatus
+  ) => {
+    try {
+      // Set loading state based on action type
+      if (newStatus === BookingStatus.Confirmed) {
+        setLoadingApprove(bookingId);
+        await owner.approveBooking(bookingId);
+      } else if (newStatus === BookingStatus.AlreadyBooked) {
+        setLoadingReject(bookingId);
+        await owner.rejectBooking(bookingId);
+      }
 
-    // Update local state
-    const updatedBookings = bookings.map((booking) =>
-      booking.id === bookingId ? { ...booking, status: newStatus } : booking
-    );
-    setBookings(updatedBookings);
+      toast.success('Booking status updated successfully');
+
+      // Update local state
+      const updatedBookings = bookings.map((booking) =>
+        booking.id === bookingId ? { ...booking, status: newStatus } : booking
+      );
+      setBookings(updatedBookings);
+    } catch (error) {
+      toast.error('Error updating booking status: ' + error);
+    } finally {
+      // Clear loading states
+      setLoadingApprove(null);
+      setLoadingReject(null);
+    }
   };
 
   // Handle sending a message
@@ -239,17 +206,21 @@ export default function BookingsPage() {
   // Get status badge color
   const getStatusBadge = (status: BookingStatus) => {
     switch (status) {
-      case 'approved':
+      case BookingStatus.Confirmed:
         return (
           <Badge className="bg-emerald-500 hover:bg-emerald-600">
-            Approved
+            Confirmed
           </Badge>
         );
-      case 'rejected':
+      case BookingStatus.AlreadyBooked:
+        return (
+          <Badge className="bg-sky-500 hover:bg-sky-600">Already Booked</Badge>
+        );
+      case BookingStatus.Cancelled:
         return (
           <Badge className="bg-rose-500 hover:bg-rose-600">Rejected</Badge>
         );
-      case 'pending':
+      case BookingStatus.Pending:
       default:
         return (
           <Badge className="bg-amber-500 hover:bg-amber-600">Pending</Badge>
@@ -331,8 +302,8 @@ export default function BookingsPage() {
             <SelectItem value="pending" className="cursor-pointer">
               Pending
             </SelectItem>
-            <SelectItem value="approved" className="cursor-pointer">
-              Approved
+            <SelectItem value="confirmed" className="cursor-pointer">
+              Confirmed
             </SelectItem>
             <SelectItem value="rejected" className="cursor-pointer">
               Rejected
@@ -413,19 +384,33 @@ export default function BookingsPage() {
               filteredBookings.map((booking) => (
                 <TableRow key={booking.id}>
                   <TableCell className="font-medium">
-                    {booking.propertyName}
+                    <div className="flex items-center space-x-2">
+                      <div className="h-8 w-8 rounded-md overflow-hidden flex-shrink-0 border border-gray-200">
+                        <Image
+                          src={
+                            booking.propertyImage ||
+                            '/placeholder.svg?height=100&width=100'
+                          }
+                          width={100}
+                          height={100}
+                          alt={booking.propertyName}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <span>{booking.propertyName}</span>
+                    </div>
                   </TableCell>
                   <TableCell>
-                    <button
+                    <Button
                       onClick={() => openStudentProfile(booking)}
-                      className="flex items-center space-x-2 hover:text-teal-600 transition-colors cursor-pointer"
+                      className="flex items-center space-x-2 text-foreground hover:bg-primary/40 hover:text-background transition-colors cursor-pointer bg-transparent"
                     >
                       <Avatar className="h-8 w-8">
                         <AvatarImage
                           src={booking.studentImage || '/placeholder.svg'}
                           alt={booking.studentName}
                         />
-                        <AvatarFallback>
+                        <AvatarFallback className="bg-primary text-background">
                           {booking.studentName
                             .split(' ')
                             .map((n) => n[0])
@@ -435,7 +420,7 @@ export default function BookingsPage() {
                       <span className="underline underline-offset-2">
                         {booking.studentName}
                       </span>
-                    </button>
+                    </Button>
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
@@ -463,10 +448,21 @@ export default function BookingsPage() {
                                   variant="outline"
                                   className="h-9 w-9 p-0 cursor-pointer"
                                   onClick={() =>
-                                    handleStatusChange(booking.id, 'approved')
+                                    handleStatusChange(
+                                      booking.id,
+                                      BookingStatus.Confirmed
+                                    )
+                                  }
+                                  disabled={
+                                    loadingApprove === booking.id ||
+                                    loadingReject === booking.id
                                   }
                                 >
-                                  <Check className="h-4 w-4 text-emerald-600" />
+                                  {loadingApprove === booking.id ? (
+                                    <LoaderCircle className="h-4 w-4 animate-spin text-emerald-600" />
+                                  ) : (
+                                    <Check className="h-4 w-4 text-emerald-600" />
+                                  )}
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
@@ -483,10 +479,21 @@ export default function BookingsPage() {
                                   variant="outline"
                                   className="h-9 w-9 p-0 cursor-pointer"
                                   onClick={() =>
-                                    handleStatusChange(booking.id, 'rejected')
+                                    handleStatusChange(
+                                      booking.id,
+                                      BookingStatus.AlreadyBooked
+                                    )
+                                  }
+                                  disabled={
+                                    loadingApprove === booking.id ||
+                                    loadingReject === booking.id
                                   }
                                 >
-                                  <X className="h-4 w-4 text-rose-600" />
+                                  {loadingReject === booking.id ? (
+                                    <LoaderCircle className="h-4 w-4 animate-spin text-rose-600" />
+                                  ) : (
+                                    <X className="h-4 w-4 text-rose-600" />
+                                  )}
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
@@ -554,8 +561,20 @@ export default function BookingsPage() {
           filteredBookings.map((booking) => (
             <Card key={`mobile-${booking.id}`} className="w-full">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base font-medium">
-                  {booking.propertyName}
+                <CardTitle className="text-base font-medium flex items-center space-x-2">
+                  <div className="h-6 w-6 rounded-md overflow-hidden flex-shrink-0 border border-gray-200">
+                    <Image
+                      src={
+                        booking.studentImage ||
+                        '/placeholder.svg?height=100&width=100'
+                      }
+                      alt={booking.propertyName}
+                      width={100}
+                      height={100}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <span>{booking.propertyName}</span>
                 </CardTitle>
                 <div className="flex justify-between items-center">
                   <button
@@ -626,11 +645,24 @@ export default function BookingsPage() {
                             variant="outline"
                             className="flex-1 cursor-pointer"
                             onClick={() =>
-                              handleStatusChange(booking.id, 'approved')
+                              handleStatusChange(
+                                booking.id,
+                                BookingStatus.Confirmed
+                              )
+                            }
+                            disabled={
+                              loadingApprove === booking.id ||
+                              loadingReject === booking.id
                             }
                           >
-                            <Check className="h-4 w-4 mr-1 text-emerald-600" />
-                            Approve
+                            {loadingApprove === booking.id ? (
+                              <LoaderCircle className="h-4 w-4 mr-1 animate-spin text-emerald-600" />
+                            ) : (
+                              <Check className="h-4 w-4 mr-1 text-emerald-600" />
+                            )}
+                            {loadingApprove === booking.id
+                              ? 'Approving...'
+                              : 'Approve'}
                           </Button>
 
                           <Button
@@ -638,11 +670,24 @@ export default function BookingsPage() {
                             variant="outline"
                             className="flex-1 cursor-pointer"
                             onClick={() =>
-                              handleStatusChange(booking.id, 'rejected')
+                              handleStatusChange(
+                                booking.id,
+                                BookingStatus.AlreadyBooked
+                              )
+                            }
+                            disabled={
+                              loadingApprove === booking.id ||
+                              loadingReject === booking.id
                             }
                           >
-                            <X className="h-4 w-4 mr-1 text-rose-600" />
-                            Reject
+                            {loadingReject === booking.id ? (
+                              <LoaderCircle className="h-4 w-4 mr-1 animate-spin text-rose-600" />
+                            ) : (
+                              <X className="h-4 w-4 mr-1 text-rose-600" />
+                            )}
+                            {loadingReject === booking.id
+                              ? 'Rejecting...'
+                              : 'Reject'}
                           </Button>
                         </>
                       )}
@@ -671,8 +716,6 @@ export default function BookingsPage() {
           student={selectedStudent}
           isOpen={isProfileOpen}
           onClose={() => setIsProfileOpen(false)}
-          onApprove={() => handleStatusChange(selectedStudent.id, 'approved')}
-          onReject={() => handleStatusChange(selectedStudent.id, 'rejected')}
           onMessage={() => handleSendMessage(selectedStudent.studentId)}
         />
       )}

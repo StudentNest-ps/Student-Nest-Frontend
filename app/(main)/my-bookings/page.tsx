@@ -18,8 +18,9 @@ import { BookingCard } from './components/BookingCard';
 import { BookingTable } from './components/BookingTable';
 import { BookingSkeleton } from './components/BookingSkeleton';
 
-import type { Booking } from './types/booking';
-import { bookingsData } from './types/bookings';
+import { BookingStatus, type Booking } from './types/booking';
+import student from '@/module/services/Student';
+import { toast } from 'sonner';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
@@ -56,28 +57,37 @@ export default function MyBookingsPage() {
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   useEffect(() => {
-    // Simulate API call
-    const loadBookings = async () => {
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      // Convert rejected status to already_booked for better UX
-      const updatedBookings = bookingsData.map((booking: Booking) => ({
-        ...booking,
-        status:
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          booking.status === ('rejected' as any)
-            ? 'already_booked'
-            : booking.status,
-      }));
-      setBookings(updatedBookings as Booking[]);
-      setIsLoading(false);
+    const fetchBookings = async () => {
+      try {
+        setIsLoading(true);
+        const data = await student.getMyBookings();
+        console.log(data);
+        setBookings(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-
-    loadBookings();
+    fetchBookings();
   }, []);
 
-  const handleCancelBooking = (bookingId: string) => {
-    setBookings((prev) => prev.filter((b) => b.id !== bookingId));
+  const handleCancelBooking = async (bookingId: string) => {
+    try {
+      const res = await student.cancelBooking(bookingId);
+      if (res) {
+        setBookings((prev) =>
+          prev.map((b) =>
+            b.id == bookingId ? { ...b, status: BookingStatus.Cancelled } : b
+          )
+        );
+        toast.success('Booking cancelled successfully');
+      } else {
+        toast.error('Failed to cancel booking');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleRemoveBooking = (bookingId: string) => {
@@ -96,7 +106,7 @@ export default function MyBookingsPage() {
     return {
       total: bookings.length,
       pending: stats.pending || 0,
-      accepted: stats.accepted || 0,
+      confirmed: stats.confirmed || 0,
       already_booked: stats.already_booked || 0,
     };
   };
@@ -184,9 +194,9 @@ export default function MyBookingsPage() {
                   <CheckCircle className="h-5 w-5 text-green-500" />
                 </div>
                 <div className="text-2xl font-bold text-headline">
-                  {stats.accepted}
+                  {stats.confirmed}
                 </div>
-                <div className="text-sm text-muted-foreground">Accepted</div>
+                <div className="text-sm text-muted-foreground">Confirmed</div>
               </CardContent>
             </Card>
 

@@ -8,7 +8,6 @@ export type INotification = {
   updatedAt: string;
 };
 
-
 export type INotificationRequest = {
   userI : string,
   message: string,

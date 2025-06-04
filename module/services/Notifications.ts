@@ -2,6 +2,7 @@ import axios from 'axios';
 import { token } from './token';
 import { INotification, INotificationRequest } from '../types/Notifications';
 
+
 class Notifications {
   async getNotifications() {
     const res = await axios.get(`/api/sn/api/notifications`, {
@@ -34,6 +35,7 @@ class Notifications {
       },
     });
     return res.data as INotification;
+
   }
 }
 

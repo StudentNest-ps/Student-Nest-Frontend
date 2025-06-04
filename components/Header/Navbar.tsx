@@ -3,16 +3,53 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/button';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/Auth';
 import { Role } from '@/module/@types';
 import { hiddenHeaderPaths } from '@/data/hiddenPaths';
 import { ModeToggle } from '../providers/theme-provider';
 import Logo from './Logo';
-import { Menu, X } from 'lucide-react';
+import { Bell, BellDot, Menu, User, X } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { INotification } from '@/module/types/Notifications';
+import NotificationService from '@/module/services/Notifications';
+import { toast } from 'sonner';
+import Notifications from '../notifications/Notifications';
+
+const dummyNotifications: INotification[] = [
+  {
+    _id: '684031a90c6f5a63286d1859',
+    userId: '681a048ec95d02acc4aeed08',
+    message: 'hello from a user to an owner',
+    seen: false,
+    type: 'system',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
 
 const Navbar = () => {
+  const [notifications, setNotifications] = useState<INotification[]>([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      setLoading(true);
+      try {
+        const res = await NotificationService.getNotifications();
+        setNotifications(res);
+      } catch {
+        toast.error('Failed to load Notifications');
+        setNotifications(dummyNotifications);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
   const { user, logout } = useAuth();
+  const router = useRouter();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -127,21 +164,54 @@ const Navbar = () => {
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center gap-3 relative z-10">
               {user ? (
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    variant="outline"
-                    className="relative overflow-hidden text-primary border-primary hover:bg-accent cursor-pointer group transition-all duration-300"
-                    onClick={logout}
+                <div className="flex gap-2">
+                  <motion.div
+                    className=""
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <span className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <Link href="/signin" className="relative z-10">
-                      Logout
-                    </Link>
-                  </Button>
-                </motion.div>
+                    <Button
+                      className="cursor-pointer"
+                      onClick={() => router.push('/profile')}
+                    >
+                      <User />
+                    </Button>
+                  </motion.div>
+                  <motion.div
+                    className=""
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button className="cursor-pointer">
+                          {notifications.length > 0 ? <BellDot /> : <Bell />}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="md:w-80 lg:w-90 xl:w-120">
+                        <Notifications
+                          loading={loading}
+                          notifications={notifications}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Button
+                      variant="outline"
+                      className="relative overflow-hidden text-primary border-primary hover:bg-accent cursor-pointer group transition-all duration-300"
+                      onClick={logout}
+                    >
+                      <span className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <Link href="/signin" className="relative z-10">
+                        Logout
+                      </Link>
+                    </Button>
+                  </motion.div>
+                </div>
               ) : (
                 <motion.div
                   whileHover={{ scale: 1.05 }}
@@ -158,8 +228,12 @@ const Navbar = () => {
                   </Button>
                 </motion.div>
               )}
-
-              <ModeToggle />
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <ModeToggle />
+              </motion.div>
             </div>
 
             {/* Mobile Menu Button */}
@@ -213,7 +287,10 @@ const Navbar = () => {
                     { href: '/blog', label: 'Blog' },
                     { href: '/contact-us', label: 'Contacts' },
                     ...(user?.role === Role.STUDENT
-                      ? [{ href: '/apartments', label: 'Book Now' }]
+                      ? [
+                          { href: '/apartments', label: 'Book Now' },
+                          { href: '/my-bookings', label: 'My Bookings' },
+                        ]
                       : []),
                   ].map((item, index) => (
                     <motion.div
@@ -239,16 +316,53 @@ const Navbar = () => {
                     className="pt-4 border-t border-border flex items-center gap-3"
                   >
                     {user ? (
-                      <Button
-                        variant="outline"
-                        className="text-primary border-primary hover:bg-accent cursor-pointer"
-                        onClick={() => {
-                          logout();
-                          setIsMobileMenuOpen(false);
-                        }}
-                      >
-                        <Link href="/signin">Logout</Link>
-                      </Button>
+                      <>
+                        <motion.div
+                          className=""
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Button
+                            className="cursor-pointer"
+                            onClick={() => router.push('/profile')}
+                          >
+                            <User />
+                          </Button>
+                        </motion.div>
+                        <motion.div
+                          className=""
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button className="cursor-pointer">
+                                {notifications.length > 0 ? (
+                                  <BellDot />
+                                ) : (
+                                  <Bell />
+                                )}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="md:w-80 lg:w-90 xl:w-120">
+                              <Notifications
+                                notifications={notifications}
+                                loading={loading}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </motion.div>
+                        <Button
+                          variant="outline"
+                          className="text-primary border-primary hover:bg-accent cursor-pointer"
+                          onClick={() => {
+                            logout();
+                            setIsMobileMenuOpen(false);
+                          }}
+                        >
+                          <Link href="/signin">Logout</Link>
+                        </Button>
+                      </>
                     ) : (
                       <Button
                         variant="outline"

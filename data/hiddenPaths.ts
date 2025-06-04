@@ -7,6 +7,12 @@ export const hiddenFooterPaths = [
   '/unauthorized',
   '/my-bookings',
   '/apartments',
+  '/profile',
+  '/payment-success',
 ];
 
-export const hiddenHeaderPaths = ['/dashboard', '/dashboard-owner'];
+export const hiddenHeaderPaths = [
+  '/dashboard',
+  '/dashboard-owner',
+  '/payment-success',
+];
