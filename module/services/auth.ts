@@ -31,6 +31,16 @@ class Auth {
 
     return res.data as UserProfile;
   }
+
+  async getUserInformation(userToken: string) {
+    const res = await axios.get(`api/sn/api/general/me`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+
+    return res.data as UserProfile;
+  }
 }
 
 const auth = new Auth();
