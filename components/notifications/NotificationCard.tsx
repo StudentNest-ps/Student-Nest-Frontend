@@ -33,8 +33,8 @@ const NotificationCard: React.FC<NotificationProps> = ({
 }) => {
   return (
     <div
-      className={`flex items-start gap-3 p-4 rounded-lg shadow-md transition-all ${
-        seen ? 'bg-muted' : 'bg-accent'
+      className={`flex items-start gap-3 p-4 rounded-lg shadow-md transition-all border ${
+        seen ? 'bg-muted border-green-500' : 'bg-accent border-red-500'
       }`}
     >
       <div className="mt-1">{getIcon(type)}</div>

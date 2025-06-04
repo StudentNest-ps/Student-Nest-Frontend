@@ -3,16 +3,7 @@ import NotificationService from '@/module/services/Notifications';
 import NotificationCard from '@/components/notifications/NotificationCard';
 import { toast } from 'sonner';
 import { LoaderCircle } from 'lucide-react';
-
-type Notification = {
-  _id: string;
-  userId: string;
-  message: string;
-  seen: boolean;
-  type: 'info' | 'success' | 'error' | 'system';
-  createdAt: string;
-  updatedAt: string;
-};
+import { Notification } from '@/module/types/Notifications';
 
 const dummyNotifications: Notification[] = [
   {

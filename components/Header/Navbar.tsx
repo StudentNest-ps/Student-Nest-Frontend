@@ -154,7 +154,7 @@ const Navbar = () => {
                           <Bell />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-80">
+                      <PopoverContent className="md:w-80 lg:w-90 xl:w-120">
                         <Notifications />
                       </PopoverContent>
                     </Popover>
@@ -291,6 +291,22 @@ const Navbar = () => {
                           >
                             <User />
                           </Button>
+                        </motion.div>
+                        <motion.div
+                          className=""
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button className="cursor-pointer">
+                                <Bell />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="md:w-80 lg:w-90 xl:w-120">
+                              <Notifications />
+                            </PopoverContent>
+                          </Popover>
                         </motion.div>
                         <Button
                           variant="outline"
