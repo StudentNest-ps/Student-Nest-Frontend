@@ -9,11 +9,45 @@ import { Role } from '@/module/@types';
 import { hiddenHeaderPaths } from '@/data/hiddenPaths';
 import { ModeToggle } from '../providers/theme-provider';
 import Logo from './Logo';
-import { Bell, Menu, User, X } from 'lucide-react';
+import { Bell, BellDot, Menu, User, X } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { INotification } from '@/module/types/Notifications';
+import NotificationService from '@/module/services/Notifications';
+import { toast } from 'sonner';
 import Notifications from '../notifications/Notifications';
 
+const dummyNotifications: INotification[] = [
+  {
+    _id: '684031a90c6f5a63286d1859',
+    userId: '681a048ec95d02acc4aeed08',
+    message: 'hello from a user to an owner',
+    seen: false,
+    type: 'system',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
+
 const Navbar = () => {
+  const [notifications, setNotifications] = useState<INotification[]>([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      setLoading(true);
+      try {
+        const res = await NotificationService.getNotifications();
+        setNotifications(res);
+      } catch {
+        toast.error('Failed to load Notifications');
+        setNotifications(dummyNotifications);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -151,11 +185,14 @@ const Navbar = () => {
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button className="cursor-pointer">
-                          <Bell />
+                          {notifications.length > 0 ? <BellDot /> : <Bell />}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="md:w-80 lg:w-90 xl:w-120">
-                        <Notifications />
+                        <Notifications
+                          loading={loading}
+                          notifications={notifications}
+                        />
                       </PopoverContent>
                     </Popover>
                   </motion.div>
@@ -300,11 +337,18 @@ const Navbar = () => {
                           <Popover>
                             <PopoverTrigger asChild>
                               <Button className="cursor-pointer">
-                                <Bell />
+                                {notifications.length > 0 ? (
+                                  <BellDot />
+                                ) : (
+                                  <Bell />
+                                )}
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent className="md:w-80 lg:w-90 xl:w-120">
-                              <Notifications />
+                              <Notifications
+                                notifications={notifications}
+                                loading={loading}
+                              />
                             </PopoverContent>
                           </Popover>
                         </motion.div>

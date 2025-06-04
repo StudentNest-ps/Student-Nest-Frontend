@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   InfoIcon,
   CheckCircleIcon,
   XCircleIcon,
   BellIcon,
   Check,
+  LoaderCircle,
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Button } from '../ui/button';
+import NotificationService from '@/module/services/Notifications';
+import { toast } from 'sonner';
 
 dayjs.extend(relativeTime);
 
@@ -41,8 +44,19 @@ const NotificationCard: React.FC<NotificationProps> = ({
   seen,
   createdAt,
 }) => {
-  const onMarkAsSeen = (id: string) => {
-    console.log('this notification is seen: ', id);
+  const [seenLoading, setSeenLoading] = useState(false);
+  const onMarkAsSeen = async (id: string) => {
+    try {
+      setSeenLoading(true);
+      console.log('this notification is seen: ', id);
+      await NotificationService.markAsSeen(id);
+    } catch {
+      toast.error(
+        'Failed to mark this Notification as seen. Please contact an admin for troubleshooting'
+      );
+    } finally {
+      setSeenLoading(false);
+    }
   };
   return (
     <div
@@ -63,7 +77,11 @@ const NotificationCard: React.FC<NotificationProps> = ({
           variant="outline"
           className="cursor-pointer text-sm hover:underline flex items-center gap-1"
         >
-          <Check size={16} />
+          {seenLoading ? (
+            <LoaderCircle className="h-4 w-4 animate-spin text-primary" />
+          ) : (
+            <Check size={16} />
+          )}
         </Button>
       )}
     </div>
