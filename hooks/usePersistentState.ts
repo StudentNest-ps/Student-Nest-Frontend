@@ -1,0 +1,21 @@
+import { getFromLocalStorage, setToLocalStorage } from "@/utils/localStorageUtils";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+
+
+export function usePersistentState<T>(
+  key: string,
+  initialValue: T
+): [T, Dispatch<SetStateAction<T>>] {
+  const [data, setData] = useState<T>(initialValue);
+
+  useEffect(() => {
+    const stored = getFromLocalStorage<T>(key, initialValue);
+    setData(stored);
+  }, [key]);
+
+  useEffect(() => {
+    setToLocalStorage(key, data);
+  }, [data, key]);
+
+  return [data, setData];
+}
