@@ -30,6 +30,8 @@ import { toast } from 'sonner';
 import property from '@/module/services/Property';
 import { IBooking } from '@/module/types/Student';
 import student from '@/module/services/Student';
+import NotificationService from '@/module/services/Notifications';
+import { INotificationRequest } from '@/module/types/Notifications';
 
 // Animation variants
 const pageVariants = {
@@ -217,8 +219,16 @@ export default function ApartmentDetails({ id }: { id: string }) {
       };
 
       const res = await student.bookProperty(booking);
-      if (res === 201)
+      if (res === 201){
+
         toast.success("Booking Requested! Waiting for Owner's Approval.");
+        const notificationInfo : INotificationRequest = {
+          userId: userId,
+          message: `You've Requested a booking on apartment ${apartment?.title}`,
+          type: 'system'
+        }
+        await NotificationService.createNotification(notificationInfo)
+      }
       else if (res === 204)
         toast.warning("You've Already Booked This Apartment!");
       else toast.error('Something went wrong! Please try again.');

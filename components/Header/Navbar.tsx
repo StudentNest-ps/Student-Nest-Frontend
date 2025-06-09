@@ -122,7 +122,7 @@ const Navbar = () => {
               </motion.div>
 
               {/* Desktop Navigation */}
-              <div className="hidden md:flex ml-10 space-x-8">
+              <div className="hidden lg:flex ml-10 space-x-8">
                 {[
                   { href: '/', label: 'Home' },
                   ...(user?.role === Role.OWNER
@@ -163,7 +163,7 @@ const Navbar = () => {
             </div>
 
             {/* Desktop Actions */}
-            <div className="hidden md:flex items-center gap-3 relative z-10">
+            <div className="hidden lg:flex items-center gap-3 relative z-10">
               {user ? (
                 <div className="flex gap-2">
                   <motion.div
@@ -241,7 +241,7 @@ const Navbar = () => {
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden relative z-10 p-2 text-foreground hover:text-primary transition-colors"
+              className="lg:hidden relative z-10 p-2 text-foreground hover:text-primary transition-colors"
             >
               <AnimatePresence mode="wait">
                 {isMobileMenuOpen ? (
@@ -277,7 +277,7 @@ const Navbar = () => {
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
-                className="md:hidden bg-background/95 backdrop-blur-xl border-t border-primary/20"
+                className="lg:hidden bg-background/95 backdrop-blur-xl border-t border-primary/20"
               >
                 <div className="container mx-auto px-4 py-6 space-y-4">
                   {[
