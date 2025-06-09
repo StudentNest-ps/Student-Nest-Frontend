@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { User, IRegisterUser, UserResponse } from '../@types';
-import { token } from './token';
 import { UserProfile } from '@/context/Auth';
+import { getToken } from './token';
 
 class Auth {
   async registerUser(user: IRegisterUser) {
@@ -25,7 +25,7 @@ class Auth {
   async getUserProfile() {
     const res = await axios.get(`api/sn/api/general/me`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
     });
 

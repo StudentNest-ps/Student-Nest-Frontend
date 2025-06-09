@@ -20,9 +20,9 @@ const dummyNotifications: INotification[] = [
   {
     _id: '684031a90c6f5a63286d1859',
     userId: '681a048ec95d02acc4aeed08',
-    message: 'hello from a user to an owner',
+    message: 'Refresh to preview notifications.',
     seen: false,
-    type: 'system',
+    type: 'error',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -31,6 +31,12 @@ const dummyNotifications: INotification[] = [
 const Navbar = () => {
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [loading, setLoading] = useState(false);
+  const { user, logout } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   useEffect(() => {
     const fetchNotifications = async () => {
       setLoading(true);
@@ -44,15 +50,10 @@ const Navbar = () => {
         setLoading(false);
       }
     };
-
-    fetchNotifications();
-  }, []);
-
-  const { user, logout } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    if (user) {
+      fetchNotifications();
+    }
+  }, [user]);
 
   useEffect(() => {
     const handleScroll = () => {

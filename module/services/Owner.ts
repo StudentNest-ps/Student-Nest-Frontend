@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { token } from './token';
 import { Property } from '../types/Admin';
 import Cookies from 'js-cookie';
+import { getToken } from './token';
 class Owner {
   ownerId = Cookies.get('user-id');
 
@@ -11,7 +11,7 @@ class Owner {
       property,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }
     );
@@ -25,7 +25,7 @@ class Owner {
       `/api/sn/api/owner/${this.ownerId}/properties`,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }
     );
@@ -40,7 +40,7 @@ class Owner {
       property,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }
     );
@@ -56,7 +56,7 @@ class Owner {
       `/api/sn/api/owner/${this.ownerId}/properties/${propertyId}`,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }
     );
@@ -68,7 +68,7 @@ class Owner {
   async getBookings() {
     const res = await axios.get(`/api/sn/api/bookings/owner`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
     });
 
@@ -82,7 +82,7 @@ class Owner {
       {},
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }
     );
@@ -96,7 +96,7 @@ class Owner {
       {},
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }
     );

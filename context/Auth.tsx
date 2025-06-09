@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error('Failed to parse user data from localStorage:', error);
       // Clean up invalid data
       localStorage.removeItem('userData');
+      Cookies.remove('auth-token');
     }
   }, []);
 

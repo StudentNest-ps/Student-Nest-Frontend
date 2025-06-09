@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { token } from './token';
+import { getToken } from './token';
 import { IPayment } from '../types/Payment';
 
 class Payment {
@@ -9,7 +9,7 @@ class Payment {
       {},
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }
     );

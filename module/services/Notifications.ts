@@ -1,13 +1,12 @@
 import axios from 'axios';
-import { token } from './token';
 import { INotification, INotificationRequest } from '../types/Notifications';
-
+import { getToken } from './token';
 
 class Notifications {
   async getNotifications() {
     const res = await axios.get(`/api/sn/api/notifications`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
     });
     return res.data;
@@ -18,7 +17,7 @@ class Notifications {
       `/api/sn/api/notifications/${notificationId}/seen`,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${getToken()}`,
         },
       }
     );
@@ -31,11 +30,10 @@ class Notifications {
     //TODO: Use this in various placed like when the user creates a booking, when the admin sends some feedback, when the owner accepts or rejects a booking
     const res = await axios.post(`/api/sn/api/notification`, notification, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${getToken()}`,
       },
     });
     return res.data as INotification;
-
   }
 }
 
