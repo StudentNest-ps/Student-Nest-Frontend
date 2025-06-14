@@ -748,7 +748,7 @@ export default function BookingsPage() {
           student={selectedStudent}
           isOpen={isProfileOpen}
           onClose={() => setIsProfileOpen(false)}
-          onMessage={() => handleSendMessage(selectedStudent.studentId)}
+          onSendMessage={handleSendMessage} // ✅ pass correct function
         />
       )}
 
