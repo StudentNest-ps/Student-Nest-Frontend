@@ -28,7 +28,7 @@ class Notifications {
 
   async createNotification(notification: INotificationRequest) {
     //TODO: Use this in various placed like when the user creates a booking, when the admin sends some feedback, when the owner accepts or rejects a booking
-    const res = await axios.post(`/api/sn/api/notification`, notification, {
+    const res = await axios.post(`/api/sn/api/notifications`, notification, {
       headers: {
         Authorization: `Bearer ${getToken()}`,
       },

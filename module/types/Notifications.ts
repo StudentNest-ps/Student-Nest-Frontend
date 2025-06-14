@@ -9,7 +9,7 @@ export type INotification = {
 };
 
 export type INotificationRequest = {
-  userI : string,
+  userId : string,
   message: string,
   type:string
 }

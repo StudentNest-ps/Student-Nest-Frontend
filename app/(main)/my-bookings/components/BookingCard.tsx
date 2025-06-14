@@ -32,6 +32,7 @@ import { ChatPopup } from './ChatPopup';
 import { Booking } from '../types/booking';
 import { toast } from 'sonner';
 import payment from '@/module/services/Payment';
+import ChatService from '@/module/services/Chat';
 
 interface BookingCardProps {
   bookings: Booking[];
@@ -77,6 +78,14 @@ const getStatusLabel = (status: string) => {
   return status.charAt(0).toUpperCase() + status.slice(1);
 };
 
+async function fetchChatHistory(apartmentId: string) {
+  try {
+    await ChatService.getChatId(apartmentId);
+  } catch {
+    toast.error('Failed Fetching ChatId');
+  }
+}
+
 export function BookingCard({
   bookings,
   onCancelBooking,
@@ -113,7 +122,10 @@ export function BookingCard({
     setRemovingId(null);
   };
 
-  const openChat = (bookingId: string) => {
+  const openChat = (bookingId: string, apartmentId: string) => {
+    console.log(apartmentId);
+    fetchChatHistory(apartmentId);
+
     setChatOpen(bookingId);
   };
 
@@ -141,7 +153,7 @@ export function BookingCard({
               >
                 <Button
                   size="sm"
-                  onClick={() => openChat(booking.id)}
+                  onClick={() => openChat(booking.id, booking.apartment.id)}
                   className="cursor-pointer h-8 w-8 p-0 rounded-full bg-primary/90 hover:bg-primary text-background shadow-lg shadow-primary/25 backdrop-blur-sm"
                 >
                   <MessageCircle className="h-3 w-3" />
