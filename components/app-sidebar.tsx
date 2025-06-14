@@ -5,7 +5,6 @@ import {
   IconCamera,
   IconFileAi,
   IconFileDescription,
-  IconInnerShadowTop,
   IconUsers,
   IconBuilding,
   IconShieldPlus,
@@ -26,6 +25,7 @@ import {
 import Link from 'next/link';
 import { useAuth } from '@/context/Auth';
 import { Role } from '@/module/@types';
+import { LayoutDashboard } from 'lucide-react';
 
 const adminTabs = [
   {
@@ -143,8 +143,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   user?.role === Role.ADMIN ? '/dashboard' : '/dashboard-owner'
                 }
               >
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Student Nest</span>
+                <LayoutDashboard className="!size-5" />
+                <span className="text-base font-semibold">Dashboard</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
