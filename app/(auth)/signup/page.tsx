@@ -250,7 +250,7 @@ export default function SignUpPage() {
             <p className="text-muted-foreground">
               Already have an account?{' '}
               <Link
-                href="/auth/signin"
+                href="/signin"
                 className="text-primary font-medium hover:underline relative inline-block group"
               >
                 <span>Sign in</span>

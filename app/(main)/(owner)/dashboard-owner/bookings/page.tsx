@@ -53,6 +53,8 @@ import { BookingStatus, Booking } from '@/module/types/Student';
 import owner from '@/module/services/Owner';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import Cookies from 'js-cookie';
+import { OwnerChatPopup } from './components/OwnerChatPopup';
 
 interface Property {
   id: string;
@@ -76,6 +78,8 @@ export default function BookingsPage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loadingApprove, setLoadingApprove] = useState<string | null>(null);
   const [loadingReject, setLoadingReject] = useState<string | null>(null);
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+  const [chatBooking, setChatBooking] = useState<Booking | null>(null);
 
   // Convert API booking to StudentBooking format
   //TODO: Utils folder
@@ -192,9 +196,39 @@ export default function BookingsPage() {
   };
 
   // Handle sending a message
-  const handleSendMessage = (studentId: string) => {
-    // In a real app, you would open a messaging interface
-    console.log(`Opening message dialog for student ${studentId}`);
+  const handleSendMessage = (bookingId: string) => {
+    const matchedBooking = bookings.find((b) => b.id === bookingId);
+    if (matchedBooking) {
+      // Convert StudentBooking back to Booking shape expected by OwnerChatPopup
+      const formattedBooking: Booking = {
+        id: matchedBooking.id,
+        apartment: {
+          id: matchedBooking.propertyId,
+          name: matchedBooking.propertyName,
+          image: matchedBooking.propertyImage,
+          location: '', // Fill if you have it
+          owner: {
+            id: Cookies.get('user-id') || '', // Current owner
+            name: 'You', // Placeholder
+          },
+        },
+        student: {
+          id: matchedBooking.studentId,
+          name: matchedBooking.studentName,
+          email: matchedBooking.studentEmail,
+          phone: matchedBooking.studentPhone,
+        },
+        checkIn: matchedBooking.checkIn.toISOString(),
+        checkOut: matchedBooking.checkOut.toISOString(),
+        bookingDate: matchedBooking.createdAt.toISOString(),
+        guests: 1, // Optional
+        totalAmount: 0, // Optional
+        status: matchedBooking.status,
+      };
+
+      setChatBooking(formattedBooking);
+      setIsChatOpen(true);
+    }
   };
 
   // Open student profile
@@ -511,9 +545,7 @@ export default function BookingsPage() {
                               size="sm"
                               variant="outline"
                               className="h-9 w-9 p-0 cursor-pointer"
-                              onClick={() =>
-                                handleSendMessage(booking.studentId)
-                              }
+                              onClick={() => handleSendMessage(booking.id)}
                             >
                               <MessageSquare className="h-4 w-4 text-teal-600" />
                             </Button>
@@ -716,7 +748,16 @@ export default function BookingsPage() {
           student={selectedStudent}
           isOpen={isProfileOpen}
           onClose={() => setIsProfileOpen(false)}
-          onMessage={() => handleSendMessage(selectedStudent.studentId)}
+          onSendMessage={handleSendMessage} // ✅ pass correct function
+        />
+      )}
+
+      {/* Owner's Chat Popup */}
+      {chatBooking && (
+        <OwnerChatPopup
+          isOpen={isChatOpen}
+          onClose={() => setIsChatOpen(false)}
+          booking={chatBooking}
         />
       )}
     </motion.div>

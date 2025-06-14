@@ -44,15 +44,14 @@ interface StudentProfileModalProps {
   student: StudentBooking;
   isOpen: boolean;
   onClose: () => void;
-  onMessage: () => void;
+  onSendMessage: (bookingId: string) => void;
 }
 
 export default function StudentProfileModal({
   student,
   isOpen,
   onClose,
-
-  onMessage,
+  onSendMessage,
 }: StudentProfileModalProps) {
   const getStatusBadge = (status: BookingStatus) => {
     switch (status) {
@@ -159,7 +158,7 @@ export default function StudentProfileModal({
               variant="outline"
               className="flex-1 cursor-pointer"
               onClick={() => {
-                onMessage();
+                onSendMessage(student.id); // pass bookingId
                 onClose();
               }}
             >
