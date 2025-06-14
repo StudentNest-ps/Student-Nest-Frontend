@@ -263,7 +263,9 @@ export function ChatPopup({ isOpen, onClose, booking }: ChatPopupProps) {
                       </motion.div>
                     ))
                   ) : (
-                    <div></div>
+                    <div className="flex justify-center items-center h-full text-sm text-muted-foreground">
+                      No messages yet. Start the conversation!
+                    </div>
                   )}
                 </div>
               </ScrollArea>
