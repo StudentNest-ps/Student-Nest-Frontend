@@ -1,6 +1,6 @@
+import Cookies from 'js-cookie';
 import axios from 'axios';
 import { Property } from '../types/Admin';
-import Cookies from 'js-cookie';
 import { getToken } from './token';
 class Owner {
   ownerId = Cookies.get('user-id');

@@ -185,7 +185,7 @@ export default function ApartmentDetails({ id }: { id: string }) {
   const [_, setImageLoaded] = useState(false);
 
   useEffect(() => {
-    const fetchApartments = async () => {
+    const fetchApartmentById = async () => {
       try {
         // const response = await admin.getProperties();
         const response = await property.getPropertyById(id);
@@ -198,7 +198,7 @@ export default function ApartmentDetails({ id }: { id: string }) {
       }
     };
 
-    fetchApartments();
+    fetchApartmentById();
 
     const userData = JSON.parse(localStorage.getItem('userData') || '{}') as {
       role: string;
@@ -296,6 +296,8 @@ export default function ApartmentDetails({ id }: { id: string }) {
         <FloatingOrb delay={0} size="w-96 h-96" color="bg-primary/5" />
         <FloatingOrb delay={3} size="w-64 h-64" color="bg-accent/10" />
         <FloatingOrb delay={6} size="w-48 h-48" color="bg-primary/8" />
+        <FloatingOrb delay={7} size="w-128 h-128" color="bg-primary/6" />
+        <FloatingOrb delay={8} size="w-32 h-32" color="bg-primary/4" />
 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none"></div>

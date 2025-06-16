@@ -1,7 +1,6 @@
 'use client';
 
 import type React from 'react';
-
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +21,9 @@ import {
 } from 'lucide-react';
 import type { Booking } from '../types/booking';
 import Image from 'next/image';
+import Cookies from 'js-cookie';
+import ChatService from '@/module/services/Chat';
+import { IMessage } from '@/module/types/Chat';
 
 interface ChatPopupProps {
   isOpen: boolean;
@@ -34,66 +36,78 @@ interface Message {
   text: string;
   sender: 'user' | 'owner';
   timestamp: string;
-  status?: 'sent' | 'delivered' | 'read';
 }
 
-// Mock messages for demonstration
-const mockMessages: Message[] = [
-  {
-    id: '1',
-    text: 'Hi! I have a booking for your property. I wanted to ask about the check-in process.',
-    sender: 'user',
-    timestamp: '10:30 AM',
-    status: 'read',
-  },
-  {
-    id: '2',
-    text: "Hello! Thanks for reaching out. Check-in is from 3 PM onwards. I'll send you the access codes closer to your arrival date.",
-    sender: 'owner',
-    timestamp: '10:32 AM',
-    status: 'read',
-  },
-  {
-    id: '3',
-    text: 'Perfect! Is there parking available?',
-    sender: 'user',
-    timestamp: '10:33 AM',
-    status: 'read',
-  },
-  {
-    id: '4',
-    text: "Yes, there's free parking right in front of the building. Space #12 is reserved for you.",
-    sender: 'owner',
-    timestamp: '10:35 AM',
-    status: 'delivered',
-  },
-];
-
 export function ChatPopup({ isOpen, onClose, booking }: ChatPopupProps) {
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const senderId = Cookies.get('user-id') || '';
 
-  // Auto-focus input when chat opens
+  // Fetch messages when chat opens
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isOpen]);
+    if (isOpen) {
+      inputRef.current?.focus();
+      // const fetchChatId = async () => {
+      //   const apartmentId = booking.apartment.id;
+      //   const chatData =
+      //   let chatId = '';
+      //   if (chatData.length == 0) {
+      //     chatId = '684d6660695ca2fe01985f19';
+      //   } else {
+      //     chatId = chatData[0]._id;
+      //   }
+      //   console.log(`chatId is:`, chatId);
+      //   console.log(`apartmentId is: ${booking.apartment.id}`);
 
-  // Auto-scroll to bottom when new messages arrive
+      //   return chatId;
+      // };
+      const fetchMessages = async () => {
+        try {
+          const response = await ChatService.getMessagesByThread(
+            senderId,
+            booking.apartment.owner?.id || '',
+            booking.apartment.id
+          );
+
+          const formatted: Message[] = response.map((msg) => ({
+            id: msg._id,
+            text: msg.message,
+            sender: msg.senderId === senderId ? 'user' : 'owner',
+            timestamp: new Date(msg.createdAt).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+          }));
+
+          setMessages(formatted);
+        } catch (err) {
+          console.error('Failed to fetch messages:', err);
+        }
+      };
+
+      fetchMessages();
+    }
+  }, [
+    isOpen,
+    booking.id,
+    senderId,
+    booking.apartment.owner?.id,
+    booking.apartment.id,
+  ]);
+
+  // Scroll to bottom on message change
   useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [messages]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!newMessage.trim()) return;
 
-    const message: Message = {
+    const tempMessage: Message = {
       id: Date.now().toString(),
       text: newMessage,
       sender: 'user',
@@ -101,28 +115,22 @@ export function ChatPopup({ isOpen, onClose, booking }: ChatPopupProps) {
         hour: '2-digit',
         minute: '2-digit',
       }),
-      status: 'sent',
     };
 
-    setMessages((prev) => [...prev, message]);
-    setNewMessage('');
+    const payload: IMessage = {
+      senderId,
+      receiverId: booking.apartment.owner?.id || '',
+      propertyId: booking.apartment.id,
+      message: newMessage,
+    };
 
-    // Simulate owner typing and response
-    setIsTyping(true);
-    setTimeout(() => {
-      setIsTyping(false);
-      const ownerResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        text: "Thanks for your message! I'll get back to you shortly.",
-        sender: 'owner',
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        status: 'sent',
-      };
-      setMessages((prev) => [...prev, ownerResponse]);
-    }, 2000);
+    try {
+      await ChatService.sendMessage(payload); // <-- make sure this works with backend
+      setMessages((prev) => [...prev, tempMessage]);
+      setNewMessage('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -173,38 +181,25 @@ export function ChatPopup({ isOpen, onClose, booking }: ChatPopupProps) {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="cursor-pointer h-8 w-8 p-0"
-                  >
+                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
                     <Phone className="h-4 w-4" />
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="cursor-pointer h-8 w-8 p-0"
-                  >
+                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
                     <Video className="h-4 w-4" />
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="cursor-pointer h-8 w-8 p-0"
-                  >
+                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="cursor-pointer h-8 w-8 p-0"
+                    className="h-8 w-8 p-0"
                     onClick={onClose}
                   >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
-
               {/* Property Info */}
               <div className="mt-3 p-3 bg-primary/5 rounded-lg border border-primary/10">
                 <div className="flex items-center gap-3">
@@ -239,54 +234,38 @@ export function ChatPopup({ isOpen, onClose, booking }: ChatPopupProps) {
             <CardContent className="flex-1 p-0 overflow-hidden">
               <ScrollArea className="h-full p-4" ref={scrollAreaRef}>
                 <div className="space-y-4">
-                  {messages.map((message) => (
-                    <motion.div
-                      key={message.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div
-                        className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-                          message.sender === 'user'
-                            ? 'bg-primary text-background'
-                            : 'bg-muted/50 text-foreground border border-primary/10'
-                        }`}
+                  {messages.length !== 0 ? (
+                    messages.map((message) => (
+                      <motion.div
+                        key={message.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
-                        <p className="text-sm">{message.text}</p>
                         <div
-                          className={`text-xs mt-1 ${
+                          className={`max-w-[80%] rounded-2xl px-4 py-2 ${
                             message.sender === 'user'
-                              ? 'text-background/70'
-                              : 'text-muted-foreground'
+                              ? 'bg-primary text-background'
+                              : 'bg-muted/50 text-foreground border border-primary/10'
                           }`}
                         >
-                          {message.timestamp}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-
-                  {/* Typing indicator */}
-                  {isTyping && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex justify-start"
-                    >
-                      <div className="bg-muted/50 border border-primary/10 rounded-2xl px-4 py-2">
-                        <div className="flex items-center gap-1">
-                          <div className="flex gap-1">
-                            <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce"></div>
-                            <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce delay-100"></div>
-                            <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce delay-200"></div>
+                          <p className="text-sm">{message.text}</p>
+                          <div
+                            className={`text-xs mt-1 ${
+                              message.sender === 'user'
+                                ? 'text-background/70'
+                                : 'text-muted-foreground'
+                            }`}
+                          >
+                            {message.timestamp}
                           </div>
-                          <span className="text-xs text-muted-foreground ml-2">
-                            typing...
-                          </span>
                         </div>
-                      </div>
-                    </motion.div>
+                      </motion.div>
+                    ))
+                  ) : (
+                    <div className="flex justify-center items-center h-full text-sm text-muted-foreground">
+                      No messages yet. Start the conversation!
+                    </div>
                   )}
                 </div>
               </ScrollArea>
@@ -295,11 +274,7 @@ export function ChatPopup({ isOpen, onClose, booking }: ChatPopupProps) {
             {/* Input */}
             <div className="p-4 border-t border-primary/10">
               <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="cursor-pointer h-8 w-8 p-0"
-                >
+                <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
                   <Paperclip className="h-4 w-4" />
                 </Button>
                 <div className="flex-1 relative">
@@ -323,7 +298,7 @@ export function ChatPopup({ isOpen, onClose, booking }: ChatPopupProps) {
                   size="sm"
                   onClick={sendMessage}
                   disabled={!newMessage.trim()}
-                  className="cursor-pointer h-8 w-8 p-0 bg-primary hover:bg-primary/90"
+                  className="h-8 w-8 p-0 bg-primary hover:bg-primary/90"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
@@ -335,59 +310,3 @@ export function ChatPopup({ isOpen, onClose, booking }: ChatPopupProps) {
     </AnimatePresence>
   );
 }
-
-/*
-BACKEND INTEGRATION INSTRUCTIONS:
-
-1. WEBSOCKET CONNECTION:
-   - Replace mock messages with real-time WebSocket connection
-   - Use libraries like Socket.IO or native WebSocket API
-   - Example: const socket = io('/chat', { query: { bookingId: booking.id } })
-
-2. MESSAGE PERSISTENCE:
-   - Store messages in database (MongoDB, PostgreSQL, etc.)
-   - Implement message history loading on chat open
-   - Add pagination for older messages
-
-3. REAL-TIME FEATURES:
-   - Implement typing indicators using socket events
-   - Add message delivery/read receipts
-   - Show online/offline status of property owners
-
-4. FILE SHARING:
-   - Implement file upload for attachments (images, documents)
-   - Use cloud storage (AWS S3, Cloudinary) for file hosting
-   - Add image preview and download functionality
-
-5. PUSH NOTIFICATIONS:
-   - Integrate with Firebase Cloud Messaging or similar
-   - Send notifications for new messages when chat is closed
-   - Add email notifications for offline users
-
-6. AUTHENTICATION:
-   - Verify user identity and booking ownership
-   - Implement JWT tokens for secure communication
-   - Add rate limiting to prevent spam
-
-7. MODERATION:
-   - Add message filtering for inappropriate content
-   - Implement report/block functionality
-   - Store chat logs for dispute resolution
-
-8. API ENDPOINTS NEEDED:
-   - GET /api/chat/:bookingId/messages - Fetch message history
-   - POST /api/chat/:bookingId/messages - Send new message
-   - PUT /api/chat/:bookingId/messages/:messageId/read - Mark as read
-   - POST /api/chat/:bookingId/upload - File upload endpoint
-
-9. DATABASE SCHEMA:
-   - Messages table: id, booking_id, sender_id, content, timestamp, type, status
-   - Chat_participants table: booking_id, user_id, owner_id, last_read_at
-   - File_attachments table: id, message_id, file_url, file_type, file_size
-
-10. SECURITY CONSIDERATIONS:
-    - Validate booking ownership before allowing chat access
-    - Sanitize message content to prevent XSS attacks
-    - Implement message encryption for sensitive data
-    - Add CORS configuration for WebSocket connections
-*/
