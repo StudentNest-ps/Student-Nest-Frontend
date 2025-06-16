@@ -247,7 +247,7 @@ export default function ApartmentsPage() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-background/80 backdrop-blur-sm py-6 border-b border-border sticky top-0 z-40"
+        className="bg-background/80 backdrop-blur-sm py-6 border-b border-border mt-5"
       >
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row gap-3 md:items-center">
@@ -654,10 +654,10 @@ export default function ApartmentsPage() {
 
           {/* Right column - could be used for map or filters */}
           <div className="hidden lg:block">
-            <div className="sticky top-[180px]">
+            <div className="sticky top-[120px]">
               <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="bg-card rounded-xl overflow-hidden shadow-sm border border-border/50 p-6 relative"
               >
