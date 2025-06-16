@@ -76,7 +76,7 @@ export function OwnerChatPopup({
 
       fetchMessages();
     }
-  }, [isOpen, booking.id, ownerId]);
+  }, [isOpen, booking.id, ownerId, booking.student.id, booking.apartment.id]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
