@@ -307,7 +307,7 @@ const Landing2 = () => {
                   }}
                 />
                 <Image
-                  src="/placeholder.svg?height=500&width=600&text=Student+Living"
+                  src="/images/SNPublicAsset-Flexible.jpg"
                   alt="Student living"
                   width={600}
                   height={500}
@@ -354,6 +354,7 @@ const Landing2 = () => {
                 whileHover="hover"
                 initial="rest"
                 variants={buttonHover}
+                className="w-fit"
               >
                 <Button
                   className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 font-semibold shadow-lg shadow-primary/25"
