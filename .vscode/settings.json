@@ -1,5 +1,13 @@
 {
-  "cSpell.words": ["jenin", "lahza", "Najah", "ramallah", "sonner", "tabler"],
+  "cSpell.words": [
+    "jenin",
+    "lahza",
+    "Najah",
+    "ramallah",
+    "reactbits",
+    "sonner",
+    "tabler"
+  ],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "[javascript]": {
