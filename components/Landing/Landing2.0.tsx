@@ -17,7 +17,6 @@ import {
   Heart,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import DotGrid from '../reactbits/DotGrid';
 import SplitText from '../reactbits/SplitText';
 
@@ -263,27 +262,6 @@ const Landing2 = () => {
                   </span>
                 </Button>
               </motion.div>
-            </motion.div>
-
-            {/* Quick Stats */}
-            <motion.div
-              className="hidden md:flex flex-wrap justify-center gap-8 mt-12 text-center"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-            >
-              <div className="flex flex-col items-center">
-                <span className="text-3xl font-bold text-primary">500+</span>
-                <span className="text-muted-foreground">Properties</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-3xl font-bold text-primary">50+</span>
-                <span className="text-muted-foreground">Universities</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className="text-3xl font-bold text-primary">10K+</span>
-                <span className="text-muted-foreground">Happy Students</span>
-              </div>
             </motion.div>
           </motion.div>
         </div>
@@ -767,7 +745,7 @@ const Landing2 = () => {
 
           <motion.p
             variants={fadeInUp}
-            className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto"
+            className="text-xl text-foreground/90 mb-8 max-w-2xl mx-auto"
           >
             Join thousands of students who have found their ideal accommodation
             through Student Nest. Start your journey today and discover your
@@ -808,7 +786,7 @@ const Landing2 = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 px-8 py-3 text-lg font-semibold relative overflow-hidden group"
+                className="border-primary-foreground text-primary hover:bg-primary-foreground/10 px-8 py-3 text-lg font-semibold relative overflow-hidden group"
                 onClick={() => router.push('/contact')}
               >
                 <motion.span
@@ -822,23 +800,6 @@ const Landing2 = () => {
                 </span>
               </Button>
             </motion.div>
-          </motion.div>
-
-          {/* Newsletter Signup */}
-          <motion.div variants={fadeInUp} className="mt-12 max-w-md mx-auto">
-            <p className="text-primary-foreground/90 mb-4">
-              Get updates on new properties and exclusive offers
-            </p>
-            <div className="flex gap-2">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/60"
-              />
-              <Button className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 px-6">
-                Subscribe
-              </Button>
-            </div>
           </motion.div>
         </div>
       </motion.section>
