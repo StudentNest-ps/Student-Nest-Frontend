@@ -328,17 +328,10 @@ const Landing2 = () => {
                     repeatType: 'reverse',
                   }}
                 />
-                <Image
-                  src="/placeholder.svg?height=500&width=600&text=Student+Living"
-                  alt="Student living"
-                  width={600}
-                  height={500}
-                  className="rounded-2xl shadow-2xl shadow-primary/10"
-                />
               </div>
             </motion.div>
 
-            <motion.div variants={fadeInUp} className="lg:w-1/2">
+            <motion.div variants={fadeInUp} className="cg:w-1/2">
               <h2 className="text-4xl font-bold text-foreground mb-6">
                 Why Choose <span className="text-primary">Student Nest?</span>
               </h2>

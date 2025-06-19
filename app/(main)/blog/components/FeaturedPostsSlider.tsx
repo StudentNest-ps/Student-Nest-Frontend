@@ -1,74 +1,101 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Clock, ArrowRight } from 'lucide-react';
+import ArticleDialog from './ArticleDialog'; // Make sure the path is correct
 
-// Featured posts data
+// Update this array with full data (content, author, date)
 const featuredPosts = [
   {
     id: 1,
-    title: 'Turpis elit in dictum eget eget',
-    excerpt: 'Consequat eu vel fames feugiat et venenatis nulla.',
-    category: 'Relocation',
-    readTime: '1 min read',
+    title: 'Tips for Finding the Perfect Student Apartment',
+    excerpt:
+      'Learn how to search, compare, and secure the best housing option based on location, budget, and amenities.',
+    content:
+      'Finding a student apartment can be tricky. Always start early, compare options, and prioritize safety and proximity to campus.\n\nUse platforms like StudentNest to view verified listings and contact landlords directly.',
+    author: 'StudentNest Team',
+    date: 'June 10, 2025',
+    category: 'Housing Advice',
+    readTime: '4 min read',
     image:
-      'https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?q=80&w=2070&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2070&q=80',
   },
   {
     id: 2,
-    title: 'Faucibus egestas ut sit purus ultricies at eu',
-    excerpt: 'Massa tellus risus, lacus commodo magna feugiat consequat.',
-    category: 'Guest experience',
+    title: 'How to Save Money on Rent as a Student',
+    excerpt:
+      'Explore smart budgeting tips and shared living strategies to lower your monthly expenses.',
+    content:
+      'Students often overlook budgeting when renting. Consider co-living, negotiate rent if possible, and avoid overpaying for unnecessary extras.\n\nTrack your spending monthly and use student discounts wherever possible.',
+    author: 'StudentNest Editorial',
+    date: 'June 5, 2025',
+    category: 'Student Budgeting',
     readTime: '3 min read',
     image:
-      'https://images.unsplash.com/photo-1581287053822-fd7bf4f4bfec?q=80&w=2101&auto=format&fit=crop',
-  },
-  {
-    id: 3,
-    title: 'Feugiat gravida sed sit lacus sagittis',
-    excerpt: 'Pellentesque ultrices hendrerit lacus lectus.',
-    category: 'Working remotely',
-    readTime: '3 min read',
-    image:
-      'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=2072&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=2070&q=80',
   },
   {
     id: 4,
-    title: 'Modern apartment design trends for 2025',
+    title: 'Is Co-Living Right for You? Pros and Cons',
     excerpt:
-      'Discover the latest interior design trends for modern urban living.',
-    category: 'Property investing',
-    readTime: '2 min read',
+      'Co-living is growing in popularity among students. But is it the right fit for your lifestyle?',
+    content:
+      'Co-living can offer cost savings, social connection, and less responsibility over utilities and maintenance.\n\nHowever, privacy might be limited, and compatibility with roommates is crucial. Evaluate your priorities before committing.',
+    author: 'Ahmed Nasser',
+    date: 'May 20, 2025',
+    category: 'Living Trends',
+    readTime: '4 min read',
     image:
-      'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2073&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=2070&q=80',
   },
   {
     id: 5,
-    title: 'The rise of co-living spaces in major cities',
-    excerpt: 'How co-living is transforming urban housing markets worldwide.',
-    category: 'Property insights',
-    readTime: '4 min read',
+    title: 'Sustainable Student Living: Go Green at Home',
+    excerpt:
+      'Discover eco-friendly habits and rental features that support sustainable living.',
+    content:
+      'More student housing providers are offering green-certified properties. Look for places with good insulation, energy-efficient appliances, and recycling programs.\n\nAlso, reduce waste by reusing furniture and switching to LED lighting.',
+    author: 'StudentNest Editorial',
+    date: 'May 12, 2025',
+    category: 'Sustainable Living',
+    readTime: '3 min read',
     image:
-      'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2070&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=2070&q=80',
   },
   {
     id: 6,
-    title: 'Sustainable living: Eco-friendly rental properties',
-    excerpt: 'The growing demand for environmentally conscious living spaces.',
-    category: 'Property insights',
-    readTime: '5 min read',
+    title: "Exploring London's hidden architectural gems",
+    excerpt:
+      'A journey through the lesser-known architectural wonders of London.',
+    content:
+      'Before signing any lease, ask about utility costs, maintenance responsibilities, subletting rules, and deposit return policies.\n\nClear communication up front helps avoid disputes and ensures you know what you’re committing to.',
+    author: 'Layla Jaber',
+    date: 'May 2, 2025',
+    category: 'Rental Tips',
+    readTime: '2 min read',
     image:
-      'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=2065&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2070&auto=format&fit=crop',
   },
 ];
-
 export default function FeaturedPostsSlider() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: false, amount: 0.2 });
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const openDialog = (post: any) => {
+    setSelectedPost(post);
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedPost(null);
+  };
 
   const scrollSlider = (direction: 'left' | 'right') => {
     if (sliderRef.current) {
@@ -96,26 +123,21 @@ export default function FeaturedPostsSlider() {
             transition={{ duration: 0.5 }}
             className="flex items-center"
           >
-            <Link
-              href="/blog/featured"
-              className="text-primary flex items-center group mr-4"
-            >
+            <button className="text-primary flex items-center group mr-4">
               <span>View all</span>
               <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
+            </button>
 
             <div className="flex space-x-2">
               <button
                 onClick={() => scrollSlider('left')}
-                className="bg-white rounded-full p-2 shadow-sm cursor-pointer hover:bg-accent transition-colors duration-300"
-                aria-label="Scroll left"
+                className="bg-white rounded-full p-2 shadow-sm hover:bg-accent transition-colors duration-300"
               >
                 <ChevronLeft size={20} className="text-primary" />
               </button>
               <button
                 onClick={() => scrollSlider('right')}
-                className="bg-white rounded-full p-2 shadow-sm cursor-pointer hover:bg-accent transition-colors duration-300"
-                aria-label="Scroll right"
+                className="bg-white rounded-full p-2 shadow-sm hover:bg-accent transition-colors duration-300"
               >
                 <ChevronRight size={20} className="text-primary" />
               </button>
@@ -135,7 +157,10 @@ export default function FeaturedPostsSlider() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="flex-shrink-0 w-[300px] group"
             >
-              <Link href={`/blog/${post.id}`} className="block">
+              <div
+                onClick={() => openDialog(post)}
+                className="cursor-pointer block"
+              >
                 <div className="bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 h-full border border-border/50">
                   <div className="relative h-40 overflow-hidden">
                     <Image
@@ -162,11 +187,18 @@ export default function FeaturedPostsSlider() {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </div>
             </motion.div>
           ))}
         </div>
       </div>
+
+      {/* Popup Dialog */}
+      <ArticleDialog
+        isOpen={isDialogOpen}
+        onClose={closeDialog}
+        article={selectedPost}
+      />
     </section>
   );
 }
