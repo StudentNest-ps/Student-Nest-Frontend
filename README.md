@@ -137,3 +137,13 @@ This project is licensed under the MIS License.
 - Built with [Next.js](https://nextjs.org/) , [React](https://react.dev/) , and [Tailwind CSS](https://tailwindcss.com/) .
 - UI powered by [Radix UI](https://www.radix-ui.com/) and custom components.
 - Data visualization by [Recharts](https://recharts.org/) .
+
+
+---
+## 👥 Contributors
+
+- <a href="https://github.com/Hadi87s" target="_blank"></a> [**Hadi87s**](https://github.com/Hadi87s)
+
+- <a href="https://github.com/mkittani" target="_blank"></a> [**mkittani**](https://github.com/mkittani)
+
+- <a href="https://github.com/OsamaSalah-7" target="_blank"></a> [**OsamaSalah-7**](https://github.com/OsamaSalah-7)
