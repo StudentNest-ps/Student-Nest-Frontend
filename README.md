@@ -7,11 +7,11 @@ Welcome to **Student Nest**, a modern web app for student housing, apartment boo
 ## 📚 Table of Contents
 
 - [ Features](#-features)
-- [ Tech Stack](#-tech-stack)
+- [ Tech Stack](#%EF%B8%8F-tech-stack)
 - [ Project Structure](#-project-structure)
 - [ Getting Started](#-getting-started)
 - [ Available Scripts](#-available-scripts)
-- [ Folder Overview](#-folder-overview)
+- [ Folder Overview](#%EF%B8%8F-folder-overview)
 - [ Contributing](#-contributing)
 - [ License](#-license)
 - [ Credits](#-credits)
