@@ -1,6 +1,6 @@
 # 🏡 Student Nest Frontend
 
-Welcome to **Student Nest**, a modern web app for student housing, apartment bookings, and property management. This is the frontend codebase, built with Next.js, React, and Tailwind CSS.
+Welcome to **Student Nest Frontend**, a modern web app for student housing, apartment bookings, and property management. This is the frontend codebase, built with Next.js, React, and Tailwind CSS.
 
 ---
 
